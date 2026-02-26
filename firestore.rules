@@ -1,0 +1,163 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isAuthenticated()
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role in ['super_admin', 'moderator'];
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated()
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'super_admin';
+    }
+
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
+    // Users can read their own profile.
+    // Users CANNOT write balances, status, or timer fields directly.
+    // All sensitive writes go through server (Admin SDK).
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if false; // Server-only creation
+      allow update: if false; // Server-only updates
+      allow delete: if false; // Never client-deletable
+    }
+
+    // ============================================
+    // DEVICES COLLECTION
+    // ============================================
+    // Devices are managed exclusively by the server.
+    match /devices/{deviceKey} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ============================================
+    // REFERRALS COLLECTION
+    // ============================================
+    // Users can read their own referral data.
+    // Writes are server-only.
+    match /referrals/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // ============================================
+    // TASKS COLLECTION
+    // ============================================
+    // Users can read their own task logs.
+    // Task completion is server-authoritative.
+    match /tasks/{uid}/{date} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // ============================================
+    // SPINS COLLECTION
+    // ============================================
+    // Users can read their own spin results.
+    // Spin outcome is server-decided.
+    match /spins/{uid}/{spinId} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // ============================================
+    // LEDGER COLLECTION
+    // ============================================
+    // Users can read their own ledger entries (wallet history).
+    // All ledger writes are server-only.
+    match /ledger/{uid}/entries/{entryId} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // ============================================
+    // BANS COLLECTION
+    // ============================================
+    // Ban records are server-managed.
+    // Users cannot read or write ban records.
+    match /bans/{uid} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ============================================
+    // CONFIG COLLECTION
+    // ============================================
+    // App config is readable by all authenticated users.
+    // Only server/admin can write.
+    match /config/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    // ============================================
+    // REFERRAL CODES COLLECTION
+    // ============================================
+    // Referral codes are readable by authenticated users (to validate codes).
+    // Only server creates/manages codes.
+    match /referralCodes/{code} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    // ============================================
+    // ADMIN ACTIONS AUDIT LOG
+    // ============================================
+    // Only admins can read audit logs. Server writes.
+    match /adminActions/{actionId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ============================================
+    // WITHDRAWALS (Phase 2+)
+    // ============================================
+    match /withdrawals/{withdrawalId} {
+      allow read: if isAuthenticated()
+        && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // ============================================
+    // SALARY APPROVALS (Phase 2+)
+    // ============================================
+    match /salaryApprovals/{approvalId} {
+      allow read: if isAuthenticated()
+        && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // ============================================
+    // ADMINS COLLECTION
+    // ============================================
+    // Admin records are not client-accessible.
+    match /admins/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // ============================================
+    // DEFAULT: DENY ALL
+    // ============================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

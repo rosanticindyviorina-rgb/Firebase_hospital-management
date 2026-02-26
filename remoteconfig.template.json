@@ -1,0 +1,72 @@
+{
+  "conditions": [],
+  "parameters": {
+    "ad_provider": {
+      "defaultValue": {
+        "value": "admob"
+      },
+      "description": "Active ad provider: admob | applovin | unity | adcolony",
+      "valueType": "STRING"
+    },
+    "maintenance_mode": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Enable maintenance mode to block app access",
+      "valueType": "BOOLEAN"
+    },
+    "min_app_version": {
+      "defaultValue": {
+        "value": "1"
+      },
+      "description": "Minimum required app version code",
+      "valueType": "NUMBER"
+    },
+    "task_cooldown_seconds": {
+      "defaultValue": {
+        "value": "180"
+      },
+      "description": "Cooldown between tasks in seconds (default 3 minutes)",
+      "valueType": "NUMBER"
+    },
+    "cycle_hours": {
+      "defaultValue": {
+        "value": "24"
+      },
+      "description": "Task cycle duration in hours",
+      "valueType": "NUMBER"
+    },
+    "spin_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Enable/disable spin wheel feature",
+      "valueType": "BOOLEAN"
+    },
+    "invite_challenge_target": {
+      "defaultValue": {
+        "value": "15"
+      },
+      "description": "Number of verified invites needed for Task 3",
+      "valueType": "NUMBER"
+    }
+  },
+  "parameterGroups": {
+    "Ads Configuration": {
+      "description": "Ad network settings",
+      "parameters": {
+        "ad_provider": {}
+      }
+    },
+    "App Control": {
+      "description": "App-level feature flags",
+      "parameters": {
+        "maintenance_mode": {},
+        "min_app_version": {}
+      }
+    }
+  },
+  "version": {
+    "description": "Phase 1 initial config"
+  }
+}
