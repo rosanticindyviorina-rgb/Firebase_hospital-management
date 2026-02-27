@@ -111,3 +111,28 @@ data class SpinResultResponse(
     val spinId: String?,
     val error: String?
 )
+
+// ============================================
+// Withdrawal API
+// ============================================
+interface WithdrawalApi {
+
+    @POST("withdrawals/request")
+    suspend fun requestWithdrawal(@Body body: Map<String, String>): GenericResponse
+
+    @GET("withdrawals/history")
+    suspend fun getWithdrawalHistory(): WithdrawalHistoryResponse
+}
+
+data class WithdrawalHistoryResponse(
+    val withdrawals: List<WithdrawalItem>
+)
+
+data class WithdrawalItem(
+    val id: String,
+    val method: String,
+    val amount: Double,
+    val status: String,
+    val accountNumber: String,
+    val createdAt: Long
+)

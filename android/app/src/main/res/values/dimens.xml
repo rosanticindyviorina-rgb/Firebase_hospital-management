@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+    <dimen name="spacing_xxl">48dp</dimen>
+
+    <!-- Radius -->
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_md">12dp</dimen>
+    <dimen name="radius_lg">16dp</dimen>
+    <dimen name="radius_xl">24dp</dimen>
+    <dimen name="radius_pill">50dp</dimen>
+
+    <!-- Text -->
+    <dimen name="text_xs">10sp</dimen>
+    <dimen name="text_sm">12sp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_md">16sp</dimen>
+    <dimen name="text_lg">20sp</dimen>
+    <dimen name="text_xl">24sp</dimen>
+    <dimen name="text_xxl">32sp</dimen>
+    <dimen name="text_display">48sp</dimen>
+
+    <!-- Button -->
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="button_height_sm">40dp</dimen>
+    <dimen name="button_icon_size">24dp</dimen>
+
+    <!-- Card -->
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+
+    <!-- Bottom Nav -->
+    <dimen name="bottom_nav_height">64dp</dimen>
+    <dimen name="nav_icon_size">28dp</dimen>
+
+    <!-- Balance Display -->
+    <dimen name="balance_text_size">36sp</dimen>
+
+    <!-- Spin Wheel -->
+    <dimen name="spin_wheel_size">280dp</dimen>
+
+    <!-- Task Card -->
+    <dimen name="task_card_icon_size">48dp</dimen>
+</resources>

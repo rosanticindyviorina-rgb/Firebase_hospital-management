@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
+
+        <!-- Greeting -->
+        <TextView
+            android:id="@+id/tvGreeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome back!"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <!-- Balance Card — Gradient -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:background="@drawable/bg_balance_card"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_lg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/balance_label"
+                android:textColor="#B3FFFFFF"
+                android:textSize="@dimen/text_sm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/spacing_xs">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pkr_symbol"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <TextView
+                    android:id="@+id/tvBalance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:text="0.00"
+                    style="@style/Widget.KamyabiCash.Balance"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_earned_label"
+                        android:textColor="#80FFFFFF"
+                        android:textSize="@dimen/text_xs" />
+
+                    <TextView
+                        android:id="@+id/tvTotalEarned"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PKR 0"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnWithdraw"
+                    style="@style/Widget.KamyabiCash.Button.Primary"
+                    android:layout_width="140dp"
+                    android:text="@string/withdraw_button"
+                    android:textSize="@dimen/text_sm" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Daily Tasks Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/daily_tasks"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvCycleTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_sm" />
+
+        <!-- Task 1 Card -->
+        <include
+            android:id="@+id/task1Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 2 Card -->
+        <include
+            android:id="@+id/task2Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 3 Card (Invite Challenge) -->
+        <include
+            android:id="@+id/task3Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 4 Card (Spin Wheel) -->
+        <include
+            android:id="@+id/task4Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Referral Code Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/your_referral_code"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_sm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/spacing_sm">
+
+                <TextView
+                    android:id="@+id/tvReferralCode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="KCXXXXXX"
+                    android:textColor="@color/primary"
+                    android:textSize="@dimen/text_xl"
+                    android:textStyle="bold"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.15" />
+
+                <Button
+                    android:id="@+id/btnShareCode"
+                    style="@style/Widget.KamyabiCash.Button.Outline"
+                    android:layout_width="100dp"
+                    android:text="@string/share_code"
+                    android:textSize="@dimen/text_sm" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_lg" />
+
+    </LinearLayout>
+</ScrollView>

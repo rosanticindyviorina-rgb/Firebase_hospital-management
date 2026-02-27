@@ -6,6 +6,7 @@ import securityRoutes from './routes/securityRoutes';
 import userRoutes from './routes/userRoutes';
 import taskRoutes from './routes/taskRoutes';
 import adminRoutes from './routes/adminRoutes';
+import withdrawalRoutes from './routes/withdrawalRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -31,6 +32,7 @@ app.use('/security', securityRoutes);
 app.use('/users', userRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/admin', adminRoutes);
+app.use('/withdrawals', withdrawalRoutes);
 
 // Config endpoint (public, for app to read ad_provider etc.)
 app.get('/config', async (_req, res) => {

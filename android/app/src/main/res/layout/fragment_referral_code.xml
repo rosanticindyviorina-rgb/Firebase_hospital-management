@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_xl">
+
+    <!-- Logo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/text_xxl"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xxl"
+        android:text="@string/referral_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_lg"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:text="@string/referral_subtitle"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        android:gravity="center" />
+
+    <EditText
+        android:id="@+id/etReferralCode"
+        style="@style/Widget.KamyabiCash.Input"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:hint="@string/referral_hint"
+        android:inputType="textCapCharacters"
+        android:maxLength="8"
+        android:textAlignment="center"
+        android:letterSpacing="0.15"
+        android:textSize="@dimen/text_lg" />
+
+    <TextView
+        android:id="@+id/tvReferralError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:textColor="@color/text_danger"
+        android:textSize="@dimen/text_sm"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnContinue"
+        style="@style/Widget.KamyabiCash.Button.Primary"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="@string/referral_continue" />
+
+</LinearLayout>

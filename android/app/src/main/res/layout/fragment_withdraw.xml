@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/withdraw_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <!-- Selected Method Card -->
+        <LinearLayout
+            android:id="@+id/selectedMethodCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:id="@+id/methodIconFrame"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="@dimen/spacing_sm">
+
+                <TextView
+                    android:id="@+id/tvMethodIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_md" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvSelectedMethod"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMethodDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Amount Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/withdraw_amount_label"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_sm" />
+
+        <EditText
+            android:id="@+id/etWithdrawAmount"
+            style="@style/Widget.KamyabiCash.Input"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:hint="@string/withdraw_amount_hint"
+            android:inputType="numberDecimal"
+            android:textSize="@dimen/text_xl"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/tvAvailableBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/text_hint"
+            android:textSize="@dimen/text_sm" />
+
+        <!-- Account Number Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/withdraw_account_label"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_sm" />
+
+        <EditText
+            android:id="@+id/etAccountNumber"
+            style="@style/Widget.KamyabiCash.Input"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:hint="@string/withdraw_account_hint"
+            android:inputType="phone"
+            android:textSize="@dimen/text_md" />
+
+        <!-- Account Holder Name (for USDT this becomes wallet address) -->
+        <TextView
+            android:id="@+id/labelAccountName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/withdraw_name_label"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_sm" />
+
+        <EditText
+            android:id="@+id/etAccountName"
+            style="@style/Widget.KamyabiCash.Input"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:hint="@string/withdraw_name_hint"
+            android:inputType="textPersonName"
+            android:textSize="@dimen/text_md" />
+
+        <!-- Fee Notice -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/withdraw_fee_label"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvFee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PKR 0"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_sm"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/withdraw_receive_label"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvReceiveAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PKR 0"
+                    android:textColor="@color/text_success"
+                    android:textSize="@dimen/text_md"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/btnSubmitWithdraw"
+            style="@style/Widget.KamyabiCash.Button.Primary"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/withdraw_submit" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:gravity="center"
+            android:text="@string/withdraw_processing_time"
+            android:textColor="@color/text_hint"
+            android:textSize="@dimen/text_xs" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_lg" />
+
+    </LinearLayout>
+</ScrollView>

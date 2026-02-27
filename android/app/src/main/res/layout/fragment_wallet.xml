@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wallet_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <!-- Balance -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:background="@drawable/bg_balance_card"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_lg"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/balance_label"
+                android:textColor="#B3FFFFFF"
+                android:textSize="@dimen/text_sm" />
+
+            <TextView
+                android:id="@+id/tvWalletBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PKR 0.00"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_display"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Withdraw Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/withdraw_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/withdraw_min"
+            android:textColor="@color/text_hint"
+            android:textSize="@dimen/text_sm" />
+
+        <!-- EasyPaisa -->
+        <LinearLayout
+            android:id="@+id/cardEasypaisa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:background="@drawable/bg_payment_easypaisa"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@color/easypaisa_green"
+                android:padding="@dimen/spacing_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="EP"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_md" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/method_easypaisa"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile wallet transfer"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="Select"
+                android:tint="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- JazzCash -->
+        <LinearLayout
+            android:id="@+id/cardJazzcash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_payment_jazzcash"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@color/jazzcash_red"
+                android:padding="@dimen/spacing_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="JC"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_md" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/method_jazzcash"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile wallet transfer"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="Select"
+                android:tint="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- USDT TRC-20 -->
+        <LinearLayout
+            android:id="@+id/cardUsdt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_payment_usdt"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@color/usdt_teal"
+                android:padding="@dimen/spacing_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="₮"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_lg" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/method_usdt"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crypto wallet (TRON network)"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="Select"
+                android:tint="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- Transaction History -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/transaction_history"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTransactions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <TextView
+            android:id="@+id/tvNoTransactions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:gravity="center"
+            android:text="@string/no_transactions"
+            android:textColor="@color/text_hint"
+            android:textSize="@dimen/text_body" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_lg" />
+
+    </LinearLayout>
+</ScrollView>

@@ -33,11 +33,11 @@ export default function DashboardPage() {
   if (loading || !user) return null;
 
   const kpiCards = [
-    { label: 'Total Users', value: kpis?.totalUsers ?? '—', color: 'bg-blue-500' },
-    { label: 'Active Bans', value: kpis?.activeBans ?? '—', color: 'bg-red-500' },
-    { label: 'New Users Today', value: kpis?.todayNewUsers ?? '—', color: 'bg-green-500' },
-    { label: 'Bans Today', value: kpis?.todayBans ?? '—', color: 'bg-orange-500' },
-    { label: 'Task Claims Today', value: kpis?.todayTaskClaims ?? '—', color: 'bg-purple-500' },
+    { label: 'Total Users', value: kpis?.totalUsers ?? '—', color: 'bg-primary-500' },
+    { label: 'Active Bans', value: kpis?.activeBans ?? '—', color: 'bg-danger-500' },
+    { label: 'New Users Today', value: kpis?.todayNewUsers ?? '—', color: 'bg-primary-400' },
+    { label: 'Bans Today', value: kpis?.todayBans ?? '—', color: 'bg-warning-500' },
+    { label: 'Task Claims Today', value: kpis?.todayTaskClaims ?? '—', color: 'bg-secondary-500' },
   ];
 
   return (
@@ -76,6 +76,12 @@ export default function DashboardPage() {
               className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
               Switch Ads
+            </button>
+            <button
+              onClick={() => router.push('/withdrawals')}
+              className="px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors"
+            >
+              Manage Withdrawals
             </button>
             <button
               onClick={() => router.push('/bans')}

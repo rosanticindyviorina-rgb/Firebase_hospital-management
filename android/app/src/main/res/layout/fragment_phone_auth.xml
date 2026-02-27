@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_xl">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xxl"
+        android:text="@string/phone_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_lg"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:text="@string/phone_subtitle"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body" />
+
+    <EditText
+        android:id="@+id/etPhone"
+        style="@style/Widget.KamyabiCash.Input"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:hint="@string/phone_hint"
+        android:inputType="phone"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_lg" />
+
+    <Button
+        android:id="@+id/btnSendOtp"
+        style="@style/Widget.KamyabiCash.Button.Primary"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="@string/phone_send_otp" />
+
+    <!-- OTP Entry (shown after sending) -->
+    <LinearLayout
+        android:id="@+id/otpSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvOtpTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/otp_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etOtp"
+            style="@style/Widget.KamyabiCash.Input"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:hint="------"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textAlignment="center"
+            android:letterSpacing="0.5"
+            android:textSize="@dimen/text_xl" />
+
+        <Button
+            android:id="@+id/btnVerify"
+            style="@style/Widget.KamyabiCash.Button.Primary"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/otp_verify" />
+
+        <TextView
+            android:id="@+id/tvResend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/otp_resend"
+            android:textColor="@color/secondary"
+            android:textSize="@dimen/text_sm" />
+    </LinearLayout>
+
+</LinearLayout>

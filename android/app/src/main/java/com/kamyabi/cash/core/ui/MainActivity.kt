@@ -1,11 +1,20 @@
 package com.kamyabi.cash.core.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kamyabi.cash.R
+import com.kamyabi.cash.auth.ui.PhoneAuthFragment
+import com.kamyabi.cash.auth.ui.ReferralCodeFragment
 import com.kamyabi.cash.security.data.SecurityGate
+import com.kamyabi.cash.security.ui.BanActivity
 import kotlinx.coroutines.launch
 
 /**
@@ -15,39 +24,40 @@ import kotlinx.coroutines.launch
  * 1. Run Pre-Auth Security Gate (root/emulator/clone/vpn/hooking checks)
  * 2. If banned → BanActivity
  * 3. If not signed in → show referral code screen → phone auth
- * 4. If signed in → listen for user status → show task dashboard
+ * 4. If signed in → listen for user status → show task dashboard with bottom nav
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    ReferralCodeFragment.OnReferralValidatedListener,
+    PhoneAuthFragment.OnAuthCompleteListener {
 
     private val securityGate by lazy { SecurityGate(this) }
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
+    private lateinit var bottomNav: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // TODO: setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)
+
+        bottomNav = findViewById(R.id.bottomNav)
 
         lifecycleScope.launch {
             // Step 1: Run security gate
             val isAllowed = securityGate.runGate()
-            if (!isAllowed) return@launch // BanActivity will be shown
+            if (!isAllowed) return@launch
 
             // Step 2: Check auth state
             val currentUser = auth.currentUser
             if (currentUser == null) {
                 showReferralAndAuthFlow()
             } else {
-                // Step 3: Listen for user status changes (real-time ban detection)
                 listenForUserStatus(currentUser.uid)
                 showTaskDashboard()
             }
         }
     }
 
-    /**
-     * Listens to user status in Firestore.
-     * If status changes to "banned", immediately show ban screen.
-     */
     private fun listenForUserStatus(uid: String) {
         db.collection("users").document(uid)
             .addSnapshotListener { snapshot, error ->
@@ -56,21 +66,53 @@ class MainActivity : AppCompatActivity() {
                 val status = snapshot?.getString("status")
                 if (status == "banned") {
                     val reason = snapshot.getString("banReason") ?: "Policy violation"
-                    val intent = android.content.Intent(this, com.kamyabi.cash.security.ui.BanActivity::class.java)
+                    val intent = Intent(this, BanActivity::class.java)
                     intent.putExtra("ban_reason", reason)
-                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                 }
             }
     }
 
     private fun showReferralAndAuthFlow() {
-        // TODO: Navigate to ReferralCodeFragment → PhoneAuthFragment
-        // This will be implemented with Navigation Component
+        bottomNav.visibility = View.GONE
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.navHostFragment, ReferralCodeFragment())
+            .commit()
+    }
+
+    override fun onReferralValidated(referralCode: String) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.navHostFragment, PhoneAuthFragment.newInstance(referralCode))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onAuthComplete() {
+        val uid = auth.currentUser?.uid ?: return
+        listenForUserStatus(uid)
+        showTaskDashboard()
     }
 
     private fun showTaskDashboard() {
-        // TODO: Navigate to TaskDashboardFragment
-        // Shows task buttons, timers, balance, referral code
+        bottomNav.visibility = View.VISIBLE
+
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.navHostFragment) as? NavHostFragment
+
+        if (navHostFragment == null) {
+            val fragment = NavHostFragment.create(R.navigation.nav_graph)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.navHostFragment, fragment)
+                .commitNow()
+            fragment.navController.let { navController ->
+                bottomNav.setupWithNavController(navController)
+            }
+        } else {
+            navHostFragment.navController.let { navController ->
+                bottomNav.setupWithNavController(navController)
+            }
+        }
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_xl">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/banned_title"
+        android:tint="@color/status_banned" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="@string/banned_title"
+        android:textColor="@color/status_banned"
+        android:textSize="@dimen/text_xl"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:gravity="center"
+        android:text="@string/banned_message"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        android:lineSpacingExtra="4dp" />
+
+    <TextView
+        android:id="@+id/tvBanReason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:background="@drawable/bg_card"
+        android:padding="@dimen/spacing_md"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_sm" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:text="@string/banned_contact"
+        android:textColor="@color/text_hint"
+        android:textSize="@dimen/text_sm" />
+
+</LinearLayout>

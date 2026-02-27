@@ -76,4 +76,23 @@ export const adminApi = {
 
   getAuditLogs: (limit = 50) =>
     apiRequest<{ logs: any[] }>(`/admin/auditLogs?limit=${limit}`),
+
+  // Withdrawals
+  getWithdrawals: (status?: string, limit = 50) =>
+    apiRequest<{ withdrawals: any[] }>(`/withdrawals/admin/all?status=${status || 'all'}&limit=${limit}`),
+
+  getPendingWithdrawals: () =>
+    apiRequest<{ withdrawals: any[] }>('/withdrawals/admin/pending'),
+
+  approveWithdrawal: (withdrawalId: string) =>
+    apiRequest('/withdrawals/admin/approve', {
+      method: 'POST',
+      body: JSON.stringify({ withdrawalId }),
+    }),
+
+  rejectWithdrawal: (withdrawalId: string, reason: string) =>
+    apiRequest('/withdrawals/admin/reject', {
+      method: 'POST',
+      body: JSON.stringify({ withdrawalId, reason }),
+    }),
 };

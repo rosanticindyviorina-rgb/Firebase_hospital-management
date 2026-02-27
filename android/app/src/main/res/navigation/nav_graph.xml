@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.kamyabi.cash.tasks.ui.HomeFragment"
+        android:label="@string/nav_home" />
+
+    <fragment
+        android:id="@+id/nav_wallet"
+        android:name="com.kamyabi.cash.wallet.ui.WalletFragment"
+        android:label="@string/nav_wallet">
+        <action
+            android:id="@+id/action_wallet_to_withdraw"
+            app:destination="@id/withdrawFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.kamyabi.cash.auth.ui.ProfileFragment"
+        android:label="@string/nav_profile" />
+
+    <fragment
+        android:id="@+id/withdrawFragment"
+        android:name="com.kamyabi.cash.wallet.ui.WithdrawFragment"
+        android:label="@string/withdraw_title" />
+
+</navigation>

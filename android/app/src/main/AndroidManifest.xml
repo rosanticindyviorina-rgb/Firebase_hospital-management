@@ -14,16 +14,23 @@
         android:theme="@style/Theme.KamyabiCash"
         tools:targetApi="34">
 
-        <!-- Main Activity -->
+        <!-- Splash Screen -->
         <activity
-            android:name=".core.ui.MainActivity"
+            android:name=".core.ui.SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.KamyabiCash.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".core.ui.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <!-- Ban Screen Activity -->
         <activity
