@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "express", "cors", "uuid"],
+    "types": ["node", "express", "cors", "uuid", "jest"],
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
