@@ -21,9 +21,9 @@ router.use(verifyAdmin);
 
 /**
  * POST /admin/switchAds
- * Toggles the active ad provider.
+ * Toggles the active ad provider. Requires super_admin.
  */
-router.post('/switchAds', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/switchAds', verifySuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { provider } = req.body;
 
@@ -69,9 +69,9 @@ router.post('/banUser', async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * POST /admin/unbanUser
- * Unbans a user (only if policy allows).
+ * Unbans a user. Requires super_admin.
  */
-router.post('/unbanUser', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/unbanUser', verifySuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { targetUid } = req.body;
 

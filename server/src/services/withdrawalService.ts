@@ -95,6 +95,7 @@ export async function requestWithdrawal(req: WithdrawalRequest) {
     .doc();
 
   batch.set(ledgerRef, {
+    uid,
     type: 'withdrawal',
     amount: -amount,
     withdrawalId: withdrawalRef.id,
@@ -256,6 +257,7 @@ export async function rejectWithdrawal(withdrawalId: string, adminUid: string, r
     .doc();
 
   batch.set(ledgerRef, {
+    uid: data.uid,
     type: 'withdrawal_refund',
     amount: data.amount,
     withdrawalId,

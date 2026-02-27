@@ -117,6 +117,15 @@
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_sm" />
 
+        <TextView
+            android:id="@+id/tvCooldownTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_sm"
+            android:visibility="gone" />
+
         <!-- Task 1 Card -->
         <include
             android:id="@+id/task1Card"

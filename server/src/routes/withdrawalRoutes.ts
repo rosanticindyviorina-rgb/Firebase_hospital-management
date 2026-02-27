@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { verifyAuth, verifyAdmin } from '../middleware/authMiddleware';
+import { verifyAuth, verifyAdmin, verifySuperAdmin } from '../middleware/authMiddleware';
 import { taskLimiter } from '../middleware/rateLimiter';
 import {
   requestWithdrawal,
@@ -85,7 +85,7 @@ router.get('/admin/pending', verifyAuth, verifyAdmin, async (req, res) => {
  * POST /withdrawals/admin/approve
  * Admin approves a withdrawal.
  */
-router.post('/admin/approve', verifyAuth, verifyAdmin, async (req, res) => {
+router.post('/admin/approve', verifyAuth, verifySuperAdmin, async (req, res) => {
   try {
     const adminUid = (req as any).uid;
     const { withdrawalId } = req.body;
@@ -106,7 +106,7 @@ router.post('/admin/approve', verifyAuth, verifyAdmin, async (req, res) => {
  * POST /withdrawals/admin/reject
  * Admin rejects a withdrawal (refunds balance).
  */
-router.post('/admin/reject', verifyAuth, verifyAdmin, async (req, res) => {
+router.post('/admin/reject', verifyAuth, verifySuperAdmin, async (req, res) => {
   try {
     const adminUid = (req as any).uid;
     const { withdrawalId, reason } = req.body;

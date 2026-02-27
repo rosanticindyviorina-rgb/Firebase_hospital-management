@@ -21,15 +21,15 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val tvLogo = findViewById<TextView>(R.id.tvSplashLogo)
-        val tvAppName = findViewById<TextView>(R.id.tvSplashAppName)
-        val tvTagline = findViewById<TextView>(R.id.tvSplashTagline)
-        val progressBar = findViewById<ProgressBar>(R.id.splashProgress)
+        val ivLogo = findViewById<View>(R.id.ivLogo)
+        val tvAppName = findViewById<TextView>(R.id.tvAppName)
+        val tvTagline = findViewById<TextView>(R.id.tvTagline)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
         // Logo animation: fade in + scale up with overshoot
-        val logoFade = ObjectAnimator.ofFloat(tvLogo, View.ALPHA, 0f, 1f).setDuration(800)
-        val logoScaleX = ObjectAnimator.ofFloat(tvLogo, View.SCALE_X, 0.5f, 1f).setDuration(800)
-        val logoScaleY = ObjectAnimator.ofFloat(tvLogo, View.SCALE_Y, 0.5f, 1f).setDuration(800)
+        val logoFade = ObjectAnimator.ofFloat(ivLogo, View.ALPHA, 0f, 1f).setDuration(800)
+        val logoScaleX = ObjectAnimator.ofFloat(ivLogo, View.SCALE_X, 0.5f, 1f).setDuration(800)
+        val logoScaleY = ObjectAnimator.ofFloat(ivLogo, View.SCALE_Y, 0.5f, 1f).setDuration(800)
         logoScaleX.interpolator = OvershootInterpolator(2f)
         logoScaleY.interpolator = OvershootInterpolator(2f)
 
@@ -54,7 +54,7 @@ class SplashActivity : AppCompatActivity() {
         animatorSet.start()
 
         // Navigate to MainActivity after animation
-        tvLogo.postDelayed({
+        ivLogo.postDelayed({
             startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()

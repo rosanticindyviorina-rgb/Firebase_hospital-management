@@ -52,7 +52,7 @@ class AdManager(private val context: Context) {
      * Loads and shows a rewarded ad using the active provider.
      * Returns true if ad was watched successfully.
      */
-    suspend fun showRewardedAd(): Boolean {
+    suspend fun showRewardedAd(activity: android.app.Activity? = null): Boolean {
         return when (currentProvider) {
             AdProvider.ADMOB -> showAdMobRewardedAd()
             AdProvider.APPLOVIN -> showAppLovinRewardedAd()

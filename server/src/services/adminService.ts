@@ -155,6 +155,9 @@ export async function getDashboardKPIs(): Promise<{
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
+  // Today's date key for task subcollections (YYYY-MM-DD)
+  const todayKey = now.toISOString().split('T')[0];
+
   const [
     totalUsersSnapshot,
     bansSnapshot,
@@ -173,12 +176,28 @@ export async function getDashboardKPIs(): Promise<{
       .get(),
   ]);
 
+  // Count today's task claims by querying ledger entries of type task_reward created today
+  let todayTaskClaims = 0;
+  try {
+    // Use collectionGroup query on ledger entries for today's task rewards
+    const taskClaimsSnapshot = await db
+      .collectionGroup('entries')
+      .where('type', '==', 'task_reward')
+      .where('createdAt', '>=', todayStart)
+      .count()
+      .get();
+    todayTaskClaims = taskClaimsSnapshot.data().count;
+  } catch {
+    // collectionGroup index may not exist yet — fallback to 0
+    todayTaskClaims = 0;
+  }
+
   return {
     totalUsers: totalUsersSnapshot.data().count,
     activeBans: bansSnapshot.data().count,
     todayNewUsers: todayUsersSnapshot.data().count,
     todayBans: todayBansSnapshot.data().count,
-    todayTaskClaims: 0, // TODO: aggregate from task logs
+    todayTaskClaims,
   };
 }
 

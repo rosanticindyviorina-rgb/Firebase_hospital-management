@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.kamyabi.cash.R
-import com.kamyabi.cash.ads.data.AdManager
 import com.kamyabi.cash.core.di.ServiceLocator
 import com.kamyabi.cash.tasks.data.TaskRepository
 import com.kamyabi.cash.wallet.data.WalletRepository
@@ -24,7 +23,7 @@ class HomeFragment : Fragment() {
 
     private val taskRepo = TaskRepository()
     private val walletRepo = WalletRepository()
-    private val adManager = AdManager()
+    private val adManager get() = ServiceLocator.adManager
 
     private lateinit var tvGreeting: TextView
     private lateinit var tvBalance: TextView
@@ -49,6 +48,8 @@ class HomeFragment : Fragment() {
     private lateinit var task4Btn: Button
 
     private var cycleTimer: CountDownTimer? = null
+    private var cooldownTimer: CountDownTimer? = null
+    private lateinit var tvCooldownTimer: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -69,6 +70,8 @@ class HomeFragment : Fragment() {
         tvReferralCode = view.findViewById(R.id.tvReferralCode)
         btnWithdraw = view.findViewById(R.id.btnWithdraw)
         btnShareCode = view.findViewById(R.id.btnShareCode)
+
+        tvCooldownTimer = view.findViewById(R.id.tvCooldownTimer)
 
         // Task cards
         val task1Card = view.findViewById<View>(R.id.task1Card)
@@ -152,6 +155,9 @@ class HomeFragment : Fragment() {
         updateTaskButton(task2Btn, progress["task_2"])
         updateTaskButton(task3Btn, progress["task_3"])
         updateTaskButton(task4Btn, progress["task_4"])
+
+        // Start 3-minute cooldown timer if active
+        startCooldownTimer(status.nextTaskAt)
     }
 
     private fun updateTaskButton(button: Button, status: String?) {
@@ -233,6 +239,29 @@ class HomeFragment : Fragment() {
         }.start()
     }
 
+    private fun startCooldownTimer(nextTaskAt: Long) {
+        cooldownTimer?.cancel()
+        val remaining = nextTaskAt - System.currentTimeMillis()
+        if (remaining <= 0) {
+            tvCooldownTimer.visibility = View.GONE
+            return
+        }
+
+        tvCooldownTimer.visibility = View.VISIBLE
+        cooldownTimer = object : CountDownTimer(remaining, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val minutes = millisUntilFinished / (1000 * 60)
+                val seconds = (millisUntilFinished % (1000 * 60)) / 1000
+                tvCooldownTimer.text = "Next task in: ${minutes}m ${seconds}s"
+            }
+
+            override fun onFinish() {
+                tvCooldownTimer.visibility = View.GONE
+                loadData() // Refresh task availability
+            }
+        }.start()
+    }
+
     private fun shareReferralCode() {
         val code = tvReferralCode.text.toString()
         val shareText = "Join Kamyabi Cash and earn daily! Use my referral code: $code\nDownload: https://play.google.com/store/apps/details?id=com.kamyabi.cash"
@@ -246,5 +275,6 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         cycleTimer?.cancel()
+        cooldownTimer?.cancel()
     }
 }

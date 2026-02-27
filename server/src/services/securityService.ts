@@ -1,5 +1,6 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
 import { BAN_REASONS, USER_STATUS } from '../config/constants';
+import * as crypto from 'crypto';
 
 interface DeviceFingerprint {
   androidId?: string;
@@ -79,7 +80,7 @@ async function checkIpIntelligence(ip: string): Promise<{
 }
 
 /**
- * Generates a device key from fingerprint for device binding.
+ * Generates a SHA-256 device key from fingerprint for device binding.
  */
 function generateDeviceKey(fingerprint: DeviceFingerprint): string {
   const parts = [
@@ -89,15 +90,8 @@ function generateDeviceKey(fingerprint: DeviceFingerprint): string {
     fingerprint.buildManufacturer || '',
     fingerprint.screenResolution || '',
   ];
-  // Simple hash — in production use a proper hash function
-  let hash = 0;
-  const str = parts.join('|');
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return `dev_${Math.abs(hash).toString(36)}`;
+  const hash = crypto.createHash('sha256').update(parts.join('|')).digest('hex');
+  return `dev_${hash.substring(0, 16)}`;
 }
 
 /**
@@ -242,9 +236,14 @@ export async function banUser(
     { merge: true }
   );
 
-  // Create ban record
+  // Fetch user phone for phone-level ban
+  const userDoc2 = await db.collection(Collections.USERS).doc(uid).get();
+  const phone = userDoc2.exists ? userDoc2.data()?.phone : null;
+
+  // Create ban record (includes phone for phone-number ban enforcement)
   batch.set(db.collection(Collections.BANS).doc(uid), {
     uid,
+    phone: phone || null,
     reason,
     evidence,
     bannedAt: now,

@@ -1,6 +1,7 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
-import { USER_STATUS, CYCLE_DURATION_MS, BAN_REASONS } from '../config/constants';
+import { USER_STATUS, CYCLE_DURATION_MS, BAN_REASONS, L1_INVITE_BONUS_PKR } from '../config/constants';
 import { v4 as uuidv4 } from 'uuid';
+import * as crypto from 'crypto';
 
 interface CreateUserPayload {
   uid: string;
@@ -45,6 +46,25 @@ export async function createUser(payload: CreateUserPayload): Promise<{
   const existingUser = await db.collection(Collections.USERS).doc(uid).get();
   if (existingUser.exists) {
     return { success: false, error: 'User already exists' };
+  }
+
+  // 1b. Check if phone number is banned (prevent re-registration)
+  const bannedPhoneSnapshot = await db.collection(Collections.BANS)
+    .where('phone', '==', phone)
+    .limit(1)
+    .get();
+  if (!bannedPhoneSnapshot.empty) {
+    return { success: false, error: 'This phone number is banned' };
+  }
+
+  // 1c. Device binding: one account per device
+  const deviceKey = generateDeviceKey(deviceFingerprint);
+  const deviceDoc = await db.collection(Collections.DEVICES).doc(deviceKey).get();
+  if (deviceDoc.exists) {
+    const deviceData = deviceDoc.data()!;
+    if (deviceData.boundUid && deviceData.boundUid !== uid) {
+      return { success: false, error: 'This device is already linked to another account' };
+    }
   }
 
   // 2. Validate referral code
@@ -120,6 +140,35 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     usedCount: firebaseAdmin.firestore.FieldValue.increment(1),
   });
 
+  // 10. Bind device to this user
+  batch.set(db.collection(Collections.DEVICES).doc(deviceKey), {
+    boundUid: uid,
+    phone,
+    lastSeen: now,
+    lastIp: clientIp,
+    fingerprint: deviceFingerprint,
+    createdAt: now,
+  }, { merge: true });
+
+  // 11. Credit L1 invite bonus (3 PKR) to the inviter
+  batch.update(db.collection(Collections.USERS).doc(inviterUid), {
+    balance: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_PKR),
+    totalEarned: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_PKR),
+    updatedAt: now,
+  });
+
+  // 12. Ledger entry for inviter's L1 bonus
+  batch.set(
+    db.collection(Collections.LEDGER).doc(inviterUid).collection('entries').doc(),
+    {
+      uid: inviterUid,
+      type: 'invite_bonus_l1',
+      amount: L1_INVITE_BONUS_PKR,
+      fromUid: uid,
+      createdAt: now,
+    }
+  );
+
   await batch.commit();
 
   return { success: true };
@@ -139,6 +188,21 @@ export async function getUserProfile(uid: string): Promise<FirebaseFirestore.Doc
 export async function isUserBanned(uid: string): Promise<boolean> {
   const doc = await db.collection(Collections.USERS).doc(uid).get();
   return doc.exists ? doc.data()?.status === USER_STATUS.BANNED : false;
+}
+
+/**
+ * Generates a SHA-256 device key from fingerprint for device binding.
+ */
+function generateDeviceKey(fingerprint: Record<string, unknown>): string {
+  const parts = [
+    fingerprint.androidId || '',
+    fingerprint.buildFingerprint || '',
+    fingerprint.buildModel || '',
+    fingerprint.buildManufacturer || '',
+    fingerprint.screenResolution || '',
+  ];
+  const hash = crypto.createHash('sha256').update(parts.join('|')).digest('hex');
+  return `dev_${hash.substring(0, 16)}`;
 }
 
 /**
