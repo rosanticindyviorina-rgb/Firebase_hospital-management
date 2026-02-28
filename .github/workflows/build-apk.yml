@@ -22,9 +22,6 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
       - name: Generate Gradle Wrapper
         working-directory: android
         run: |
@@ -35,9 +32,15 @@ jobs:
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace --info 2>&1 | tail -200
+
+      - name: List APK output
+        if: success()
+        working-directory: android
+        run: find app/build/outputs -name "*.apk" -type f 2>/dev/null || echo "No APK found"
 
       - name: Upload Debug APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: kamyabi-cash-debug
