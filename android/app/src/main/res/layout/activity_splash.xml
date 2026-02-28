@@ -11,11 +11,12 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <!-- App Logo placeholder (replace with actual logo) -->
+        <!-- App Logo -->
         <ImageView
             android:id="@+id/ivLogo"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:src="@drawable/ic_launcher_foreground"
             android:contentDescription="@string/app_name"
             android:alpha="0" />
 

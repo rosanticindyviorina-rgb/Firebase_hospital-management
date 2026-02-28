@@ -2,14 +2,18 @@ package com.kamyabi.cash.tasks.ui
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.auth.FirebaseAuth
 import com.kamyabi.cash.R
 import com.kamyabi.cash.core.di.ServiceLocator
@@ -51,6 +55,19 @@ class HomeFragment : Fragment() {
     private var cooldownTimer: CountDownTimer? = null
     private lateinit var tvCooldownTimer: TextView
 
+    // Banner slider
+    private lateinit var bannerPager: ViewPager2
+    private lateinit var bannerIndicator: LinearLayout
+    private val bannerHandler = Handler(Looper.getMainLooper())
+    private val bannerAutoScroll = object : Runnable {
+        override fun run() {
+            if (::bannerPager.isInitialized) {
+                bannerPager.currentItem = bannerPager.currentItem + 1
+                bannerHandler.postDelayed(this, 4000) // 4 seconds per slide
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -58,6 +75,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindViews(view)
+        setupBannerSlider(view)
         setupClickListeners()
         loadData()
     }
@@ -103,6 +121,55 @@ class HomeFragment : Fragment() {
         task3Reward.text = getString(R.string.task_3_reward)
         task4Title.text = getString(R.string.task_4_title)
         task4Reward.text = getString(R.string.task_4_reward)
+    }
+
+    private fun setupBannerSlider(view: View) {
+        bannerPager = view.findViewById(R.id.bannerPager)
+        bannerIndicator = view.findViewById(R.id.bannerIndicator)
+
+        val banners = listOf(
+            BannerItem("\uD83D\uDCB0", "Earn PKR 20 Per Task", "Complete daily tasks & grow your balance", R.drawable.bg_banner_1),
+            BannerItem("\uD83D\uDC65", "Invite 15 Friends", "Unlock the 50 PKR Invite Challenge reward", R.drawable.bg_banner_2),
+            BannerItem("\uD83C\uDFA1", "Spin & Win Up To 199 PKR", "Try your luck on the daily spin wheel", R.drawable.bg_banner_3),
+            BannerItem("\uD83D\uDCB3", "Withdraw via EasyPaisa", "Cash out to EasyPaisa, JazzCash or USDT", R.drawable.bg_banner_4),
+        )
+
+        val adapter = BannerAdapter(banners)
+        bannerPager.adapter = adapter
+
+        // Start at a large middle position for infinite-scroll feel
+        val startPos = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2 % banners.size)
+        bannerPager.setCurrentItem(startPos, false)
+
+        // Build dot indicators
+        buildIndicatorDots(banners.size, 0)
+
+        bannerPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                buildIndicatorDots(banners.size, position % banners.size)
+            }
+        })
+
+        // Start auto-scroll
+        bannerHandler.postDelayed(bannerAutoScroll, 4000)
+    }
+
+    private fun buildIndicatorDots(count: Int, activeIndex: Int) {
+        bannerIndicator.removeAllViews()
+        for (i in 0 until count) {
+            val dot = View(requireContext()).apply {
+                val size = resources.getDimensionPixelSize(R.dimen.spacing_xs)
+                layoutParams = LinearLayout.LayoutParams(size, size).apply {
+                    marginStart = 4
+                    marginEnd = 4
+                }
+                setBackgroundResource(
+                    if (i == activeIndex) R.drawable.dot_indicator_active
+                    else R.drawable.dot_indicator_inactive
+                )
+            }
+            bannerIndicator.addView(dot)
+        }
     }
 
     private fun setupClickListeners() {
@@ -264,7 +331,7 @@ class HomeFragment : Fragment() {
 
     private fun shareReferralCode() {
         val code = tvReferralCode.text.toString()
-        val shareText = "Join Kamyabi Cash and earn daily! Use my referral code: $code\nDownload: https://play.google.com/store/apps/details?id=com.kamyabi.cash"
+        val shareText = "Join Kamyabi Cash and earn daily! Use my referral code: $code\nDownload: https://play.google.com/store/apps/details?id=com.taskforge.app"
         val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(android.content.Intent.EXTRA_TEXT, shareText)
@@ -276,5 +343,6 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         cycleTimer?.cancel()
         cooldownTimer?.cancel()
+        bannerHandler.removeCallbacks(bannerAutoScroll)
     }
 }

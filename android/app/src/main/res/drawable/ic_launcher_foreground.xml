@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Circle background -->
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+
+    <!-- K letter for Kamyabi -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,34L40,74L46,74L46,58L56,74L63,74L51,56L62,34L55,34L46,52L46,34Z" />
+
+    <!-- Cash symbol $ -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M68,42C68,38 65,36 62,36L62,33L60,33L60,36C57,36 54,38 54,42C54,46 57,48 60,49L60,56C58,56 57,55 57,53L54,53C54,57 57,60 60,60L60,63L62,63L62,60C65,60 68,57 68,54C68,50 65,48 62,47L62,40C64,40 65,41 65,42Z M60,47C58,46 57,45 57,43C57,41 58,40 60,40Z M62,49C64,50 65,51 65,53C65,55 64,56 62,56Z" />
+</vector>

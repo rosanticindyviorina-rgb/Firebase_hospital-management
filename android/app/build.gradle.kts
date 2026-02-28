@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.kamyabi.cash"
+        applicationId = "com.taskforge.app"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -56,6 +56,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))

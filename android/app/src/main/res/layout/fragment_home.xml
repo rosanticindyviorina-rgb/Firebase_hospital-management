@@ -21,6 +21,24 @@
             android:textSize="@dimen/text_lg"
             android:textStyle="bold" />
 
+        <!-- Auto-Scrolling Banner Slider -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/bannerPager"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:overScrollMode="never" />
+
+        <LinearLayout
+            android:id="@+id/bannerIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:orientation="horizontal" />
+
         <!-- Balance Card — Gradient -->
         <LinearLayout
             android:layout_width="match_parent"

@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.applicationDefault(),
-    projectId: process.env.FIREBASE_PROJECT_ID || 'kamyabi-cash',
+    projectId: process.env.FIREBASE_PROJECT_ID || 'kamyabi-cash-app',
   });
 }
 
