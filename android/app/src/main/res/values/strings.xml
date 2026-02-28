@@ -57,7 +57,6 @@
     <string name="withdraw_submit">Request Withdrawal</string>
     <string name="withdraw_amount_label">Amount</string>
     <string name="withdraw_account_label">Account Number</string>
-    <string name="withdraw_account_hint">Account number</string>
     <string name="withdraw_name_label">Account Holder Name</string>
     <string name="withdraw_name_hint">Full name</string>
     <string name="withdraw_fee_label">Processing Fee</string>
