@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base styles for dot-notation hierarchy -->
+    <style name="Widget.KamyabiCash" parent="" />
+    <style name="Widget.KamyabiCash.Button" parent="" />
+
     <!-- Primary Button — Gradient green, rounded, shadow -->
     <style name="Widget.KamyabiCash.Button.Primary">
         <item name="android:layout_width">match_parent</item>
