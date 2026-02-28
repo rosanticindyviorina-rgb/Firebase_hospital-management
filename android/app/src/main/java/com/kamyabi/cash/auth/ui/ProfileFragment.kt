@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
             FirebaseAuth.getInstance().signOut()
             val intent = requireActivity().packageManager.getLaunchIntentForPackage(requireActivity().packageName)
             intent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            intent?.let { startActivity(it) }
             requireActivity().finish()
         }
     }
