@@ -38,10 +38,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
-        <!-- AdMob App ID (replace with actual) -->
+        <!-- AdMob App ID (test ID for debug builds) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy" />
+            android:value="ca-app-pub-3940256099942544~3347511713" />
 
     </application>
 </manifest>
