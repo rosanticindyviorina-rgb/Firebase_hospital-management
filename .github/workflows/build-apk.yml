@@ -22,13 +22,13 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
 
-      - name: Create google-services.json from secret
+      - name: Create google-services.json
         working-directory: android/app
         run: |
-          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
-          if [ ! -s google-services.json ]; then
-            echo "Warning: GOOGLE_SERVICES_JSON secret is empty, using placeholder"
-            cat > google-services.json << 'GSEOF'
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" > google-services.json
+          else
+            cat > google-services.json << 'EOF'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -44,22 +44,17 @@ jobs:
                   }
                 },
                 "oauth_client": [],
-                "api_key": [
-                  {
-                    "current_key": "placeholder-key"
-                  }
-                ],
-                "services": {
-                  "appinvite_service": {
-                    "other_platform_oauth_client": []
-                  }
-                }
+                "api_key": [{ "current_key": "placeholder" }],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
               }
             ],
             "configuration_version": "1"
           }
-          GSEOF
+          EOF
           fi
+          cat google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: Download and setup Gradle 8.2
         run: |
@@ -75,15 +70,25 @@ jobs:
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee /tmp/build-output.txt
+        continue-on-error: true
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: /tmp/build-output.txt
+          if-no-files-found: warn
+          retention-days: 5
 
       - name: Upload Debug APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: kamyabi-cash-debug
-          path: |
-            android/app/build/outputs/apk/debug/app-debug.apk
-            android/app/build/outputs/logs/
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: warn
           retention-days: 30
