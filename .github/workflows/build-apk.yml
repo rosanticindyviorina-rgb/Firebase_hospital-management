@@ -22,6 +22,45 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
 
+      - name: Create google-services.json from secret
+        working-directory: android/app
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
+          if [ ! -s google-services.json ]; then
+            echo "Warning: GOOGLE_SERVICES_JSON secret is empty, using placeholder"
+            cat > google-services.json << 'GSEOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "placeholder",
+              "storage_bucket": "placeholder.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                  "android_client_info": {
+                    "package_name": "com.taskforge.app"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "placeholder-key"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          GSEOF
+          fi
+
       - name: Download and setup Gradle 8.2
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle.zip
