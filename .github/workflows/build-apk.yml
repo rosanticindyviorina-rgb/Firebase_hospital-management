@@ -22,27 +22,29 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
 
+      - name: Download and setup Gradle 8.2
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /opt/gradle
+          echo "/opt/gradle/gradle-8.2/bin" >> $GITHUB_PATH
+
       - name: Generate Gradle Wrapper
         working-directory: android
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /tmp/gradle
-          /tmp/gradle/gradle-8.2/bin/gradle wrapper --gradle-version 8.2
+          gradle wrapper --gradle-version 8.2
           chmod +x gradlew
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --stacktrace --info 2>&1 | tail -200
-
-      - name: List APK output
-        if: success()
-        working-directory: android
-        run: find app/build/outputs -name "*.apk" -type f 2>/dev/null || echo "No APK found"
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: kamyabi-cash-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/logs/
+          if-no-files-found: warn
           retention-days: 30
