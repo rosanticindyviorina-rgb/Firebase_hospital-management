@@ -111,7 +111,7 @@ class ProfileFragment : Fragment() {
 
     private fun shareReferralCode() {
         val code = tvProfileReferralCode.text.toString()
-        val shareText = "Join Kamyabi Cash and earn daily! Use my referral code: $code\nDownload: https://play.google.com/store/apps/details?id=com.kamyabi.cash"
+        val shareText = "Join Kamyabi Cash and earn daily! Use my referral code: $code\nDownload: https://play.google.com/store/apps/details?id=com.taskforge.app"
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, shareText)
