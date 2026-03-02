@@ -1,9 +1,9 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
 import { banUser, unbanUser } from './securityService';
-import { AD_PROVIDERS } from '../config/constants';
+import { AD_PROVIDERS, DEFAULT_EXCHANGE_RATE, TASK_REWARDS } from '../config/constants';
 
 /**
- * Switch the active ad provider. Updates Firestore config and logs the action.
+ * Switch the active ad provider.
  */
 export async function switchAdProvider(
   provider: string,
@@ -16,14 +16,12 @@ export async function switchAdProvider(
   const now = firebaseAdmin.firestore.FieldValue.serverTimestamp();
   const batch = db.batch();
 
-  // Update config
   batch.set(
     db.collection(Collections.CONFIG).doc('app'),
     { ad_provider: provider, updatedAt: now, updatedBy: adminUid },
     { merge: true }
   );
 
-  // Log admin action
   batch.set(db.collection(Collections.ADMIN_ACTIONS).doc(), {
     action: 'switch_ads',
     provider,
@@ -32,21 +30,38 @@ export async function switchAdProvider(
   });
 
   await batch.commit();
-
   return { success: true };
 }
 
 /**
- * Admin ban user with audit trail.
+ * Update app configuration (exchange rate, task rewards, ad limits, etc.)
  */
-export async function adminBanUser(
-  targetUid: string,
-  reason: string,
+export async function updateAppConfig(
+  updates: Record<string, unknown>,
   adminUid: string
-): Promise<void> {
-  await banUser(targetUid, reason, { bannedBy: adminUid, source: 'admin_panel' });
+): Promise<{ success: boolean }> {
+  const now = firebaseAdmin.firestore.FieldValue.serverTimestamp();
+  const batch = db.batch();
 
-  // Log admin action
+  batch.set(
+    db.collection(Collections.CONFIG).doc('app'),
+    { ...updates, updatedAt: now, updatedBy: adminUid },
+    { merge: true }
+  );
+
+  batch.set(db.collection(Collections.ADMIN_ACTIONS).doc(), {
+    action: 'update_config',
+    adminUid,
+    details: updates,
+    timestamp: now,
+  });
+
+  await batch.commit();
+  return { success: true };
+}
+
+export async function adminBanUser(targetUid: string, reason: string, adminUid: string): Promise<void> {
+  await banUser(targetUid, reason, { bannedBy: adminUid, source: 'admin_panel' });
   await db.collection(Collections.ADMIN_ACTIONS).doc().set({
     action: 'ban_user',
     targetUid,
@@ -56,19 +71,10 @@ export async function adminBanUser(
   });
 }
 
-/**
- * Admin unban user with audit trail.
- */
-export async function adminUnbanUser(
-  targetUid: string,
-  adminUid: string
-): Promise<void> {
+export async function adminUnbanUser(targetUid: string, adminUid: string): Promise<void> {
   await unbanUser(targetUid, adminUid);
 }
 
-/**
- * Get detailed user info for admin panel.
- */
 export async function getAdminUserDetail(uid: string): Promise<{
   user: FirebaseFirestore.DocumentData | null;
   referral: FirebaseFirestore.DocumentData | null;
@@ -82,7 +88,6 @@ export async function getAdminUserDetail(uid: string): Promise<{
     db.collection(Collections.BANS).doc(uid).get(),
   ]);
 
-  // Get recent ledger entries
   const ledgerSnapshot = await db
     .collection(Collections.LEDGER)
     .doc(uid)
@@ -100,51 +105,29 @@ export async function getAdminUserDetail(uid: string): Promise<{
   };
 }
 
-/**
- * Get fraud/ban logs for admin panel.
- */
 export async function getFraudLogs(
   limit = 50,
   startAfter?: FirebaseFirestore.DocumentSnapshot
-): Promise<{
-  logs: FirebaseFirestore.DocumentData[];
-  lastDoc: FirebaseFirestore.DocumentSnapshot | null;
-}> {
-  let query = db
-    .collection(Collections.BANS)
-    .orderBy('bannedAt', 'desc')
-    .limit(limit);
-
-  if (startAfter) {
-    query = query.startAfter(startAfter);
-  }
+): Promise<{ logs: FirebaseFirestore.DocumentData[]; lastDoc: FirebaseFirestore.DocumentSnapshot | null }> {
+  let query = db.collection(Collections.BANS).orderBy('bannedAt', 'desc').limit(limit);
+  if (startAfter) query = query.startAfter(startAfter);
 
   const snapshot = await query.get();
-
   return {
     logs: snapshot.docs.map(d => ({ id: d.id, ...d.data() })),
     lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null,
   };
 }
 
-/**
- * Get admin action audit logs.
- */
-export async function getAdminActionLogs(
-  limit = 50
-): Promise<FirebaseFirestore.DocumentData[]> {
+export async function getAdminActionLogs(limit = 50): Promise<FirebaseFirestore.DocumentData[]> {
   const snapshot = await db
     .collection(Collections.ADMIN_ACTIONS)
     .orderBy('timestamp', 'desc')
     .limit(limit)
     .get();
-
   return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * Get dashboard KPIs.
- */
 export async function getDashboardKPIs(): Promise<{
   totalUsers: number;
   activeBans: number;
@@ -155,31 +138,15 @@ export async function getDashboardKPIs(): Promise<{
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // Today's date key for task subcollections (YYYY-MM-DD)
-  const todayKey = now.toISOString().split('T')[0];
-
-  const [
-    totalUsersSnapshot,
-    bansSnapshot,
-    todayUsersSnapshot,
-    todayBansSnapshot,
-  ] = await Promise.all([
+  const [totalUsersSnapshot, bansSnapshot, todayUsersSnapshot, todayBansSnapshot] = await Promise.all([
     db.collection(Collections.USERS).count().get(),
     db.collection(Collections.BANS).count().get(),
-    db.collection(Collections.USERS)
-      .where('createdAt', '>=', todayStart)
-      .count()
-      .get(),
-    db.collection(Collections.BANS)
-      .where('bannedAt', '>=', todayStart)
-      .count()
-      .get(),
+    db.collection(Collections.USERS).where('createdAt', '>=', todayStart).count().get(),
+    db.collection(Collections.BANS).where('bannedAt', '>=', todayStart).count().get(),
   ]);
 
-  // Count today's task claims by querying ledger entries of type task_reward created today
   let todayTaskClaims = 0;
   try {
-    // Use collectionGroup query on ledger entries for today's task rewards
     const taskClaimsSnapshot = await db
       .collectionGroup('entries')
       .where('type', '==', 'task_reward')
@@ -188,7 +155,6 @@ export async function getDashboardKPIs(): Promise<{
       .get();
     todayTaskClaims = taskClaimsSnapshot.data().count;
   } catch {
-    // collectionGroup index may not exist yet — fallback to 0
     todayTaskClaims = 0;
   }
 
@@ -201,10 +167,18 @@ export async function getDashboardKPIs(): Promise<{
   };
 }
 
-/**
- * Get current app config.
- */
 export async function getAppConfig(): Promise<FirebaseFirestore.DocumentData> {
   const doc = await db.collection(Collections.CONFIG).doc('app').get();
-  return doc.exists ? doc.data()! : { ad_provider: 'admob' };
+  const defaults = {
+    ad_provider: 'admob',
+    exchange_rate_coins: DEFAULT_EXCHANGE_RATE,
+    exchange_rate_pkr: 100,
+    min_withdrawal_coins: 3000,
+    daily_ad_limit: 8,
+    ad_cooldown_hours: 7,
+    l1_invite_bonus_coins: 150,
+    task_rewards: TASK_REWARDS,
+    maintenance_mode: false,
+  };
+  return doc.exists ? { ...defaults, ...doc.data() } : defaults;
 }

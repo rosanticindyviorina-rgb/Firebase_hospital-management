@@ -1,5 +1,12 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
-import { SPIN_WEIGHTS, TASK_TYPES, TASK_COOLDOWN_MS, CYCLE_DURATION_MS } from '../config/constants';
+import {
+  SPIN_WEIGHTS,
+  SCRATCH_REWARDS,
+  TASK_TYPES,
+  TASK_COOLDOWN_MS,
+  CYCLE_DURATION_MS,
+  getDefaultTaskProgress,
+} from '../config/constants';
 import { v4 as uuidv4 } from 'uuid';
 
 interface SpinResult {
@@ -11,129 +18,159 @@ interface SpinResult {
 }
 
 /**
- * Executes a spin (Task 4). Server decides the outcome using weighted random.
- * Zero client influence on the result.
+ * Weighted random pick from a weights array.
  */
-export async function executeSpin(uid: string): Promise<SpinResult> {
-  // 1. Get user data
+function weightedRandom(weights: ReadonlyArray<{ prize: number; label: string; weight: number }>): { prize: number; label: string } {
+  const totalWeight = weights.reduce((sum, w) => sum + w.weight, 0);
+  let random = Math.random() * totalWeight;
+
+  for (const entry of weights) {
+    random -= entry.weight;
+    if (random <= 0) {
+      return { prize: entry.prize, label: entry.label };
+    }
+  }
+  return { prize: weights[0].prize, label: weights[0].label };
+}
+
+/**
+ * Common validation for spin/scratch tasks.
+ */
+async function validateRandomTask(uid: string, taskKey: string): Promise<{
+  valid: boolean;
+  error?: string;
+  userRef?: FirebaseFirestore.DocumentReference;
+  userData?: FirebaseFirestore.DocumentData;
+}> {
   const userRef = db.collection(Collections.USERS).doc(uid);
   const userDoc = await userRef.get();
 
-  if (!userDoc.exists) {
-    return { success: false, error: 'User not found' };
-  }
-
+  if (!userDoc.exists) return { valid: false, error: 'User not found' };
   const userData = userDoc.data()!;
+  if (userData.status !== 'active') return { valid: false, error: 'Account is not active' };
 
-  // 2. Check user is active
-  if (userData.status !== 'active') {
-    return { success: false, error: 'Account is not active' };
-  }
-
-  // 3. Check cycle timer
   const now = Date.now();
   const nextCycleAt = userData.nextCycleAt?.toMillis?.() || 0;
-  if (now < nextCycleAt) {
-    return { success: false, error: 'Task cycle not ready yet' };
-  }
+  if (now < nextCycleAt) return { valid: false, error: 'Task cycle not ready yet' };
 
-  // 4. Check cooldown
   const nextTaskAt = userData.nextTaskAt?.toMillis?.() || 0;
-  if (now < nextTaskAt) {
-    return { success: false, error: 'Task cooldown active' };
+  if (now < nextTaskAt) return { valid: false, error: 'Task cooldown active' };
+
+  if (userData.taskProgress?.[taskKey] === 'completed') {
+    return { valid: false, error: 'Task already completed in this cycle' };
   }
 
-  // 5. Check if spin already done this cycle
-  if (userData.taskProgress?.[TASK_TYPES.TASK_4] === 'completed') {
-    return { success: false, error: 'Spin already completed in this cycle' };
-  }
+  return { valid: true, userRef, userData };
+}
 
-  // 6. Execute weighted random spin
-  const totalWeight = SPIN_WEIGHTS.reduce((sum, w) => sum + w.weight, 0);
-  let random = Math.random() * totalWeight;
-  let prize = SPIN_WEIGHTS[0].prize as number;
-  let label = SPIN_WEIGHTS[0].label as string;
-
-  for (const entry of SPIN_WEIGHTS) {
-    random -= entry.weight;
-    if (random <= 0) {
-      prize = entry.prize;
-      label = entry.label;
-      break;
-    }
-  }
-  const spinId = uuidv4();
-
-  // 7. Check if all tasks will be complete
-  const updatedProgress = { ...userData.taskProgress, [TASK_TYPES.TASK_4]: 'completed' };
-  const allDone = Object.values(updatedProgress).every(s => s === 'completed');
-
+/**
+ * Applies random task result (spin or scratch) to user.
+ */
+async function applyRandomTaskResult(
+  uid: string,
+  taskKey: string,
+  prize: number,
+  label: string,
+  resultType: 'spin_reward' | 'scratch_reward',
+  userRef: FirebaseFirestore.DocumentReference,
+  userData: FirebaseFirestore.DocumentData,
+  weights: ReadonlyArray<{ label: string; weight: number }>,
+): Promise<string> {
+  const now = Date.now();
+  const resultId = uuidv4();
   const serverNow = firebaseAdmin.firestore.FieldValue.serverTimestamp();
   const batch = db.batch();
 
-  // 8. Update user
+  const updatedProgress = { ...userData.taskProgress, [taskKey]: 'completed' };
+  const allDone = Object.values(updatedProgress).every(s => s === 'completed');
+
   const userUpdate: Record<string, unknown> = {
-    [`taskProgress.${TASK_TYPES.TASK_4}`]: 'completed',
+    [`taskProgress.${taskKey}`]: 'completed',
     lastTaskAt: serverNow,
     nextTaskAt: firebaseAdmin.firestore.Timestamp.fromMillis(now + TASK_COOLDOWN_MS),
     updatedAt: serverNow,
   };
 
   if (prize > 0) {
-    userUpdate.balance = firebaseAdmin.firestore.FieldValue.increment(prize);
-    userUpdate.totalEarned = firebaseAdmin.firestore.FieldValue.increment(prize);
+    userUpdate.coinBalance = firebaseAdmin.firestore.FieldValue.increment(prize);
+    userUpdate.totalCoinsEarned = firebaseAdmin.firestore.FieldValue.increment(prize);
   }
 
   if (allDone) {
-    userUpdate.nextCycleAt = firebaseAdmin.firestore.Timestamp.fromMillis(now + CYCLE_DURATION_MS);
-    userUpdate.taskProgress = {
-      task_1: 'pending',
-      task_2: 'pending',
-      task_3: 'pending',
-      task_4: 'pending',
-    };
+    const cycleStartAt = userData.lastCycleStartAt?.toMillis?.() || now;
+    userUpdate.nextCycleAt = firebaseAdmin.firestore.Timestamp.fromMillis(cycleStartAt + CYCLE_DURATION_MS);
+    userUpdate.taskProgress = getDefaultTaskProgress();
     userUpdate.lastCycleStartAt = serverNow;
+    userUpdate.adWatchCount = 0;
   }
 
   batch.update(userRef, userUpdate);
 
-  // 9. Log spin result
+  // Log result
+  const collection = resultType === 'spin_reward' ? Collections.SPINS : Collections.TASKS;
+  const subcollection = resultType === 'spin_reward' ? 'results' : 'scratches';
   batch.set(
-    db.collection(Collections.SPINS).doc(uid).collection('results').doc(spinId),
+    db.collection(collection).doc(uid).collection(subcollection).doc(resultId),
     {
-      uid,
-      spinId,
-      prize,
-      label,
-      weights: SPIN_WEIGHTS.map(w => ({ label: w.label, weight: w.weight })),
+      uid, resultId, prize, label, currency: 'coins',
+      weights: weights.map(w => ({ label: w.label, weight: w.weight })),
       claimedAt: serverNow,
     }
   );
 
-  // 10. Create ledger entry (only if prize > 0)
+  // Ledger entry (only if prize > 0)
   if (prize > 0) {
     batch.set(
       db.collection(Collections.LEDGER).doc(uid).collection('entries').doc(),
       {
         uid,
-        type: 'spin_reward',
+        type: resultType,
         amount: prize,
-        spinId,
+        currency: 'coins',
+        resultId,
         label,
-        balanceAfter: (userData.balance || 0) + prize,
+        balanceAfter: (userData.coinBalance || 0) + prize,
         createdAt: serverNow,
       }
     );
   }
 
   await batch.commit();
+  return resultId;
+}
 
-  return {
-    success: true,
-    prize,
-    label,
-    spinId,
-  };
+/**
+ * Executes a spin (Task 4). Server decides outcome using weighted random.
+ */
+export async function executeSpin(uid: string): Promise<SpinResult> {
+  const validation = await validateRandomTask(uid, TASK_TYPES.TASK_4);
+  if (!validation.valid) return { success: false, error: validation.error };
+
+  const { prize, label } = weightedRandom(SPIN_WEIGHTS);
+  const spinId = await applyRandomTaskResult(
+    uid, TASK_TYPES.TASK_4, prize, label,
+    'spin_reward', validation.userRef!, validation.userData!,
+    SPIN_WEIGHTS,
+  );
+
+  return { success: true, prize, label, spinId };
+}
+
+/**
+ * Executes a scratch card (Task 8). Server decides outcome.
+ */
+export async function executeScratch(uid: string): Promise<SpinResult> {
+  const validation = await validateRandomTask(uid, TASK_TYPES.TASK_8);
+  if (!validation.valid) return { success: false, error: validation.error };
+
+  const { prize, label } = weightedRandom(SCRATCH_REWARDS);
+  const scratchId = await applyRandomTaskResult(
+    uid, TASK_TYPES.TASK_8, prize, label,
+    'scratch_reward', validation.userRef!, validation.userData!,
+    SCRATCH_REWARDS,
+  );
+
+  return { success: true, prize, label, spinId: scratchId };
 }
 
 /**

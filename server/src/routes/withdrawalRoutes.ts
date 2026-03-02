@@ -19,12 +19,12 @@ const router = Router();
 router.post('/request', verifyAuth, taskLimiter, async (req, res) => {
   try {
     const uid = (req as any).uid;
-    const { method, amount, accountNumber, accountName } = req.body;
+    const { method, coinAmount, accountNumber, accountName } = req.body;
 
     const result = await requestWithdrawal({
       uid,
       method,
-      amount: parseFloat(amount),
+      coinAmount: parseInt(coinAmount),
       accountNumber,
       accountName: accountName || '',
     });

@@ -27,22 +27,40 @@
     <!-- Dashboard -->
     <string name="balance_label">Your Balance</string>
     <string name="total_earned_label">Total Earned</string>
+    <string name="coins_symbol">Coins</string>
     <string name="pkr_symbol">PKR</string>
     <string name="withdraw_button">Withdraw</string>
     <string name="daily_tasks">Daily Tasks</string>
     <string name="cycle_resets_in">Cycle resets in</string>
     <string name="cooldown_active">Cooldown: %s</string>
 
-    <!-- Tasks -->
+    <!-- Tasks (12 Tasks) -->
     <string name="task_1_title">Watch Ad #1</string>
-    <string name="task_1_reward">+20 PKR</string>
+    <string name="task_1_reward">+50 Coins</string>
     <string name="task_2_title">Watch Ad #2</string>
-    <string name="task_2_reward">+20 PKR</string>
+    <string name="task_2_reward">+60 Coins</string>
     <string name="task_3_title">Invite Challenge</string>
-    <string name="task_3_reward">+50 PKR</string>
+    <string name="task_3_reward">+400 Coins</string>
     <string name="task_3_desc">Invite 15 verified friends</string>
     <string name="task_4_title">Spin Wheel</string>
-    <string name="task_4_reward">Up to 199 PKR</string>
+    <string name="task_4_reward">Up to 199 Coins</string>
+    <string name="task_5_title">Watch Ad #3</string>
+    <string name="task_5_reward">+50 Coins</string>
+    <string name="task_6_title">Watch Ad #4</string>
+    <string name="task_6_reward">+50 Coins</string>
+    <string name="task_7_title">Watch Ad #5</string>
+    <string name="task_7_reward">+50 Coins</string>
+    <string name="task_8_title">Scratch Card</string>
+    <string name="task_8_reward">Up to 15 Coins</string>
+    <string name="task_9_title">Invite 1 Friend</string>
+    <string name="task_9_reward">+80 Coins</string>
+    <string name="task_10_title">Invite 3 Friends</string>
+    <string name="task_10_reward">+100 Coins</string>
+    <string name="task_11_title">Invite 5 Friends</string>
+    <string name="task_11_reward">+150 Coins</string>
+    <string name="task_12_title">Invite 8 Friends</string>
+    <string name="task_12_reward">+250 Coins</string>
+
     <string name="task_claim">Claim</string>
     <string name="task_completed">Completed</string>
     <string name="task_locked">Locked</string>
@@ -50,18 +68,19 @@
     <!-- Wallet -->
     <string name="wallet_title">Wallet</string>
     <string name="withdraw_title">Withdraw Funds</string>
-    <string name="withdraw_min">Minimum withdrawal: PKR 500</string>
-    <string name="withdraw_amount_hint">Enter amount (PKR)</string>
+    <string name="withdraw_min">Minimum: 3,000 Coins (100 PKR)</string>
+    <string name="withdraw_amount_hint">Enter coins to withdraw</string>
     <string name="withdraw_account_hint">Account number</string>
     <string name="withdraw_wallet_hint">Wallet address (TRC-20)</string>
     <string name="withdraw_submit">Request Withdrawal</string>
-    <string name="withdraw_amount_label">Amount</string>
+    <string name="withdraw_amount_label">Amount (Coins)</string>
     <string name="withdraw_account_label">Account Number</string>
     <string name="withdraw_name_label">Account Holder Name</string>
     <string name="withdraw_name_hint">Full name</string>
     <string name="withdraw_fee_label">Processing Fee</string>
-    <string name="withdraw_receive_label">You Receive</string>
-    <string name="withdraw_processing_time">Withdrawals are processed within 24–48 hours</string>
+    <string name="withdraw_receive_label">You Receive (PKR)</string>
+    <string name="withdraw_pkr_equivalent">= PKR %s</string>
+    <string name="withdraw_processing_time">Withdrawals are processed within 24-48 hours</string>
     <string name="withdraw_pending">Pending</string>
     <string name="withdraw_approved">Approved</string>
     <string name="withdraw_rejected">Rejected</string>
@@ -79,7 +98,7 @@
     <string name="share_code">Share Code</string>
     <string name="referral_tree">Referral Tree</string>
     <string name="verified_invites">Verified Invites</string>
-    <string name="level_1">Level 1 (10%%)</string>
+    <string name="level_1">Level 1 (150 Coins)</string>
     <string name="level_2">Level 2 (5%%)</string>
     <string name="level_3">Level 3 (2%%)</string>
 
@@ -97,11 +116,21 @@
     <string name="banned_contact">Contact support if you believe this is an error.</string>
 
     <!-- Splash -->
-    <string name="loading">Loading…</string>
+    <string name="loading">Loading&#8230;</string>
 
     <!-- Spin -->
     <string name="spin_title">Spin &amp; Win!</string>
     <string name="spin_button">SPIN</string>
-    <string name="spin_result_win">You won %s PKR!</string>
+    <string name="spin_result_win">You won %s Coins!</string>
     <string name="spin_result_try_again">Try Again next cycle!</string>
+
+    <!-- Scratch Card -->
+    <string name="scratch_title">Scratch &amp; Win!</string>
+    <string name="scratch_result_win">You won %s Coins!</string>
+
+    <!-- Redeem Code -->
+    <string name="redeem_title">Redeem Code</string>
+    <string name="redeem_hint">Enter redeem code</string>
+    <string name="redeem_submit">Redeem</string>
+    <string name="redeem_success">Redeemed! +%s Coins</string>
 </resources>

@@ -25,8 +25,13 @@ class WalletFragment : Fragment() {
     private val walletRepo = WalletRepository()
 
     private lateinit var tvWalletBalance: TextView
+    private lateinit var tvWalletBalancePkr: TextView
     private lateinit var rvTransactions: RecyclerView
     private lateinit var tvNoTransactions: TextView
+
+    // Exchange rate: default 3000 coins = 100 PKR
+    private var exchangeRateCoins = 3000
+    private var exchangeRatePkr = 100
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_wallet, container, false)
@@ -36,6 +41,7 @@ class WalletFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         tvWalletBalance = view.findViewById(R.id.tvWalletBalance)
+        tvWalletBalancePkr = view.findViewById(R.id.tvWalletBalancePkr)
         rvTransactions = view.findViewById(R.id.rvTransactions)
         tvNoTransactions = view.findViewById(R.id.tvNoTransactions)
 
@@ -60,6 +66,10 @@ class WalletFragment : Fragment() {
         findNavController().navigate(R.id.action_wallet_to_withdraw, bundle)
     }
 
+    private fun coinsToPkr(coins: Double): Double {
+        return if (exchangeRateCoins > 0) (coins / exchangeRateCoins) * exchangeRatePkr else 0.0
+    }
+
     private fun loadData() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
@@ -67,7 +77,9 @@ class WalletFragment : Fragment() {
             // Load balance
             walletRepo.getBalance(uid)?.let { wallet ->
                 val formatter = NumberFormat.getNumberInstance(Locale.US)
-                tvWalletBalance.text = "PKR ${formatter.format(wallet.balance)}"
+                val coins = wallet.coinBalance.toLong()
+                tvWalletBalance.text = "${formatter.format(coins)} Coins"
+                tvWalletBalancePkr.text = "= PKR ${formatter.format(coinsToPkr(wallet.coinBalance).toLong())}"
             }
 
             // Load transactions
@@ -107,6 +119,8 @@ class WalletFragment : Fragment() {
                 "task_reward" -> "\u25B6" // play icon
                 "referral_commission" -> "\u2B50" // star
                 "spin_reward" -> "\uD83C\uDFB0" // slot
+                "scratch_reward" -> "\uD83C\uDFAB" // ticket
+                "redeem_code" -> "\uD83C\uDF81" // gift
                 "withdrawal" -> "\u2B07" // down arrow
                 else -> "\u25CF"
             }
@@ -116,6 +130,8 @@ class WalletFragment : Fragment() {
                 "task_reward" -> "Task Reward (${entry.taskType ?: ""})"
                 "referral_commission" -> "Referral Commission (${entry.level ?: ""})"
                 "spin_reward" -> "Spin Reward"
+                "scratch_reward" -> "Scratch Reward"
+                "redeem_code" -> "Redeem Code"
                 "withdrawal" -> "Withdrawal"
                 else -> entry.type
             }
@@ -124,10 +140,10 @@ class WalletFragment : Fragment() {
             val dateFormat = SimpleDateFormat("MMM dd, HH:mm", Locale.US)
             holder.tvDate.text = dateFormat.format(Date(entry.createdAt))
 
-            // Amount
+            // Amount in coins
             val formatter = NumberFormat.getNumberInstance(Locale.US)
             val prefix = if (entry.amount >= 0) "+" else ""
-            holder.tvAmount.text = "${prefix}PKR ${formatter.format(entry.amount)}"
+            holder.tvAmount.text = "${prefix}${formatter.format(entry.amount.toLong())} Coins"
         }
 
         override fun getItemCount() = items.size

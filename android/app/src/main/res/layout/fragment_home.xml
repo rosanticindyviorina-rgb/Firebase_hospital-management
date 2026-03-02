@@ -62,22 +62,23 @@
                 android:layout_marginTop="@dimen/spacing_xs">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pkr_symbol"
-                    android:textColor="@color/text_primary"
-                    android:textSize="@dimen/text_md" />
-
-                <TextView
                     android:id="@+id/tvBalance"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="@dimen/spacing_sm"
-                    android:text="0.00"
+                    android:text="0 Coins"
                     style="@style/Widget.KamyabiCash.Balance"
                     android:textColor="@color/text_primary" />
             </LinearLayout>
+
+            <!-- PKR equivalent -->
+            <TextView
+                android:id="@+id/tvBalancePkr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="= PKR 0"
+                android:textColor="#80FFFFFF"
+                android:textSize="@dimen/text_sm" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,7 +103,7 @@
                         android:id="@+id/tvTotalEarned"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PKR 0"
+                        android:text="0 Coins"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/text_body"
                         android:textStyle="bold" />
@@ -144,7 +145,7 @@
             android:textSize="@dimen/text_sm"
             android:visibility="gone" />
 
-        <!-- Task 1 Card -->
+        <!-- Task 1: Watch Ad #1 -->
         <include
             android:id="@+id/task1Card"
             layout="@layout/item_task_card"
@@ -152,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 2 Card -->
+        <!-- Task 2: Watch Ad #2 -->
         <include
             android:id="@+id/task2Card"
             layout="@layout/item_task_card"
@@ -160,7 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 3 Card (Invite Challenge) -->
+        <!-- Task 3: Invite Challenge (15 friends) -->
         <include
             android:id="@+id/task3Card"
             layout="@layout/item_task_card"
@@ -168,9 +169,73 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 4 Card (Spin Wheel) -->
+        <!-- Task 4: Spin Wheel -->
         <include
             android:id="@+id/task4Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 5: Watch Ad #3 -->
+        <include
+            android:id="@+id/task5Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 6: Watch Ad #4 -->
+        <include
+            android:id="@+id/task6Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 7: Watch Ad #5 -->
+        <include
+            android:id="@+id/task7Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 8: Scratch Card -->
+        <include
+            android:id="@+id/task8Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 9: Invite 1 Friend -->
+        <include
+            android:id="@+id/task9Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 10: Invite 3 Friends -->
+        <include
+            android:id="@+id/task10Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 11: Invite 5 Friends -->
+        <include
+            android:id="@+id/task11Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 12: Invite 8 Friends -->
+        <include
+            android:id="@+id/task12Card"
             layout="@layout/item_task_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

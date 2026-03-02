@@ -1,7 +1,9 @@
 package com.kamyabi.cash.tasks.data
 
 import com.kamyabi.cash.core.di.ServiceLocator
+import com.kamyabi.cash.core.network.ScratchResultResponse
 import com.kamyabi.cash.core.network.SpinResultResponse
+import com.kamyabi.cash.core.network.RedeemResultResponse
 import com.kamyabi.cash.core.network.TaskClaimResponse
 import com.kamyabi.cash.core.network.TaskStatusResponse
 
@@ -27,7 +29,7 @@ class TaskRepository {
 
     /**
      * Claims a task reward. Server validates timers and eligibility.
-     * taskType: "task_1", "task_2", "task_3", "task_4"
+     * taskType: "task_1" through "task_12"
      */
     suspend fun claimTask(taskType: String): Result<TaskClaimResponse> {
         return try {
@@ -52,6 +54,38 @@ class TaskRepository {
                 Result.success(response)
             } else {
                 Result.failure(Exception(response.error ?: "Spin failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Executes scratch card (Task 8). Server decides the outcome.
+     */
+    suspend fun executeScratch(): Result<ScratchResultResponse> {
+        return try {
+            val response = taskApi.executeScratch()
+            if (response.success) {
+                Result.success(response)
+            } else {
+                Result.failure(Exception(response.error ?: "Scratch failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Claims a redeem code for coins.
+     */
+    suspend fun claimRedeemCode(code: String): Result<RedeemResultResponse> {
+        return try {
+            val response = taskApi.claimRedeemCode(mapOf("code" to code))
+            if (response.success) {
+                Result.success(response)
+            } else {
+                Result.failure(Exception(response.error ?: "Redeem failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)

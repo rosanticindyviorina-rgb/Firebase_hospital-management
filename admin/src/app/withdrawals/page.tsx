@@ -82,7 +82,8 @@ export default function WithdrawalsPage() {
   if (loading || !user) return null;
 
   const pendingCount = withdrawals.filter(w => w.status === 'pending').length;
-  const totalAmount = withdrawals.reduce((sum: number, w: any) => sum + (w.amount || 0), 0);
+  const totalCoins = withdrawals.reduce((sum: number, w: any) => sum + (w.coinAmount || 0), 0);
+  const totalPkr = withdrawals.reduce((sum: number, w: any) => sum + (w.pkrAmount || w.amount || 0), 0);
 
   return (
     <div className="flex min-h-screen">
@@ -93,7 +94,7 @@ export default function WithdrawalsPage() {
             <h2 className="text-2xl font-bold text-gray-900">Withdrawal Management</h2>
             <p className="text-sm text-gray-500 mt-1">
               {filter === 'pending' ? `${pendingCount} pending requests` : `${withdrawals.length} withdrawals`}
-              {' '}&middot; Total: PKR {totalAmount.toLocaleString()}
+              {' '}&middot; Total: {totalCoins.toLocaleString()} Coins (PKR {totalPkr.toLocaleString()})
             </p>
           </div>
 
@@ -123,7 +124,8 @@ export default function WithdrawalsPage() {
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">User</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Method</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Coins</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">PKR</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Account</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Date</th>
@@ -133,7 +135,7 @@ export default function WithdrawalsPage() {
             <tbody className="divide-y divide-gray-200">
               {withdrawals.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
                     No {filter !== 'all' ? filter : ''} withdrawals found
                   </td>
                 </tr>
@@ -147,7 +149,10 @@ export default function WithdrawalsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm font-semibold">
-                      PKR {(w.amount || 0).toLocaleString()}
+                      {(w.coinAmount || 0).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-semibold">
+                      PKR {(w.pkrAmount || w.amount || 0).toLocaleString()}
                       {w.fee > 0 && (
                         <span className="text-xs text-gray-400 ml-1">(fee: {w.fee})</span>
                       )}
@@ -200,7 +205,7 @@ export default function WithdrawalsPage() {
             <div className="bg-white rounded-xl p-6 w-96 shadow-2xl">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Reject Withdrawal</h3>
               <p className="text-sm text-gray-500 mb-3">
-                This will refund the balance back to the user.
+                This will refund the coins back to the user&apos;s balance.
               </p>
               <textarea
                 value={rejectReason}

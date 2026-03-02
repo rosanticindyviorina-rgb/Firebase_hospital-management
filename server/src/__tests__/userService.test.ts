@@ -104,8 +104,8 @@ describe('userService', () => {
       seedStore('users', 'inviter1', {
         uid: 'inviter1',
         status: 'active',
-        balance: 100,
-        totalEarned: 100,
+        coinBalance: 100,
+        totalCoinsEarned: 100,
       });
       seedStore('referral_codes', 'KCTEST01', {
         code: 'KCTEST01',
@@ -133,12 +133,12 @@ describe('userService', () => {
   });
 
   describe('createUser — L1 invite bonus', () => {
-    it('should credit 3 PKR to inviter when new user is created', async () => {
+    it('should credit 150 coins to inviter when new user is created', async () => {
       seedStore('users', 'inviter1', {
         uid: 'inviter1',
         status: 'active',
-        balance: 50,
-        totalEarned: 50,
+        coinBalance: 50,
+        totalCoinsEarned: 50,
       });
       seedStore('referral_codes', 'KCABC123', {
         code: 'KCABC123',
@@ -163,12 +163,12 @@ describe('userService', () => {
 
       expect(result.success).toBe(true);
 
-      // Verify inviter balance increased by 3 PKR (L1_INVITE_BONUS_PKR)
+      // Verify inviter coinBalance increased by 150 coins (L1_INVITE_BONUS_COINS)
       const inviterData = getStoreData('users', 'inviter1');
       expect(inviterData).toBeDefined();
       // The mock increment stores the __type: 'increment' object,
       // but through the batch mock it should call update which resolves FieldValues
-      // In our mock, FieldValue.increment returns { __type: 'increment', __value: 3 }
+      // In our mock, FieldValue.increment returns { __type: 'increment', __value: 150 }
       // and resolveFieldValues converts it. Let's check the update was called.
     });
   });
@@ -178,8 +178,8 @@ describe('userService', () => {
       seedStore('users', 'inviter1', {
         uid: 'inviter1',
         status: 'active',
-        balance: 100,
-        totalEarned: 100,
+        coinBalance: 100,
+        totalCoinsEarned: 100,
       });
       seedStore('referral_codes', 'KCTEST02', {
         code: 'KCTEST02',
@@ -236,11 +236,11 @@ describe('userService', () => {
 
   describe('getUserProfile', () => {
     it('should return user data for existing user', async () => {
-      seedStore('users', 'user1', { uid: 'user1', balance: 100, status: 'active' });
+      seedStore('users', 'user1', { uid: 'user1', coinBalance: 100, status: 'active' });
 
       const profile = await getUserProfile('user1');
       expect(profile).toBeDefined();
-      expect(profile!.balance).toBe(100);
+      expect(profile!.coinBalance).toBe(100);
     });
 
     it('should return null for non-existent user', async () => {

@@ -6,7 +6,7 @@ import kotlinx.coroutines.tasks.await
 
 /**
  * Repository for wallet/balance data.
- * Read-only in Phase 1 — displays balance and ledger entries.
+ * Read-only — displays balance and ledger entries.
  * All balance mutations happen server-side.
  */
 class WalletRepository {
@@ -14,15 +14,16 @@ class WalletRepository {
     private val db = FirebaseFirestore.getInstance()
 
     /**
-     * Gets current balance and total earned from user profile.
+     * Gets current coin balance and total earned from user profile.
      */
     suspend fun getBalance(uid: String): WalletBalance? {
         return try {
             val doc = db.collection("users").document(uid).get().await()
             if (doc.exists()) {
                 WalletBalance(
-                    balance = doc.getDouble("balance") ?: 0.0,
-                    totalEarned = doc.getDouble("totalEarned") ?: 0.0
+                    coinBalance = doc.getDouble("coinBalance") ?: 0.0,
+                    totalCoinsEarned = doc.getDouble("totalCoinsEarned") ?: 0.0,
+                    adWatchCount = (doc.getLong("adWatchCount") ?: 0).toInt()
                 )
             } else {
                 null
@@ -50,6 +51,7 @@ class WalletRepository {
                     id = doc.id,
                     type = doc.getString("type") ?: "",
                     amount = doc.getDouble("amount") ?: 0.0,
+                    currency = doc.getString("currency") ?: "coins",
                     taskType = doc.getString("taskType"),
                     level = doc.getString("level"),
                     createdAt = doc.getTimestamp("createdAt")?.toDate()?.time ?: 0
@@ -62,14 +64,16 @@ class WalletRepository {
 }
 
 data class WalletBalance(
-    val balance: Double,
-    val totalEarned: Double
+    val coinBalance: Double,
+    val totalCoinsEarned: Double,
+    val adWatchCount: Int = 0
 )
 
 data class LedgerEntry(
     val id: String,
     val type: String,
     val amount: Double,
+    val currency: String = "coins",
     val taskType: String?,
     val level: String?,
     val createdAt: Long

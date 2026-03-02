@@ -43,7 +43,7 @@ describe('taskService', () => {
         status: 'active',
         nextCycleAt: { toMillis: () => futureTime },
         nextTaskAt: null,
-        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const result = await claimTask('user1', 'task_1');
@@ -58,7 +58,7 @@ describe('taskService', () => {
         status: 'active',
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => futureTask },
-        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const result = await claimTask('user1', 'task_1');
@@ -73,7 +73,7 @@ describe('taskService', () => {
         status: 'active',
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'completed', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'completed', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const result = await claimTask('user1', 'task_1');
@@ -85,11 +85,11 @@ describe('taskService', () => {
       seedStore('users', 'user1', {
         uid: 'user1',
         status: 'active',
-        balance: 0,
-        totalEarned: 0,
+        coinBalance: 0,
+        totalCoinsEarned: 0,
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'completed', task_2: 'completed', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'completed', task_2: 'completed', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
       seedStore('referrals', 'user1', {
         uid: 'user1',
@@ -109,7 +109,7 @@ describe('taskService', () => {
         status: 'active',
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const result = await claimTask('user1', 'task_4');
@@ -117,48 +117,48 @@ describe('taskService', () => {
       expect(result.error).toBe('Use spin endpoint for Task 4');
     });
 
-    it('should successfully claim task_1 and return 20 PKR reward', async () => {
+    it('should successfully claim task_1 and return 50 coins reward', async () => {
       seedStore('users', 'user1', {
         uid: 'user1',
         status: 'active',
-        balance: 100,
-        totalEarned: 100,
+        coinBalance: 100,
+        totalCoinsEarned: 100,
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const result = await claimTask('user1', 'task_1');
       expect(result.success).toBe(true);
-      expect(result.reward).toBe(20);
+      expect(result.reward).toBe(50);
       expect(result.nextTaskAt).toBeGreaterThan(Date.now());
     });
 
-    it('should successfully claim task_2 with 20 PKR reward', async () => {
+    it('should successfully claim task_2 with 60 coins reward', async () => {
       seedStore('users', 'user1', {
         uid: 'user1',
         status: 'active',
-        balance: 120,
-        totalEarned: 120,
+        coinBalance: 150,
+        totalCoinsEarned: 150,
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'completed', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'completed', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const result = await claimTask('user1', 'task_2');
       expect(result.success).toBe(true);
-      expect(result.reward).toBe(20);
+      expect(result.reward).toBe(60);
     });
 
-    it('should claim task_3 (invite challenge) with 50 PKR when 15 invites verified', async () => {
+    it('should claim task_3 (invite challenge) with 400 coins when 15 invites verified', async () => {
       seedStore('users', 'user1', {
         uid: 'user1',
         status: 'active',
-        balance: 0,
-        totalEarned: 0,
+        coinBalance: 0,
+        totalCoinsEarned: 0,
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'completed', task_2: 'completed', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'completed', task_2: 'completed', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
       seedStore('referrals', 'user1', {
         uid: 'user1',
@@ -169,18 +169,18 @@ describe('taskService', () => {
 
       const result = await claimTask('user1', 'task_3');
       expect(result.success).toBe(true);
-      expect(result.reward).toBe(50);
+      expect(result.reward).toBe(400);
     });
 
     it('should set next cooldown 3 minutes from now after claiming', async () => {
       seedStore('users', 'user1', {
         uid: 'user1',
         status: 'active',
-        balance: 0,
-        totalEarned: 0,
+        coinBalance: 0,
+        totalCoinsEarned: 0,
         nextCycleAt: { toMillis: () => 0 },
         nextTaskAt: { toMillis: () => 0 },
-        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'pending', task_2: 'pending', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const before = Date.now();
@@ -207,7 +207,7 @@ describe('taskService', () => {
         status: 'active',
         nextCycleAt: { toMillis: () => pastTime },
         nextTaskAt: { toMillis: () => pastTime },
-        taskProgress: { task_1: 'pending', task_2: 'completed', task_3: 'pending', task_4: 'pending' },
+        taskProgress: { task_1: 'pending', task_2: 'completed', task_3: 'pending', task_4: 'pending', task_5: 'pending', task_6: 'pending', task_7: 'pending', task_8: 'pending', task_9: 'pending', task_10: 'pending', task_11: 'pending', task_12: 'pending' },
       });
 
       const status = await getTaskStatus('user1');

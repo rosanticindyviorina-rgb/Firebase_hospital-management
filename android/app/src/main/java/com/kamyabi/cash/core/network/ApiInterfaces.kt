@@ -67,8 +67,9 @@ data class UserProfileResponse(
     val phone: String,
     val status: String,
     val referralCode: String,
-    val balance: Double,
-    val totalEarned: Double,
+    val coinBalance: Double,
+    val totalCoinsEarned: Double,
+    val adWatchCount: Int,
     val taskProgress: Map<String, String>,
     val nextCycleAt: Any?,
     val nextTaskAt: Any?
@@ -87,11 +88,18 @@ interface TaskApi {
 
     @POST("tasks/spin")
     suspend fun executeSpin(): SpinResultResponse
+
+    @POST("tasks/scratch")
+    suspend fun executeScratch(): ScratchResultResponse
+
+    @POST("tasks/redeem")
+    suspend fun claimRedeemCode(@Body body: Map<String, String>): RedeemResultResponse
 }
 
 data class TaskClaimResponse(
     val success: Boolean,
     val reward: Double?,
+    val currency: String?,
     val nextTaskAt: Long?,
     val error: String?
 )
@@ -101,7 +109,10 @@ data class TaskStatusResponse(
     val cooldownReady: Boolean,
     val taskProgress: Map<String, String>,
     val nextCycleAt: Long,
-    val nextTaskAt: Long
+    val nextTaskAt: Long,
+    val coinBalance: Double,
+    val totalCoinsEarned: Double,
+    val adWatchCount: Int
 )
 
 data class SpinResultResponse(
@@ -109,6 +120,23 @@ data class SpinResultResponse(
     val prize: Double?,
     val label: String?,
     val spinId: String?,
+    val currency: String?,
+    val error: String?
+)
+
+data class ScratchResultResponse(
+    val success: Boolean,
+    val prize: Double?,
+    val label: String?,
+    val scratchId: String?,
+    val currency: String?,
+    val error: String?
+)
+
+data class RedeemResultResponse(
+    val success: Boolean,
+    val coinsAwarded: Double?,
+    val currency: String?,
     val error: String?
 )
 
@@ -131,8 +159,18 @@ data class WithdrawalHistoryResponse(
 data class WithdrawalItem(
     val id: String,
     val method: String,
-    val amount: Double,
+    val coinAmount: Double,
+    val pkrAmount: Double,
     val status: String,
     val accountNumber: String,
     val createdAt: Long
+)
+
+// ============================================
+// Config API
+// ============================================
+data class AppConfigResponse(
+    val exchange_rate_coins: Int,
+    val exchange_rate_pkr: Int,
+    val daily_ad_limit: Int
 )

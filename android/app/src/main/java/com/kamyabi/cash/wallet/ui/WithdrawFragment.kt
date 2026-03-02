@@ -25,7 +25,12 @@ class WithdrawFragment : Fragment() {
 
     private val walletRepo = WalletRepository()
     private var selectedMethod = "easypaisa"
-    private var currentBalance = 0.0
+    private var currentCoinBalance = 0.0
+
+    // Exchange rate: default 3000 coins = 100 PKR
+    private var exchangeRateCoins = 3000
+    private var exchangeRatePkr = 100
+    private var minWithdrawalCoins = 3000
 
     private lateinit var tvSelectedMethod: TextView
     private lateinit var tvMethodDesc: TextView
@@ -114,43 +119,46 @@ class WithdrawFragment : Fragment() {
         })
     }
 
+    private fun coinsToPkr(coins: Double): Double {
+        return if (exchangeRateCoins > 0) (coins / exchangeRateCoins) * exchangeRatePkr else 0.0
+    }
+
     private fun calculateFees() {
-        val amount = etWithdrawAmount.text.toString().toDoubleOrNull() ?: 0.0
-        val fee = if (selectedMethod == "usdt") amount * 0.02 else 0.0
-        val receive = amount - fee
+        val coinAmount = etWithdrawAmount.text.toString().toDoubleOrNull() ?: 0.0
+        val pkrAmount = coinsToPkr(coinAmount)
+        val fee = if (selectedMethod == "usdt") pkrAmount * 0.02 else 0.0
+        val receive = pkrAmount - fee
 
         val formatter = NumberFormat.getNumberInstance(Locale.US)
         tvFee.text = if (selectedMethod == "usdt") "USDT ${formatter.format(fee)}" else "PKR 0"
-        tvReceiveAmount.text = if (selectedMethod == "usdt") {
-            "USDT ${formatter.format(receive)}"
-        } else {
-            "PKR ${formatter.format(receive)}"
-        }
+        tvReceiveAmount.text = "PKR ${formatter.format(receive.toLong())}"
     }
 
     private fun loadBalance() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         viewLifecycleOwner.lifecycleScope.launch {
             walletRepo.getBalance(uid)?.let { wallet ->
-                currentBalance = wallet.balance
+                currentCoinBalance = wallet.coinBalance
                 val formatter = NumberFormat.getNumberInstance(Locale.US)
-                tvAvailableBalance.text = "Available: PKR ${formatter.format(wallet.balance)}"
+                val coins = wallet.coinBalance.toLong()
+                val pkr = coinsToPkr(wallet.coinBalance).toLong()
+                tvAvailableBalance.text = "Available: ${formatter.format(coins)} Coins (PKR ${formatter.format(pkr)})"
             }
         }
     }
 
     private fun submitWithdrawal() {
-        val amount = etWithdrawAmount.text.toString().toDoubleOrNull()
+        val coinAmount = etWithdrawAmount.text.toString().toDoubleOrNull()
         val account = etAccountNumber.text.toString().trim()
         val name = etAccountName.text.toString().trim()
 
         // Validation
-        if (amount == null || amount < 500) {
-            Toast.makeText(context, "Minimum withdrawal is PKR 500", Toast.LENGTH_SHORT).show()
+        if (coinAmount == null || coinAmount < minWithdrawalCoins) {
+            Toast.makeText(context, "Minimum withdrawal is $minWithdrawalCoins Coins", Toast.LENGTH_SHORT).show()
             return
         }
-        if (amount > currentBalance) {
-            Toast.makeText(context, "Insufficient balance", Toast.LENGTH_SHORT).show()
+        if (coinAmount > currentCoinBalance) {
+            Toast.makeText(context, "Insufficient coin balance", Toast.LENGTH_SHORT).show()
             return
         }
         if (account.isEmpty()) {
@@ -169,7 +177,7 @@ class WithdrawFragment : Fragment() {
             try {
                 val payload = mapOf(
                     "method" to selectedMethod,
-                    "amount" to amount.toString(),
+                    "coinAmount" to coinAmount.toLong().toString(),
                     "accountNumber" to account,
                     "accountName" to name
                 )

@@ -40,10 +40,19 @@
                 android:id="@+id/tvWalletBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PKR 0.00"
+                android:text="0 Coins"
                 android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_display"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvWalletBalancePkr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="= PKR 0"
+                android:textColor="#80FFFFFF"
+                android:textSize="@dimen/text_sm" />
         </LinearLayout>
 
         <!-- Withdraw Section -->

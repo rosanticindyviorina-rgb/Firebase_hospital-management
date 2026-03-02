@@ -28,7 +28,6 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
   return response.json();
 }
 
-// Admin API methods
 export const adminApi = {
   // Dashboard
   getDashboard: () => apiRequest<{
@@ -68,7 +67,14 @@ export const adminApi = {
       body: JSON.stringify({ provider }),
     }),
 
-  getConfig: () => apiRequest<{ ad_provider: string; maintenance_mode: boolean }>('/admin/config'),
+  // Config
+  getConfig: () => apiRequest<any>('/admin/config'),
+
+  updateConfig: (updates: Record<string, unknown>) =>
+    apiRequest('/admin/config', {
+      method: 'POST',
+      body: JSON.stringify(updates),
+    }),
 
   // Logs
   getFraudLogs: (limit = 50) =>
@@ -94,5 +100,21 @@ export const adminApi = {
     apiRequest('/withdrawals/admin/reject', {
       method: 'POST',
       body: JSON.stringify({ withdrawalId, reason }),
+    }),
+
+  // Redeem Codes
+  createRedeemCode: (totalCoins: number, maxClaims: number, expiresAt?: string) =>
+    apiRequest<{ code: string; totalCoins: number; maxClaims: number }>('/admin/redeemCodes', {
+      method: 'POST',
+      body: JSON.stringify({ totalCoins, maxClaims, expiresAt }),
+    }),
+
+  getRedeemCodes: (limit = 50) =>
+    apiRequest<{ codes: any[] }>(`/admin/redeemCodes?limit=${limit}`),
+
+  deactivateRedeemCode: (code: string) =>
+    apiRequest('/admin/redeemCodes/deactivate', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
     }),
 };

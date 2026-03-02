@@ -26,4 +26,6 @@ export const Collections = {
   ADMINS: 'admins',
   WITHDRAWALS: 'withdrawals',
   SALARY_APPROVALS: 'salaryApprovals',
+  REDEEM_CODES: 'redeemCodes',
+  REDEEM_CLAIMS: 'redeemClaims',
 } as const;

@@ -3,9 +3,10 @@ import {
   TASK_COOLDOWN_MS,
   CYCLE_DURATION_MS,
   TASK_TYPES,
-  INVITE_CHALLENGE_TARGET,
+  TASK_REWARDS,
+  INVITE_TASKS,
   REFERRAL_COMMISSION,
-  L1_INVITE_BONUS_PKR,
+  getDefaultTaskProgress,
 } from '../config/constants';
 
 interface TaskClaimResult {
@@ -15,22 +16,13 @@ interface TaskClaimResult {
   nextTaskAt?: number;
 }
 
-// Task reward amounts (PKR)
-const TASK_REWARDS: Record<string, number> = {
-  [TASK_TYPES.TASK_1]: 20,
-  [TASK_TYPES.TASK_2]: 20,
-  [TASK_TYPES.TASK_3]: 50, // Invite challenge
-  // TASK_4 (spin) is handled separately
-};
-
 /**
- * Claims a task reward. Server-authoritative validation of timers and eligibility.
+ * Claims a task reward (coins). Server-authoritative validation.
  */
 export async function claimTask(
   uid: string,
   taskType: string
 ): Promise<TaskClaimResult> {
-  // 1. Get user data
   const userRef = db.collection(Collections.USERS).doc(uid);
   const userDoc = await userRef.get();
 
@@ -40,107 +32,92 @@ export async function claimTask(
 
   const userData = userDoc.data()!;
 
-  // 2. Check user is active
   if (userData.status !== 'active') {
     return { success: false, error: 'Account is not active' };
   }
 
-  // 3. Check cycle timer (24h cycle)
+  // Check cycle timer (24h cycle)
   const now = Date.now();
   const nextCycleAt = userData.nextCycleAt?.toMillis?.() || 0;
-
   if (now < nextCycleAt) {
-    return {
-      success: false,
-      error: 'Task cycle not ready yet',
-      nextTaskAt: nextCycleAt,
-    };
+    return { success: false, error: 'Task cycle not ready yet', nextTaskAt: nextCycleAt };
   }
 
-  // 4. Check task cooldown (3 minutes between tasks)
+  // Check task cooldown (3 minutes between tasks)
   const nextTaskAt = userData.nextTaskAt?.toMillis?.() || 0;
-
   if (now < nextTaskAt) {
-    return {
-      success: false,
-      error: 'Task cooldown active',
-      nextTaskAt,
-    };
+    return { success: false, error: 'Task cooldown active', nextTaskAt };
   }
 
-  // 5. Check if task already completed in this cycle
+  // Check if task already completed in this cycle
   if (userData.taskProgress?.[taskType] === 'completed') {
     return { success: false, error: 'Task already completed in this cycle' };
   }
 
-  // 6. Special check for Task 3 (invite challenge)
-  if (taskType === TASK_TYPES.TASK_3) {
+  // Task 4 (spin) and Task 8 (scratch) are handled by separate endpoints
+  if (taskType === TASK_TYPES.TASK_4) {
+    return { success: false, error: 'Use spin endpoint for Task 4' };
+  }
+  if (taskType === TASK_TYPES.TASK_8) {
+    return { success: false, error: 'Use scratch endpoint for Task 8' };
+  }
+
+  // Check invite-based tasks
+  if (INVITE_TASKS[taskType] !== undefined) {
     const referralDoc = await db.collection(Collections.REFERRALS).doc(uid).get();
     const verifiedInvites = referralDoc.exists
       ? referralDoc.data()?.verifiedInvitesL1 || 0
       : 0;
 
-    if (verifiedInvites < INVITE_CHALLENGE_TARGET) {
+    const required = INVITE_TASKS[taskType];
+    if (verifiedInvites < required) {
       return {
         success: false,
-        error: `Need ${INVITE_CHALLENGE_TARGET} verified invites. Current: ${verifiedInvites}`,
+        error: `Need ${required} verified invites. Current: ${verifiedInvites}`,
       };
     }
   }
 
-  // 7. Task 4 (spin) is handled by spinService, not here
-  if (taskType === TASK_TYPES.TASK_4) {
-    return { success: false, error: 'Use spin endpoint for Task 4' };
-  }
-
-  // 8. Calculate reward
+  // Calculate reward (coins)
   const reward = TASK_REWARDS[taskType] || 0;
 
-  // 9. Check if all tasks will be complete after this one
+  // Check if all tasks will be complete after this one
   const updatedProgress = { ...userData.taskProgress, [taskType]: 'completed' };
   const allDone = Object.values(updatedProgress).every(s => s === 'completed');
 
   const serverNow = firebaseAdmin.firestore.FieldValue.serverTimestamp();
   const batch = db.batch();
 
-  // 10. Update user: balance, timers, task progress
+  // Update user: coins balance, timers, task progress
   const userUpdate: Record<string, unknown> = {
     [`taskProgress.${taskType}`]: 'completed',
     lastTaskAt: serverNow,
     nextTaskAt: firebaseAdmin.firestore.Timestamp.fromMillis(now + TASK_COOLDOWN_MS),
-    balance: firebaseAdmin.firestore.FieldValue.increment(reward),
-    totalEarned: firebaseAdmin.firestore.FieldValue.increment(reward),
+    coinBalance: firebaseAdmin.firestore.FieldValue.increment(reward),
+    totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(reward),
     updatedAt: serverNow,
   };
 
-  // If all tasks done, reset cycle for next 24h
+  // If all tasks done, set next cycle (same time next day)
   if (allDone) {
-    userUpdate.nextCycleAt = firebaseAdmin.firestore.Timestamp.fromMillis(now + CYCLE_DURATION_MS);
-    userUpdate.taskProgress = {
-      task_1: 'pending',
-      task_2: 'pending',
-      task_3: 'pending',
-      task_4: 'pending',
-    };
+    const cycleStartAt = userData.lastCycleStartAt?.toMillis?.() || now;
+    const nextCycle = cycleStartAt + CYCLE_DURATION_MS;
+    userUpdate.nextCycleAt = firebaseAdmin.firestore.Timestamp.fromMillis(nextCycle);
+    userUpdate.taskProgress = getDefaultTaskProgress();
     userUpdate.lastCycleStartAt = serverNow;
+    userUpdate.adWatchCount = 0; // Reset daily ad count
   }
 
   batch.update(userRef, userUpdate);
 
-  // 11. Create task log
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  // Create task log
+  const today = new Date().toISOString().split('T')[0];
   batch.set(
     db.collection(Collections.TASKS).doc(uid).collection(today).doc(taskType),
-    {
-      uid,
-      taskType,
-      reward,
-      claimedAt: serverNow,
-      cycleDate: today,
-    }
+    { uid, taskType, reward, currency: 'coins', claimedAt: serverNow, cycleDate: today }
   );
 
-  // 12. Create ledger entry
+  // Create ledger entry
   batch.set(
     db.collection(Collections.LEDGER).doc(uid).collection('entries').doc(),
     {
@@ -148,23 +125,20 @@ export async function claimTask(
       type: 'task_reward',
       taskType,
       amount: reward,
-      balanceAfter: (userData.balance || 0) + reward,
+      currency: 'coins',
+      balanceAfter: (userData.coinBalance || 0) + reward,
       createdAt: serverNow,
     }
   );
 
   await batch.commit();
 
-  // 13. Process referral commissions asynchronously
+  // Process referral commissions asynchronously (on coins)
   processReferralCommissions(uid, reward, taskType).catch(err =>
     console.error('Referral commission error:', err)
   );
 
-  return {
-    success: true,
-    reward,
-    nextTaskAt: now + TASK_COOLDOWN_MS,
-  };
+  return { success: true, reward, nextTaskAt: now + TASK_COOLDOWN_MS };
 }
 
 /**
@@ -176,6 +150,9 @@ export async function getTaskStatus(uid: string): Promise<{
   taskProgress: Record<string, string>;
   nextCycleAt: number;
   nextTaskAt: number;
+  adWatchCount: number;
+  coinBalance: number;
+  totalCoinsEarned: number;
 }> {
   const userDoc = await db.collection(Collections.USERS).doc(uid).get();
 
@@ -191,18 +168,21 @@ export async function getTaskStatus(uid: string): Promise<{
   return {
     cycleReady: now >= nextCycleAt,
     cooldownReady: now >= nextTaskAt,
-    taskProgress: userData.taskProgress || {},
+    taskProgress: userData.taskProgress || getDefaultTaskProgress(),
     nextCycleAt,
     nextTaskAt,
+    adWatchCount: userData.adWatchCount || 0,
+    coinBalance: userData.coinBalance || 0,
+    totalCoinsEarned: userData.totalCoinsEarned || 0,
   };
 }
 
 /**
- * Processes referral commissions up to 3 levels when a user earns a reward.
+ * Processes referral commissions up to 3 levels when a user earns coins.
  */
 async function processReferralCommissions(
   uid: string,
-  rewardAmount: number,
+  rewardCoins: number,
   taskType: string
 ): Promise<void> {
   const referralDoc = await db.collection(Collections.REFERRALS).doc(uid).get();
@@ -222,19 +202,17 @@ async function processReferralCommissions(
     const referrerUid = chain[level];
     if (!referrerUid) continue;
 
-    const commission = Math.floor(rewardAmount * rate);
+    const commission = Math.floor(rewardCoins * rate);
     if (commission <= 0) continue;
 
     const batch = db.batch();
 
-    // Credit referrer balance
     batch.update(db.collection(Collections.USERS).doc(referrerUid), {
-      balance: firebaseAdmin.firestore.FieldValue.increment(commission),
-      totalEarned: firebaseAdmin.firestore.FieldValue.increment(commission),
+      coinBalance: firebaseAdmin.firestore.FieldValue.increment(commission),
+      totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(commission),
       updatedAt: now,
     });
 
-    // Create ledger entry for referrer
     batch.set(
       db.collection(Collections.LEDGER).doc(referrerUid).collection('entries').doc(),
       {
@@ -244,6 +222,7 @@ async function processReferralCommissions(
         fromUid: uid,
         taskType,
         amount: commission,
+        currency: 'coins',
         rate,
         createdAt: now,
       }

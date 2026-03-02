@@ -1,6 +1,5 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
-import { USER_STATUS, CYCLE_DURATION_MS, BAN_REASONS, L1_INVITE_BONUS_PKR } from '../config/constants';
-import { v4 as uuidv4 } from 'uuid';
+import { USER_STATUS, L1_INVITE_BONUS_COINS, getDefaultTaskProgress } from '../config/constants';
 import * as crypto from 'crypto';
 
 interface CreateUserPayload {
@@ -34,7 +33,7 @@ export async function validateReferralCode(code: string): Promise<{
 
 /**
  * Creates a new user profile after successful phone auth + referral validation.
- * Enforces one-account-per-device.
+ * Uses coins system. Enforces one-account-per-device.
  */
 export async function createUser(payload: CreateUserPayload): Promise<{
   success: boolean;
@@ -42,13 +41,11 @@ export async function createUser(payload: CreateUserPayload): Promise<{
 }> {
   const { uid, phone, referralCode, deviceFingerprint, clientIp } = payload;
 
-  // 1. Check if user already exists
   const existingUser = await db.collection(Collections.USERS).doc(uid).get();
   if (existingUser.exists) {
     return { success: false, error: 'User already exists' };
   }
 
-  // 1b. Check if phone number is banned (prevent re-registration)
   const bannedPhoneSnapshot = await db.collection(Collections.BANS)
     .where('phone', '==', phone)
     .limit(1)
@@ -57,7 +54,6 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     return { success: false, error: 'This phone number is banned' };
   }
 
-  // 1c. Device binding: one account per device
   const deviceKey = generateDeviceKey(deviceFingerprint);
   const deviceDoc = await db.collection(Collections.DEVICES).doc(deviceKey).get();
   if (deviceDoc.exists) {
@@ -67,24 +63,19 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     }
   }
 
-  // 2. Validate referral code
   const referralResult = await validateReferralCode(referralCode);
   if (!referralResult.valid) {
     return { success: false, error: 'Invalid or inactive referral code' };
   }
 
   const inviterUid = referralResult.inviterUid!;
-
-  // 3. Generate a unique referral code for the new user
   const userReferralCode = generateReferralCode();
-
-  // 4. Build the referral chain (up to 6 levels)
   const referralChain = await buildReferralChain(inviterUid);
 
   const now = firebaseAdmin.firestore.FieldValue.serverTimestamp();
   const batch = db.batch();
 
-  // 5. Create user document
+  // Create user document (coins system)
   batch.set(db.collection(Collections.USERS).doc(uid), {
     uid,
     phone,
@@ -92,35 +83,31 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     referralCode: userReferralCode,
     invitedBy: inviterUid,
     usedReferralCode: referralCode,
+    coinBalance: 0,
+    totalCoinsEarned: 0,
     balance: 0,
     totalEarned: 0,
     monthlyVerifiedInvitesL1: 0,
     salaryTier: 0,
+    adWatchCount: 0,
     lastCycleStartAt: now,
-    nextCycleAt: now, // First cycle starts immediately
+    nextCycleAt: now,
     lastTaskAt: null,
     nextTaskAt: null,
-    taskProgress: {
-      task_1: 'pending',
-      task_2: 'pending',
-      task_3: 'pending',
-      task_4: 'pending',
-    },
+    taskProgress: getDefaultTaskProgress(),
     createdAt: now,
     updatedAt: now,
   });
 
-  // 6. Create referral record
   batch.set(db.collection(Collections.REFERRALS).doc(uid), {
     uid,
     inviterUid,
-    referralChain, // { L1: uid, L2: uid, L3: uid, ... }
+    referralChain,
     childrenL1: [],
     verifiedInvitesL1: 0,
     createdAt: now,
   });
 
-  // 7. Create the new user's referral code
   batch.set(db.collection(Collections.REFERRAL_CODES).doc(userReferralCode), {
     code: userReferralCode,
     ownerUid: uid,
@@ -129,18 +116,16 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     createdAt: now,
   });
 
-  // 8. Update inviter's referral children
   batch.update(db.collection(Collections.REFERRALS).doc(inviterUid), {
     childrenL1: firebaseAdmin.firestore.FieldValue.arrayUnion(uid),
+    verifiedInvitesL1: firebaseAdmin.firestore.FieldValue.increment(1),
     updatedAt: now,
   });
 
-  // 9. Increment used referral code count
   batch.update(db.collection(Collections.REFERRAL_CODES).doc(referralCode), {
     usedCount: firebaseAdmin.firestore.FieldValue.increment(1),
   });
 
-  // 10. Bind device to this user
   batch.set(db.collection(Collections.DEVICES).doc(deviceKey), {
     boundUid: uid,
     phone,
@@ -150,49 +135,39 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     createdAt: now,
   }, { merge: true });
 
-  // 11. Credit L1 invite bonus (3 PKR) to the inviter
+  // Credit L1 invite bonus (150 coins) to the inviter
   batch.update(db.collection(Collections.USERS).doc(inviterUid), {
-    balance: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_PKR),
-    totalEarned: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_PKR),
+    coinBalance: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_COINS),
+    totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_COINS),
     updatedAt: now,
   });
 
-  // 12. Ledger entry for inviter's L1 bonus
   batch.set(
     db.collection(Collections.LEDGER).doc(inviterUid).collection('entries').doc(),
     {
       uid: inviterUid,
       type: 'invite_bonus_l1',
-      amount: L1_INVITE_BONUS_PKR,
+      amount: L1_INVITE_BONUS_COINS,
+      currency: 'coins',
       fromUid: uid,
       createdAt: now,
     }
   );
 
   await batch.commit();
-
   return { success: true };
 }
 
-/**
- * Gets user profile data.
- */
 export async function getUserProfile(uid: string): Promise<FirebaseFirestore.DocumentData | null> {
   const doc = await db.collection(Collections.USERS).doc(uid).get();
   return doc.exists ? doc.data()! : null;
 }
 
-/**
- * Checks if user is banned.
- */
 export async function isUserBanned(uid: string): Promise<boolean> {
   const doc = await db.collection(Collections.USERS).doc(uid).get();
   return doc.exists ? doc.data()?.status === USER_STATUS.BANNED : false;
 }
 
-/**
- * Generates a SHA-256 device key from fingerprint for device binding.
- */
 function generateDeviceKey(fingerprint: Record<string, unknown>): string {
   const parts = [
     fingerprint.androidId || '',
@@ -205,25 +180,16 @@ function generateDeviceKey(fingerprint: Record<string, unknown>): string {
   return `dev_${hash.substring(0, 16)}`;
 }
 
-/**
- * Generates a unique referral code (8 chars alphanumeric).
- */
 function generateReferralCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No ambiguous chars (0/O, 1/I/L)
-  let code = 'KC'; // Kamyabi Cash prefix
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'KC';
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return code;
 }
 
-/**
- * Builds referral chain by walking up from inviterUid.
- * Returns { L1: inviterUid, L2: inviter's inviter, ... } up to 6 levels.
- */
-async function buildReferralChain(
-  inviterUid: string
-): Promise<Record<string, string>> {
+async function buildReferralChain(inviterUid: string): Promise<Record<string, string>> {
   const chain: Record<string, string> = { L1: inviterUid };
   let currentUid = inviterUid;
 
@@ -241,9 +207,6 @@ async function buildReferralChain(
   return chain;
 }
 
-/**
- * Admin: search users by phone, uid, or referral code.
- */
 export async function searchUsers(query: string, field: 'phone' | 'uid' | 'referralCode'): Promise<FirebaseFirestore.DocumentData[]> {
   if (field === 'uid') {
     const doc = await db.collection(Collections.USERS).doc(query).get();

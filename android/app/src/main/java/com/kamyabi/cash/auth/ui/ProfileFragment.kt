@@ -89,7 +89,7 @@ class ProfileFragment : Fragment() {
                 tvStatus.text = profile.status.replaceFirstChar { it.uppercase() }
 
                 val formatter = NumberFormat.getNumberInstance(Locale.US)
-                tvStatBalance.text = "PKR ${formatter.format(profile.balance)}"
+                tvStatBalance.text = "${formatter.format(profile.coinBalance.toLong())} Coins"
 
                 // Load member since
                 val userDoc = db.collection("users").document(uid).get().await()

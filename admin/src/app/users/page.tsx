@@ -133,7 +133,7 @@ export default function UsersPage() {
                         {u.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm">{u.balance ?? 0} PKR</td>
+                    <td className="px-4 py-3 text-sm">{u.coinBalance ?? 0} Coins</td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleViewDetail(u.uid || u.id)}
@@ -171,8 +171,8 @@ export default function UsersPage() {
                 <div><span className="text-sm text-gray-500">UID:</span> <span className="text-sm font-mono">{selectedUser.user.uid}</span></div>
                 <div><span className="text-sm text-gray-500">Phone:</span> <span className="text-sm">{selectedUser.user.phone}</span></div>
                 <div><span className="text-sm text-gray-500">Status:</span> <span className="text-sm font-semibold">{selectedUser.user.status}</span></div>
-                <div><span className="text-sm text-gray-500">Balance:</span> <span className="text-sm">{selectedUser.user.balance} PKR</span></div>
-                <div><span className="text-sm text-gray-500">Total Earned:</span> <span className="text-sm">{selectedUser.user.totalEarned} PKR</span></div>
+                <div><span className="text-sm text-gray-500">Coin Balance:</span> <span className="text-sm">{selectedUser.user.coinBalance ?? 0} Coins</span></div>
+                <div><span className="text-sm text-gray-500">Total Earned:</span> <span className="text-sm">{selectedUser.user.totalCoinsEarned ?? 0} Coins</span></div>
                 <div><span className="text-sm text-gray-500">Referral Code:</span> <span className="text-sm font-mono">{selectedUser.user.referralCode}</span></div>
               </div>
             )}
@@ -205,7 +205,7 @@ export default function UsersPage() {
                   {selectedUser.recentLedger.map((entry: any) => (
                     <div key={entry.id} className="flex justify-between text-sm bg-gray-50 p-2 rounded">
                       <span>{entry.type}</span>
-                      <span className="font-medium">{entry.amount} PKR</span>
+                      <span className="font-medium">{entry.amount} {entry.currency || 'coins'}</span>
                     </div>
                   ))}
                 </div>

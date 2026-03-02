@@ -31,25 +31,25 @@ class HomeFragment : Fragment() {
 
     private lateinit var tvGreeting: TextView
     private lateinit var tvBalance: TextView
+    private lateinit var tvBalancePkr: TextView
     private lateinit var tvTotalEarned: TextView
     private lateinit var tvCycleTimer: TextView
     private lateinit var tvReferralCode: TextView
     private lateinit var btnWithdraw: Button
     private lateinit var btnShareCode: Button
 
-    // Task card views
-    private lateinit var task1Title: TextView
-    private lateinit var task1Reward: TextView
-    private lateinit var task1Btn: Button
-    private lateinit var task2Title: TextView
-    private lateinit var task2Reward: TextView
-    private lateinit var task2Btn: Button
-    private lateinit var task3Title: TextView
-    private lateinit var task3Reward: TextView
-    private lateinit var task3Btn: Button
-    private lateinit var task4Title: TextView
-    private lateinit var task4Reward: TextView
-    private lateinit var task4Btn: Button
+    // Exchange rate: default 3000 coins = 100 PKR
+    private var exchangeRateCoins = 3000
+    private var exchangeRatePkr = 100
+
+    // Task card views — data class for convenience
+    private data class TaskCardViews(
+        val title: TextView,
+        val reward: TextView,
+        val button: Button
+    )
+
+    private val taskCards = mutableMapOf<String, TaskCardViews>()
 
     private var cycleTimer: CountDownTimer? = null
     private var cooldownTimer: CountDownTimer? = null
@@ -63,10 +63,13 @@ class HomeFragment : Fragment() {
         override fun run() {
             if (::bannerPager.isInitialized) {
                 bannerPager.currentItem = bannerPager.currentItem + 1
-                bannerHandler.postDelayed(this, 4000) // 4 seconds per slide
+                bannerHandler.postDelayed(this, 4000)
             }
         }
     }
+
+    // Ad task types (tasks that require watching an ad)
+    private val adTaskTypes = setOf("task_1", "task_2", "task_5", "task_6", "task_7")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -83,44 +86,61 @@ class HomeFragment : Fragment() {
     private fun bindViews(view: View) {
         tvGreeting = view.findViewById(R.id.tvGreeting)
         tvBalance = view.findViewById(R.id.tvBalance)
+        tvBalancePkr = view.findViewById(R.id.tvBalancePkr)
         tvTotalEarned = view.findViewById(R.id.tvTotalEarned)
         tvCycleTimer = view.findViewById(R.id.tvCycleTimer)
         tvReferralCode = view.findViewById(R.id.tvReferralCode)
         btnWithdraw = view.findViewById(R.id.btnWithdraw)
         btnShareCode = view.findViewById(R.id.btnShareCode)
-
         tvCooldownTimer = view.findViewById(R.id.tvCooldownTimer)
 
-        // Task cards
-        val task1Card = view.findViewById<View>(R.id.task1Card)
-        task1Title = task1Card.findViewById(R.id.tvTaskTitle)
-        task1Reward = task1Card.findViewById(R.id.tvTaskReward)
-        task1Btn = task1Card.findViewById(R.id.btnTaskAction)
+        // Bind all 12 task cards
+        val cardIds = mapOf(
+            "task_1" to R.id.task1Card,
+            "task_2" to R.id.task2Card,
+            "task_3" to R.id.task3Card,
+            "task_4" to R.id.task4Card,
+            "task_5" to R.id.task5Card,
+            "task_6" to R.id.task6Card,
+            "task_7" to R.id.task7Card,
+            "task_8" to R.id.task8Card,
+            "task_9" to R.id.task9Card,
+            "task_10" to R.id.task10Card,
+            "task_11" to R.id.task11Card,
+            "task_12" to R.id.task12Card,
+        )
 
-        val task2Card = view.findViewById<View>(R.id.task2Card)
-        task2Title = task2Card.findViewById(R.id.tvTaskTitle)
-        task2Reward = task2Card.findViewById(R.id.tvTaskReward)
-        task2Btn = task2Card.findViewById(R.id.btnTaskAction)
+        for ((key, cardId) in cardIds) {
+            val card = view.findViewById<View>(cardId)
+            taskCards[key] = TaskCardViews(
+                title = card.findViewById(R.id.tvTaskTitle),
+                reward = card.findViewById(R.id.tvTaskReward),
+                button = card.findViewById(R.id.btnTaskAction)
+            )
+        }
 
-        val task3Card = view.findViewById<View>(R.id.task3Card)
-        task3Title = task3Card.findViewById(R.id.tvTaskTitle)
-        task3Reward = task3Card.findViewById(R.id.tvTaskReward)
-        task3Btn = task3Card.findViewById(R.id.btnTaskAction)
+        // Set static task labels
+        val taskLabels = mapOf(
+            "task_1" to Pair(R.string.task_1_title, R.string.task_1_reward),
+            "task_2" to Pair(R.string.task_2_title, R.string.task_2_reward),
+            "task_3" to Pair(R.string.task_3_title, R.string.task_3_reward),
+            "task_4" to Pair(R.string.task_4_title, R.string.task_4_reward),
+            "task_5" to Pair(R.string.task_5_title, R.string.task_5_reward),
+            "task_6" to Pair(R.string.task_6_title, R.string.task_6_reward),
+            "task_7" to Pair(R.string.task_7_title, R.string.task_7_reward),
+            "task_8" to Pair(R.string.task_8_title, R.string.task_8_reward),
+            "task_9" to Pair(R.string.task_9_title, R.string.task_9_reward),
+            "task_10" to Pair(R.string.task_10_title, R.string.task_10_reward),
+            "task_11" to Pair(R.string.task_11_title, R.string.task_11_reward),
+            "task_12" to Pair(R.string.task_12_title, R.string.task_12_reward),
+        )
 
-        val task4Card = view.findViewById<View>(R.id.task4Card)
-        task4Title = task4Card.findViewById(R.id.tvTaskTitle)
-        task4Reward = task4Card.findViewById(R.id.tvTaskReward)
-        task4Btn = task4Card.findViewById(R.id.btnTaskAction)
-
-        // Set static task info
-        task1Title.text = getString(R.string.task_1_title)
-        task1Reward.text = getString(R.string.task_1_reward)
-        task2Title.text = getString(R.string.task_2_title)
-        task2Reward.text = getString(R.string.task_2_reward)
-        task3Title.text = getString(R.string.task_3_title)
-        task3Reward.text = getString(R.string.task_3_reward)
-        task4Title.text = getString(R.string.task_4_title)
-        task4Reward.text = getString(R.string.task_4_reward)
+        for ((key, labels) in taskLabels) {
+            taskCards[key]?.let { card ->
+                card.title.text = getString(labels.first)
+                card.reward.text = getString(labels.second)
+            }
+        }
     }
 
     private fun setupBannerSlider(view: View) {
@@ -128,20 +148,18 @@ class HomeFragment : Fragment() {
         bannerIndicator = view.findViewById(R.id.bannerIndicator)
 
         val banners = listOf(
-            BannerItem("\uD83D\uDCB0", "Earn PKR 20 Per Task", "Complete daily tasks & grow your balance", R.drawable.bg_banner_1),
-            BannerItem("\uD83D\uDC65", "Invite 15 Friends", "Unlock the 50 PKR Invite Challenge reward", R.drawable.bg_banner_2),
-            BannerItem("\uD83C\uDFA1", "Spin & Win Up To 199 PKR", "Try your luck on the daily spin wheel", R.drawable.bg_banner_3),
+            BannerItem("\uD83D\uDCB0", "Earn 50 Coins Per Task", "Complete daily tasks & grow your balance", R.drawable.bg_banner_1),
+            BannerItem("\uD83D\uDC65", "Invite 15 Friends", "Unlock the 400 Coin Invite Challenge reward", R.drawable.bg_banner_2),
+            BannerItem("\uD83C\uDFA1", "Spin & Win Up To 199 Coins", "Try your luck on the daily spin wheel", R.drawable.bg_banner_3),
             BannerItem("\uD83D\uDCB3", "Withdraw via EasyPaisa", "Cash out to EasyPaisa, JazzCash or USDT", R.drawable.bg_banner_4),
         )
 
         val adapter = BannerAdapter(banners)
         bannerPager.adapter = adapter
 
-        // Start at a large middle position for infinite-scroll feel
         val startPos = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2 % banners.size)
         bannerPager.setCurrentItem(startPos, false)
 
-        // Build dot indicators
         buildIndicatorDots(banners.size, 0)
 
         bannerPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -150,7 +168,6 @@ class HomeFragment : Fragment() {
             }
         })
 
-        // Start auto-scroll
         bannerHandler.postDelayed(bannerAutoScroll, 4000)
     }
 
@@ -173,13 +190,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        task1Btn.setOnClickListener { claimTask("task_1", task1Btn) }
-        task2Btn.setOnClickListener { claimTask("task_2", task2Btn) }
-        task3Btn.setOnClickListener { claimTask("task_3", task3Btn) }
-        task4Btn.setOnClickListener { spinWheel(task4Btn) }
+        // Ad tasks (1, 2, 5, 6, 7)
+        for (taskType in adTaskTypes) {
+            taskCards[taskType]?.button?.setOnClickListener { claimTask(taskType, it as Button) }
+        }
+
+        // Invite tasks (3, 9, 10, 11, 12) — server validates invite count
+        for (taskType in listOf("task_3", "task_9", "task_10", "task_11", "task_12")) {
+            taskCards[taskType]?.button?.setOnClickListener { claimTask(taskType, it as Button) }
+        }
+
+        // Spin wheel (task 4)
+        taskCards["task_4"]?.button?.setOnClickListener { spinWheel(it as Button) }
+
+        // Scratch card (task 8)
+        taskCards["task_8"]?.button?.setOnClickListener { scratchCard(it as Button) }
 
         btnWithdraw.setOnClickListener {
-            // Navigate to wallet tab
             activity?.let { act ->
                 val navView = act.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
                 navView?.selectedItemId = R.id.nav_wallet
@@ -189,15 +216,22 @@ class HomeFragment : Fragment() {
         btnShareCode.setOnClickListener { shareReferralCode() }
     }
 
+    private fun coinsToPkr(coins: Double): Double {
+        return if (exchangeRateCoins > 0) (coins / exchangeRateCoins) * exchangeRatePkr else 0.0
+    }
+
     private fun loadData() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         viewLifecycleOwner.lifecycleScope.launch {
+            val formatter = NumberFormat.getNumberInstance(Locale.US)
+
             // Load balance
             walletRepo.getBalance(uid)?.let { wallet ->
-                val formatter = NumberFormat.getNumberInstance(Locale.US)
-                tvBalance.text = formatter.format(wallet.balance)
-                tvTotalEarned.text = "PKR ${formatter.format(wallet.totalEarned)}"
+                val coins = wallet.coinBalance.toLong()
+                tvBalance.text = "${formatter.format(coins)} Coins"
+                tvTotalEarned.text = "${formatter.format(wallet.totalCoinsEarned.toLong())} Coins"
+                tvBalancePkr.text = "= PKR ${formatter.format(coinsToPkr(wallet.coinBalance).toLong())}"
             }
 
             // Load profile for referral code
@@ -218,12 +252,10 @@ class HomeFragment : Fragment() {
     private fun updateTaskUI(status: com.kamyabi.cash.core.network.TaskStatusResponse) {
         val progress = status.taskProgress
 
-        updateTaskButton(task1Btn, progress["task_1"])
-        updateTaskButton(task2Btn, progress["task_2"])
-        updateTaskButton(task3Btn, progress["task_3"])
-        updateTaskButton(task4Btn, progress["task_4"])
+        for ((key, card) in taskCards) {
+            updateTaskButton(card.button, progress[key])
+        }
 
-        // Start 3-minute cooldown timer if active
         startCooldownTimer(status.nextTaskAt)
     }
 
@@ -251,13 +283,13 @@ class HomeFragment : Fragment() {
         button.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
             // Show ad first for ad tasks
-            if (taskType == "task_1" || taskType == "task_2") {
+            if (taskType in adTaskTypes) {
                 adManager.showRewardedAd(requireActivity())
             }
 
             taskRepo.claimTask(taskType).onSuccess { response ->
-                Toast.makeText(context, "+${response.reward?.toInt()} PKR", Toast.LENGTH_SHORT).show()
-                loadData() // Refresh
+                Toast.makeText(context, "+${response.reward?.toInt()} Coins", Toast.LENGTH_SHORT).show()
+                loadData()
             }.onFailure { e ->
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 button.isEnabled = true
@@ -271,6 +303,24 @@ class HomeFragment : Fragment() {
             taskRepo.executeSpin().onSuccess { result ->
                 val message = if (result.prize != null && result.prize > 0) {
                     getString(R.string.spin_result_win, result.prize.toInt().toString())
+                } else {
+                    getString(R.string.spin_result_try_again)
+                }
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                loadData()
+            }.onFailure { e ->
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                button.isEnabled = true
+            }
+        }
+    }
+
+    private fun scratchCard(button: Button) {
+        button.isEnabled = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            taskRepo.executeScratch().onSuccess { result ->
+                val message = if (result.prize != null && result.prize > 0) {
+                    getString(R.string.scratch_result_win, result.prize.toInt().toString())
                 } else {
                     getString(R.string.spin_result_try_again)
                 }
@@ -324,7 +374,7 @@ class HomeFragment : Fragment() {
 
             override fun onFinish() {
                 tvCooldownTimer.visibility = View.GONE
-                loadData() // Refresh task availability
+                loadData()
             }
         }.start()
     }
