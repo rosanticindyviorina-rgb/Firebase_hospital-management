@@ -55,6 +55,14 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
+      - name: Inject server URL into ApiClient
+        if: ${{ vars.SERVER_URL != '' }}
+        run: |
+          sed -i "s|https://kamyabi-cash-server-xxxxx.run.app/|${{ vars.SERVER_URL }}|g" \
+            android/app/src/main/java/com/kamyabi/cash/core/network/ApiClient.kt
+          sed -i "s|.baseUrl(DEV_BASE_URL)|.baseUrl(BASE_URL)|g" \
+            android/app/src/main/java/com/kamyabi/cash/core/network/ApiClient.kt
+
       - name: Generate release keystore
         working-directory: android/app
         run: |
@@ -69,6 +77,11 @@ jobs:
             -storepass KamyabiCash2024 \
             -keypass KamyabiCash2024 \
             -dname "CN=Kamyabi Cash, OU=Mobile, O=TaskForge, L=Karachi, ST=Sindh, C=PK"
+
+      - name: Print SHA-1 fingerprint
+        working-directory: android/app
+        run: |
+          keytool -list -v -keystore keystore/release.jks -alias kamyabi -storepass KamyabiCash2024 2>/dev/null | grep SHA1
 
       - name: Download and setup Gradle 8.2
         run: |

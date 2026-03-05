@@ -1,0 +1,59 @@
+name: Deploy Server to Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'server/**'
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: kamyabi-cash-app
+  SERVICE_NAME: kamyabi-cash-server
+  REGION: asia-south1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Enable Cloud Run API
+        run: gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com
+
+      - name: Deploy to Cloud Run (source)
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source ./server \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 512Mi \
+            --min-instances 0 \
+            --max-instances 3 \
+            --set-env-vars "NODE_ENV=production,FIREBASE_PROJECT_ID=${{ env.PROJECT_ID }}" \
+            --timeout 60 \
+            --quiet
+
+      - name: Get Service URL
+        run: |
+          URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.REGION }} --format 'value(status.url)')
+          echo "Service URL: $URL"
+          echo "SERVICE_URL=$URL" >> $GITHUB_OUTPUT
