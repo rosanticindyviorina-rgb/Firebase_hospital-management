@@ -1,6 +1,7 @@
 package com.kamyabi.cash.auth.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -73,6 +74,38 @@ class ProfileFragment : Fragment() {
             intent?.let { startActivity(it) }
             requireActivity().finish()
         }
+
+        // Social media links
+        view?.findViewById<View>(R.id.btnYoutube)?.setOnClickListener {
+            openUrl("https://www.youtube.com/@EarnWithKamyabi")
+        }
+        view?.findViewById<View>(R.id.btnFacebook)?.setOnClickListener {
+            openUrl("https://www.facebook.com/share/1axbAWTTBw/")
+        }
+        view?.findViewById<View>(R.id.btnTiktok)?.setOnClickListener {
+            openUrl("https://www.tiktok.com/@kamyabikasafar8")
+        }
+        view?.findViewById<View>(R.id.btnWhatsappChannel)?.setOnClickListener {
+            openUrl("https://whatsapp.com/channel/0029VbC0xHd7j6fyCHrehL3F")
+        }
+        view?.findViewById<View>(R.id.btnTelegramChannel)?.setOnClickListener {
+            openUrl("https://t.me/kamyabicashofficial")
+        }
+
+        // Support links
+        view?.findViewById<View>(R.id.btnTelegramSupport)?.setOnClickListener {
+            openUrl("https://t.me/kamyabicash_support")
+        }
+        view?.findViewById<View>(R.id.btnWhatsappSupport)?.setOnClickListener {
+            openUrl("https://wa.me/message/kamyabicash")
+        }
+        view?.findViewById<View>(R.id.btnWhatsappCommunity)?.setOnClickListener {
+            openUrl("https://chat.whatsapp.com/DxO8GJJcCFb0eHMdyZzCd5")
+        }
+    }
+
+    private fun openUrl(url: String) {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
     private fun loadProfile() {

@@ -133,4 +133,26 @@
     <string name="redeem_hint">Enter redeem code</string>
     <string name="redeem_submit">Redeem</string>
     <string name="redeem_success">Redeemed! +%s Coins</string>
+
+    <!-- Social Media -->
+    <string name="follow_us">Follow Us</string>
+    <string name="social_youtube">YouTube</string>
+    <string name="social_youtube_cta">Watch &amp; Learn</string>
+    <string name="social_facebook">Facebook</string>
+    <string name="social_facebook_cta">Like &amp; Follow</string>
+    <string name="social_tiktok">TikTok</string>
+    <string name="social_tiktok_cta">Follow Us</string>
+    <string name="social_whatsapp_channel">WhatsApp Channel</string>
+    <string name="social_whatsapp_cta">Join Channel</string>
+    <string name="social_telegram">Telegram</string>
+    <string name="social_telegram_cta">Join Channel</string>
+
+    <!-- Support -->
+    <string name="customer_support">Customer Support</string>
+    <string name="support_telegram">Telegram Support</string>
+    <string name="support_telegram_cta">Chat with us</string>
+    <string name="support_whatsapp">WhatsApp Support</string>
+    <string name="support_whatsapp_cta">Chat with us</string>
+    <string name="support_community">WhatsApp Community</string>
+    <string name="support_community_cta">Join Community</string>
 </resources>
