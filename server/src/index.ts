@@ -115,7 +115,7 @@ app.post('/seed', async (_req, res) => {
     return res.json({ success: true, message: 'Seed created', code: seedCode });
   } catch (error) {
     console.error('Seed error:', error);
-    return res.status(500).json({ error: 'Seed failed' });
+    return res.status(500).json({ error: 'Seed failed', detail: String(error) });
   }
 });
 
