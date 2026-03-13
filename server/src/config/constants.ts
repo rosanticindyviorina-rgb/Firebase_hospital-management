@@ -111,6 +111,25 @@ export const INVITE_TASKS: Record<string, number> = {
 // Ad providers
 export const AD_PROVIDERS = ['admob', 'applovin', 'unity', 'adcolony'] as const;
 
+// Per-network ad cooldown (3 minutes per network, independent timers)
+export const NETWORK_COOLDOWN_MS = 3 * 60 * 1000; // 3 minutes per network
+
+// Map ad tasks to their ad network (for independent cooldowns)
+export const TASK_NETWORK_MAP: Record<string, string> = {
+  [TASK_TYPES.TASK_1]: 'admob',    // Ad Watch — AdMob
+  [TASK_TYPES.TASK_2]: 'admob',    // Ad Watch — AdMob
+  [TASK_TYPES.TASK_5]: 'applovin', // Ad Watch — AppLovin
+  [TASK_TYPES.TASK_6]: 'applovin', // Ad Watch — AppLovin
+  [TASK_TYPES.TASK_7]: 'unity',    // Ad Watch — Unity
+};
+
+// Network cooldown field names stored in user doc
+export const NETWORK_COOLDOWN_FIELDS: Record<string, string> = {
+  admob: 'nextAdmobAt',
+  applovin: 'nextApplovinAt',
+  unity: 'nextUnityAt',
+};
+
 // Referral tree max levels
 export const MAX_REFERRAL_LEVELS_ADMIN = 6;
 export const MAX_REFERRAL_LEVELS_USER = 3;

@@ -1,7 +1,7 @@
 package com.kamyabi.cash.core.network
 
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.tasks.await
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -15,14 +15,17 @@ import java.util.concurrent.TimeUnit
 class ApiClient {
 
     companion object {
-        // TODO: Replace with actual Cloud Run URL in production
-        private const val BASE_URL = "https://kamyabi-cash-server-xxxxx.run.app/"
-        private const val DEV_BASE_URL = "http://10.0.2.2:8080/" // Emulator localhost
+        private const val BASE_URL = "https://kamyabi-cash-server-olqexbjaia-el.a.run.app/"
     }
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->
-            val token = FirebaseAuth.getInstance().currentUser?.getIdToken(false)?.result?.token
+            val user = FirebaseAuth.getInstance().currentUser
+            val token = try {
+                user?.let { Tasks.await(it.getIdToken(false))?.token }
+            } catch (e: Exception) {
+                null
+            }
             val request = chain.request().newBuilder().apply {
                 if (token != null) {
                     addHeader("Authorization", "Bearer $token")
@@ -39,7 +42,7 @@ class ApiClient {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(DEV_BASE_URL) // Switch to BASE_URL for production
+        .baseUrl(BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

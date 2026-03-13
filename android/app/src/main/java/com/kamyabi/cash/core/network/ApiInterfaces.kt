@@ -101,6 +101,7 @@ data class TaskClaimResponse(
     val reward: Double?,
     val currency: String?,
     val nextTaskAt: Long?,
+    val networkCooldowns: Map<String, Long>?,
     val error: String?
 )
 
@@ -112,7 +113,8 @@ data class TaskStatusResponse(
     val nextTaskAt: Long,
     val coinBalance: Double,
     val totalCoinsEarned: Double,
-    val adWatchCount: Int
+    val adWatchCount: Int,
+    val networkCooldowns: Map<String, Long>?
 )
 
 data class SpinResultResponse(

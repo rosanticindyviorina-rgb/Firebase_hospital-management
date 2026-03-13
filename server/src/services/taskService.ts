@@ -6,6 +6,9 @@ import {
   TASK_REWARDS,
   INVITE_TASKS,
   REFERRAL_COMMISSION,
+  NETWORK_COOLDOWN_MS,
+  TASK_NETWORK_MAP,
+  NETWORK_COOLDOWN_FIELDS,
   getDefaultTaskProgress,
 } from '../config/constants';
 
@@ -14,10 +17,40 @@ interface TaskClaimResult {
   error?: string;
   reward?: number;
   nextTaskAt?: number;
+  networkCooldowns?: Record<string, number>;
+}
+
+/**
+ * Gets the network cooldown field for a task, or null if not an ad task.
+ */
+function getNetworkCooldownField(taskType: string): string | null {
+  const network = TASK_NETWORK_MAP[taskType];
+  if (!network) return null;
+  return NETWORK_COOLDOWN_FIELDS[network] || null;
+}
+
+/**
+ * Extracts current network cooldown timestamps from user data.
+ */
+function getNetworkCooldowns(
+  userData: FirebaseFirestore.DocumentData,
+  overrides: Record<string, number> = {}
+): Record<string, number> {
+  const cooldowns: Record<string, number> = {};
+  for (const [network, field] of Object.entries(NETWORK_COOLDOWN_FIELDS)) {
+    if (overrides[field] !== undefined) {
+      cooldowns[network] = overrides[field];
+    } else {
+      cooldowns[network] = userData[field]?.toMillis?.() || 0;
+    }
+  }
+  return cooldowns;
 }
 
 /**
  * Claims a task reward (coins). Server-authoritative validation.
+ * Ad tasks use independent per-network cooldowns (AdMob, AppLovin, Unity).
+ * Non-ad tasks use the global cooldown.
  */
 export async function claimTask(
   uid: string,
@@ -43,10 +76,25 @@ export async function claimTask(
     return { success: false, error: 'Task cycle not ready yet', nextTaskAt: nextCycleAt };
   }
 
-  // Check task cooldown (3 minutes between tasks)
-  const nextTaskAt = userData.nextTaskAt?.toMillis?.() || 0;
-  if (now < nextTaskAt) {
-    return { success: false, error: 'Task cooldown active', nextTaskAt };
+  // Check cooldown: per-network for ad tasks, global for others
+  const networkField = getNetworkCooldownField(taskType);
+  if (networkField) {
+    // Per-network cooldown for ad tasks
+    const networkCooldownAt = userData[networkField]?.toMillis?.() || 0;
+    if (now < networkCooldownAt) {
+      return {
+        success: false,
+        error: `${TASK_NETWORK_MAP[taskType]} network cooldown active`,
+        nextTaskAt: networkCooldownAt,
+        networkCooldowns: getNetworkCooldowns(userData),
+      };
+    }
+  } else {
+    // Global cooldown for non-ad tasks (spin, scratch, invite tasks)
+    const nextTaskAt = userData.nextTaskAt?.toMillis?.() || 0;
+    if (now < nextTaskAt) {
+      return { success: false, error: 'Task cooldown active', nextTaskAt };
+    }
   }
 
   // Check if task already completed in this cycle
@@ -92,11 +140,19 @@ export async function claimTask(
   const userUpdate: Record<string, unknown> = {
     [`taskProgress.${taskType}`]: 'completed',
     lastTaskAt: serverNow,
-    nextTaskAt: firebaseAdmin.firestore.Timestamp.fromMillis(now + TASK_COOLDOWN_MS),
     coinBalance: firebaseAdmin.firestore.FieldValue.increment(reward),
     totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(reward),
     updatedAt: serverNow,
   };
+
+  // Set the appropriate cooldown timer
+  if (networkField) {
+    // Per-network cooldown — only this network gets locked for 3 min
+    userUpdate[networkField] = firebaseAdmin.firestore.Timestamp.fromMillis(now + NETWORK_COOLDOWN_MS);
+  } else {
+    // Global cooldown for non-ad tasks
+    userUpdate.nextTaskAt = firebaseAdmin.firestore.Timestamp.fromMillis(now + TASK_COOLDOWN_MS);
+  }
 
   // If all tasks done, set next cycle (same time next day)
   if (allDone) {
@@ -105,7 +161,12 @@ export async function claimTask(
     userUpdate.nextCycleAt = firebaseAdmin.firestore.Timestamp.fromMillis(nextCycle);
     userUpdate.taskProgress = getDefaultTaskProgress();
     userUpdate.lastCycleStartAt = serverNow;
-    userUpdate.adWatchCount = 0; // Reset daily ad count
+    userUpdate.adWatchCount = 0;
+    // Reset all network cooldowns on cycle reset
+    for (const field of Object.values(NETWORK_COOLDOWN_FIELDS)) {
+      userUpdate[field] = null;
+    }
+    userUpdate.nextTaskAt = null;
   }
 
   batch.update(userRef, userUpdate);
@@ -138,7 +199,12 @@ export async function claimTask(
     console.error('Referral commission error:', err)
   );
 
-  return { success: true, reward, nextTaskAt: now + TASK_COOLDOWN_MS };
+  return {
+    success: true,
+    reward,
+    nextTaskAt: networkField ? now + NETWORK_COOLDOWN_MS : now + TASK_COOLDOWN_MS,
+    networkCooldowns: getNetworkCooldowns(userData, networkField ? { [networkField]: now + NETWORK_COOLDOWN_MS } : {}),
+  };
 }
 
 /**
@@ -153,6 +219,7 @@ export async function getTaskStatus(uid: string): Promise<{
   adWatchCount: number;
   coinBalance: number;
   totalCoinsEarned: number;
+  networkCooldowns: Record<string, number>;
 }> {
   const userDoc = await db.collection(Collections.USERS).doc(uid).get();
 
@@ -164,6 +231,7 @@ export async function getTaskStatus(uid: string): Promise<{
   const now = Date.now();
   const nextCycleAt = userData.nextCycleAt?.toMillis?.() || 0;
   const nextTaskAt = userData.nextTaskAt?.toMillis?.() || 0;
+  const networkCooldowns = getNetworkCooldowns(userData);
 
   return {
     cycleReady: now >= nextCycleAt,
@@ -174,6 +242,7 @@ export async function getTaskStatus(uid: string): Promise<{
     adWatchCount: userData.adWatchCount || 0,
     coinBalance: userData.coinBalance || 0,
     totalCoinsEarned: userData.totalCoinsEarned || 0,
+    networkCooldowns,
   };
 }
 
