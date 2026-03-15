@@ -119,8 +119,8 @@ export async function claimMetaTask(uid: string, taskType: string): Promise<Meta
  */
 export async function getMetaTaskStatus(uid: string): Promise<{
   metaProgress: Record<string, string>;
-  metaCycleReady: boolean;
-  metaCooldownReady: boolean;
+  cycleReady: boolean;
+  cooldownReady: boolean;
   nextMetaCycleAt: number;
   nextMetaAt: number;
   metaCycleCount: number;
@@ -135,8 +135,8 @@ export async function getMetaTaskStatus(uid: string): Promise<{
 
   return {
     metaProgress: userData.metaProgress || getDefaultMetaProgress(),
-    metaCycleReady: now >= nextMetaCycleAt,
-    metaCooldownReady: now >= nextMetaAt,
+    cycleReady: now >= nextMetaCycleAt,
+    cooldownReady: now >= nextMetaAt,
     nextMetaCycleAt,
     nextMetaAt,
     metaCycleCount: userData.metaCycleCount || 0,

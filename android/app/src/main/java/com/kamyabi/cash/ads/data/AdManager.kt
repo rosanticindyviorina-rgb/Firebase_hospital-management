@@ -10,13 +10,12 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.kamyabi.cash.core.di.ServiceLocator
 import com.unity3d.ads.IUnityAdsInitializationListener
 import com.unity3d.ads.IUnityAdsLoadListener
 import com.unity3d.ads.IUnityAdsShowListener
 import com.unity3d.ads.UnityAds
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 
 /**
@@ -68,14 +67,13 @@ class AdManager(private val context: Context) {
     }
 
     /**
-     * Fetches the active ad provider from Remote Config.
+     * Fetches the active ad provider from server config API.
+     * Admin controls this via Switch Ads in the admin panel.
      */
     suspend fun fetchActiveProvider(): AdProvider {
         return try {
-            val remoteConfig = FirebaseRemoteConfig.getInstance()
-            remoteConfig.fetchAndActivate().await()
-
-            val providerStr = remoteConfig.getString("ad_provider")
+            val config = ServiceLocator.apiClient.configApi.getConfig()
+            val providerStr = config.ad_provider
             currentProvider = when (providerStr.lowercase()) {
                 "admob" -> AdProvider.ADMOB
                 "applovin" -> AdProvider.APPLOVIN

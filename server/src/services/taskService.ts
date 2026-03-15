@@ -10,6 +10,9 @@ import {
   NETWORK_COOLDOWN_MS,
   TASK_NETWORK_MAP,
   NETWORK_COOLDOWN_FIELDS,
+  DAILY_AD_LIMIT,
+  AD_TASKS,
+  CORE_TASK_KEYS,
   getDefaultTaskProgress,
 } from '../config/constants';
 
@@ -98,6 +101,15 @@ export async function claimTask(
     }
   }
 
+  // Check daily ad limit for ad tasks
+  const isAdTask = (AD_TASKS as readonly string[]).includes(taskType);
+  if (isAdTask) {
+    const adWatchCount = userData.adWatchCount || 0;
+    if (adWatchCount >= DAILY_AD_LIMIT) {
+      return { success: false, error: `Daily ad limit reached (${DAILY_AD_LIMIT})` };
+    }
+  }
+
   // Check if task already completed in this cycle
   if (userData.taskProgress?.[taskType] === 'completed') {
     return { success: false, error: 'Task already completed in this cycle' };
@@ -130,9 +142,9 @@ export async function claimTask(
   // Calculate reward (coins)
   const reward = TASK_REWARDS[taskType] || 0;
 
-  // Check if all tasks will be complete after this one
+  // Check if all 12 core tasks will be complete after this one
   const updatedProgress = { ...userData.taskProgress, [taskType]: 'completed' };
-  const allDone = Object.values(updatedProgress).every(s => s === 'completed');
+  const allDone = CORE_TASK_KEYS.every(key => updatedProgress[key] === 'completed');
 
   const serverNow = firebaseAdmin.firestore.FieldValue.serverTimestamp();
   const batch = db.batch();
@@ -145,6 +157,11 @@ export async function claimTask(
     totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(reward),
     updatedAt: serverNow,
   };
+
+  // Increment ad watch count for ad tasks
+  if (isAdTask) {
+    userUpdate.adWatchCount = firebaseAdmin.firestore.FieldValue.increment(1);
+  }
 
   // Set the appropriate cooldown timer
   if (networkField) {

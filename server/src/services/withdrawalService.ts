@@ -1,6 +1,6 @@
 import { db, Collections } from '../config/firebase';
 import { FieldValue } from 'firebase-admin/firestore';
-import { MIN_WITHDRAWAL_COINS, DEFAULT_EXCHANGE_RATE } from '../config/constants';
+import { MIN_WITHDRAWAL_COINS, DEFAULT_EXCHANGE_RATE, EXCHANGE_RATE_PKR } from '../config/constants';
 
 interface WithdrawalRequest {
   uid: string;
@@ -19,7 +19,7 @@ async function getExchangeRate(): Promise<{ coinsPerUnit: number; pkrPerUnit: nu
   const config = configDoc.exists ? configDoc.data()! : {};
   return {
     coinsPerUnit: config.exchange_rate_coins || DEFAULT_EXCHANGE_RATE,
-    pkrPerUnit: config.exchange_rate_pkr || 100,
+    pkrPerUnit: config.exchange_rate_pkr || EXCHANGE_RATE_PKR,
   };
 }
 

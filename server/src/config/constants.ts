@@ -129,7 +129,7 @@ export const LOYALTY_TIERS = [
 ] as const;
 
 // Task categories
-export const AD_TASKS = ['task_1', 'task_2', 'task_5', 'task_6', 'task_7', 'task_8'] as const;
+export const AD_TASKS = ['task_1', 'task_2', 'task_5', 'task_6', 'task_7'] as const;
 export const META_TASKS = ['meta_1', 'meta_2', 'meta_3', 'meta_4', 'meta_5'] as const;
 export const INVITE_TASKS: Record<string, number> = {
   [TASK_TYPES.TASK_3]: 15,
@@ -181,11 +181,17 @@ export const AD_IDS = {
 export const MAX_REFERRAL_LEVELS_ADMIN = 6;
 export const MAX_REFERRAL_LEVELS_USER = 3;
 
-// Default task progress object (all tasks pending)
+// Core task keys (task_1 through task_12 only — meta + loyalty tracked separately)
+export const CORE_TASK_KEYS = [
+  TASK_TYPES.TASK_1, TASK_TYPES.TASK_2, TASK_TYPES.TASK_3, TASK_TYPES.TASK_4,
+  TASK_TYPES.TASK_5, TASK_TYPES.TASK_6, TASK_TYPES.TASK_7, TASK_TYPES.TASK_8,
+  TASK_TYPES.TASK_9, TASK_TYPES.TASK_10, TASK_TYPES.TASK_11, TASK_TYPES.TASK_12,
+] as const;
+
+// Default task progress object (task_1–task_12 only, NOT meta tasks)
 export function getDefaultTaskProgress(): Record<string, string> {
   const progress: Record<string, string> = {};
-  for (const key of Object.values(TASK_TYPES)) {
-    if (key === 'loyalty') continue; // Loyalty tracked separately
+  for (const key of CORE_TASK_KEYS) {
     progress[key] = 'pending';
   }
   return progress;

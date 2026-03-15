@@ -204,6 +204,7 @@ interface ConfigApi {
 }
 
 data class AppConfigResponse(
+    val ad_provider: String = "admob",
     val exchange_rate_coins: Int,
     val exchange_rate_pkr: Int,
     val daily_ad_limit: Int,

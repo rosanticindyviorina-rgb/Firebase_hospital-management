@@ -423,7 +423,12 @@ class HomeFragment : Fragment() {
             // Show ad for the correct network per task type
             val network = taskNetworkMap[taskType]
             if (network != null) {
-                adManager.showRewardedAd(requireActivity(), network)
+                val adWatched = adManager.showRewardedAd(requireActivity(), network)
+                if (!adWatched) {
+                    Toast.makeText(context, "Please watch the full ad to claim this task", Toast.LENGTH_SHORT).show()
+                    button.isEnabled = true
+                    return@launch
+                }
             }
 
             taskRepo.claimTask(taskType).onSuccess { response ->
@@ -495,6 +500,14 @@ class HomeFragment : Fragment() {
     private fun claimLoyalty() {
         btnLoyaltyClaim.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
+            // Loyalty requires watching one ad per day (uses default provider)
+            val adWatched = adManager.showRewardedAd(requireActivity(), "admob")
+            if (!adWatched) {
+                Toast.makeText(context, "Please watch the ad to claim your daily reward", Toast.LENGTH_SHORT).show()
+                btnLoyaltyClaim.isEnabled = true
+                return@launch
+            }
+
             taskRepo.claimLoyalty().onSuccess { result ->
                 showResultDialog(
                     title = getString(R.string.loyalty_title),

@@ -5,6 +5,8 @@ import {
   TASK_TYPES,
   TASK_COOLDOWN_MS,
   CYCLE_DURATION_MS,
+  NETWORK_COOLDOWN_FIELDS,
+  CORE_TASK_KEYS,
   getDefaultTaskProgress,
 } from '../config/constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -82,7 +84,7 @@ async function applyRandomTaskResult(
   const batch = db.batch();
 
   const updatedProgress = { ...userData.taskProgress, [taskKey]: 'completed' };
-  const allDone = Object.values(updatedProgress).every(s => s === 'completed');
+  const allDone = CORE_TASK_KEYS.every(key => updatedProgress[key] === 'completed');
 
   const userUpdate: Record<string, unknown> = {
     [`taskProgress.${taskKey}`]: 'completed',
@@ -102,6 +104,11 @@ async function applyRandomTaskResult(
     userUpdate.taskProgress = getDefaultTaskProgress();
     userUpdate.lastCycleStartAt = serverNow;
     userUpdate.adWatchCount = 0;
+    // Reset all network cooldowns on cycle reset
+    for (const field of Object.values(NETWORK_COOLDOWN_FIELDS)) {
+      userUpdate[field] = null;
+    }
+    userUpdate.nextTaskAt = null;
   }
 
   batch.update(userRef, userUpdate);

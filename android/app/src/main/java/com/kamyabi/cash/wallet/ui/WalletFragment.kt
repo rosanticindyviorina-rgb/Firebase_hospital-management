@@ -132,7 +132,7 @@ class WalletFragment : Fragment() {
                 "task_reward" -> "\u25B6" // play icon
                 "meta_task_reward" -> "\uD83D\uDCF1" // phone
                 "referral_commission" -> "\u2B50" // star
-                "invite_bonus" -> "\uD83C\uDF89" // party
+                "invite_bonus", "invite_bonus_l1" -> "\uD83C\uDF89" // party
                 "spin_reward" -> "\uD83C\uDFB0" // slot
                 "scratch_reward" -> "\uD83C\uDFAB" // ticket
                 "loyalty_reward" -> "\uD83C\uDF1F" // star
@@ -147,7 +147,7 @@ class WalletFragment : Fragment() {
                 "task_reward" -> "Task Reward (${entry.taskType ?: ""})"
                 "meta_task_reward" -> "Meta Ad Reward (${entry.taskType ?: ""})"
                 "referral_commission" -> "Referral Commission (${entry.level ?: ""})"
-                "invite_bonus" -> "Invite Bonus"
+                "invite_bonus", "invite_bonus_l1" -> "Invite Bonus"
                 "spin_reward" -> "Spin Reward"
                 "scratch_reward" -> "Scratch Reward"
                 "loyalty_reward" -> "Daily Loyalty Reward"

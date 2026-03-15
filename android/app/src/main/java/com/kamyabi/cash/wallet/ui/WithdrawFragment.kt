@@ -143,7 +143,7 @@ class WithdrawFragment : Fragment() {
         val receive = pkrAmount - fee
 
         val formatter = NumberFormat.getNumberInstance(Locale.US)
-        tvFee.text = if (selectedMethod == "usdt") "USDT ${formatter.format(fee)}" else "PKR 0"
+        tvFee.text = if (selectedMethod == "usdt") "PKR ${formatter.format(fee.toLong())} (2% fee)" else "PKR 0"
         tvReceiveAmount.text = "PKR ${formatter.format(receive.toLong())}"
     }
 
