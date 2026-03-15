@@ -4,16 +4,36 @@ import { taskLimiter } from '../middleware/rateLimiter';
 import { claimTask, getTaskStatus } from '../services/taskService';
 import { executeSpin, executeScratch } from '../services/spinService';
 import { claimRedeemCode } from '../services/redeemService';
-import { TASK_TYPES } from '../config/constants';
+import { claimMetaTask, getMetaTaskStatus } from '../services/metaTaskService';
+import { claimLoyaltyReward, getLoyaltyStatus } from '../services/loyaltyService';
+import { TASK_TYPES, META_TASKS } from '../config/constants';
 
 const router = Router();
 
 /**
- * POST /tasks/claim — Claims a task reward (coins).
+ * POST /tasks/claim — Claims a core task reward (coins).
  */
 router.post('/claim', taskLimiter, verifyAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { taskType } = req.body;
+
+    // Check if it's a Meta task — route to Meta handler
+    if (taskType && META_TASKS.includes(taskType)) {
+      const result = await claimMetaTask(req.uid!, taskType);
+      if (!result.success) {
+        res.status(400).json({ error: result.error, nextMetaCycleAt: result.nextMetaCycleAt });
+        return;
+      }
+      res.json({
+        success: true,
+        reward: result.reward,
+        currency: 'coins',
+        isHalfReward: result.isHalfReward,
+        nextMetaCycleAt: result.nextMetaCycleAt,
+        metaProgress: result.metaProgress,
+      });
+      return;
+    }
 
     if (!taskType || !Object.values(TASK_TYPES).includes(taskType)) {
       res.status(400).json({
@@ -29,7 +49,13 @@ router.post('/claim', taskLimiter, verifyAuth, async (req: AuthenticatedRequest,
       return;
     }
 
-    res.json({ success: true, reward: result.reward, currency: 'coins', nextTaskAt: result.nextTaskAt });
+    res.json({
+      success: true,
+      reward: result.reward,
+      currency: 'coins',
+      nextTaskAt: result.nextTaskAt,
+      networkCooldowns: result.networkCooldowns,
+    });
   } catch (error) {
     console.error('Task claim error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -37,12 +63,21 @@ router.post('/claim', taskLimiter, verifyAuth, async (req: AuthenticatedRequest,
 });
 
 /**
- * GET /tasks/status — Gets current task/timer status.
+ * GET /tasks/status — Gets current task/timer status (includes Meta + Loyalty).
  */
 router.get('/status', verifyAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const status = await getTaskStatus(req.uid!);
-    res.json(status);
+    const [coreStatus, metaStatus, loyaltyStatus] = await Promise.all([
+      getTaskStatus(req.uid!),
+      getMetaTaskStatus(req.uid!),
+      getLoyaltyStatus(req.uid!),
+    ]);
+
+    res.json({
+      ...coreStatus,
+      meta: metaStatus,
+      loyalty: loyaltyStatus,
+    });
   } catch (error) {
     console.error('Task status error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -101,6 +136,29 @@ router.post('/redeem', taskLimiter, verifyAuth, async (req: AuthenticatedRequest
     res.json({ success: true, coinsAwarded: result.coinsAwarded, currency: 'coins' });
   } catch (error) {
     console.error('Redeem error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * POST /tasks/loyalty — Claim daily loyalty reward (one per day).
+ */
+router.post('/loyalty', taskLimiter, verifyAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const result = await claimLoyaltyReward(req.uid!);
+    if (!result.success) {
+      res.status(400).json({ error: result.error });
+      return;
+    }
+    res.json({
+      success: true,
+      reward: result.reward,
+      currency: 'coins',
+      dayOfMonth: result.dayOfMonth,
+      streakDay: result.streakDay,
+    });
+  } catch (error) {
+    console.error('Loyalty error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

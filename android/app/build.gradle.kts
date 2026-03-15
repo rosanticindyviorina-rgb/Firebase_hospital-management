@@ -94,6 +94,9 @@ dependencies {
     // AdMob
     implementation("com.google.android.gms:play-services-ads:23.0.0")
 
+    // Unity Ads
+    implementation("com.unity3d.ads:unity-ads:4.9.3")
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")

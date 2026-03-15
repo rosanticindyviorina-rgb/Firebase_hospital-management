@@ -135,24 +135,13 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     createdAt: now,
   }, { merge: true });
 
-  // Credit L1 invite bonus (150 coins) to the inviter
-  batch.update(db.collection(Collections.USERS).doc(inviterUid), {
-    coinBalance: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_COINS),
-    totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_COINS),
-    updatedAt: now,
+  // Mark invite bonus as pending — 150 coins awarded to inviter only
+  // after this new user completes at least one full task session.
+  // The bonus is credited in taskService.ts on first task completion.
+  batch.update(db.collection(Collections.USERS).doc(uid), {
+    inviteBonusPending: true,
+    inviteBonusInviterUid: inviterUid,
   });
-
-  batch.set(
-    db.collection(Collections.LEDGER).doc(inviterUid).collection('entries').doc(),
-    {
-      uid: inviterUid,
-      type: 'invite_bonus_l1',
-      amount: L1_INVITE_BONUS_COINS,
-      currency: 'coins',
-      fromUid: uid,
-      createdAt: now,
-    }
-  );
 
   await batch.commit();
   return { success: true };

@@ -6,6 +6,7 @@ import {
   TASK_REWARDS,
   INVITE_TASKS,
   REFERRAL_COMMISSION,
+  L1_INVITE_BONUS_COINS,
   NETWORK_COOLDOWN_MS,
   TASK_NETWORK_MAP,
   NETWORK_COOLDOWN_FIELDS,
@@ -199,6 +200,13 @@ export async function claimTask(
     console.error('Referral commission error:', err)
   );
 
+  // Credit invite bonus to inviter on first task completion
+  if (userData.inviteBonusPending && userData.inviteBonusInviterUid) {
+    creditInviteBonus(uid, userData.inviteBonusInviterUid).catch(err =>
+      console.error('Invite bonus error:', err)
+    );
+  }
+
   return {
     success: true,
     reward,
@@ -299,4 +307,40 @@ async function processReferralCommissions(
 
     await batch.commit();
   }
+}
+
+/**
+ * Credits invite bonus to the inviter after the invitee completes their first task.
+ * This prevents fake invite spamming — inviter only gets coins for real active users.
+ */
+async function creditInviteBonus(inviteeUid: string, inviterUid: string): Promise<void> {
+  const now = firebaseAdmin.firestore.FieldValue.serverTimestamp();
+  const batch = db.batch();
+
+  // Credit 150 coins to inviter
+  batch.update(db.collection(Collections.USERS).doc(inviterUid), {
+    coinBalance: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_COINS),
+    totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(L1_INVITE_BONUS_COINS),
+    updatedAt: now,
+  });
+
+  // Ledger entry for inviter
+  batch.set(
+    db.collection(Collections.LEDGER).doc(inviterUid).collection('entries').doc(),
+    {
+      uid: inviterUid,
+      type: 'invite_bonus_l1',
+      amount: L1_INVITE_BONUS_COINS,
+      currency: 'coins',
+      fromUid: inviteeUid,
+      createdAt: now,
+    }
+  );
+
+  // Clear the pending flag on invitee
+  batch.update(db.collection(Collections.USERS).doc(inviteeUid), {
+    inviteBonusPending: false,
+  });
+
+  await batch.commit();
 }

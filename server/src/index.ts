@@ -41,8 +41,8 @@ app.get('/config', async (_req, res) => {
       ad_provider: config.ad_provider || 'admob',
       maintenance_mode: config.maintenance_mode || false,
       min_app_version: config.min_app_version || 1,
-      exchange_rate_coins: config.exchange_rate_coins || 3000,
-      exchange_rate_pkr: config.exchange_rate_pkr || 100,
+      exchange_rate_coins: config.exchange_rate_coins || 2000,
+      exchange_rate_pkr: config.exchange_rate_pkr || 50,
       daily_ad_limit: config.daily_ad_limit || 8,
     });
   } catch (error) {
