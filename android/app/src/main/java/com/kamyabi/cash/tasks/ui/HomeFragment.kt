@@ -47,6 +47,10 @@ class HomeFragment : Fragment() {
     // Redeem code button
     private lateinit var btnRedeemCode: Button
 
+    // Ad watch count
+    private lateinit var tvAdWatchCount: TextView
+    private var dailyAdLimit = 8
+
     // Exchange rate: default 2000 coins = 50 PKR
     private var exchangeRateCoins = 2000
     private var exchangeRatePkr = 50
@@ -83,6 +87,20 @@ class HomeFragment : Fragment() {
     // Meta task types
     private val metaTaskTypes = setOf("meta_1", "meta_2", "meta_3", "meta_4", "meta_5")
 
+    // Task-to-network mapping (must match server TASK_NETWORK_MAP)
+    private val taskNetworkMap = mapOf(
+        "task_1" to "admob",
+        "task_2" to "admob",
+        "task_5" to "applovin",
+        "task_6" to "applovin",
+        "task_7" to "unity",
+        "meta_1" to "meta",
+        "meta_2" to "meta",
+        "meta_3" to "meta",
+        "meta_4" to "meta",
+        "meta_5" to "meta",
+    )
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -106,6 +124,7 @@ class HomeFragment : Fragment() {
         btnWithdraw = view.findViewById(R.id.btnWithdraw)
         btnShareCode = view.findViewById(R.id.btnShareCode)
         tvCooldownTimer = view.findViewById(R.id.tvCooldownTimer)
+        tvAdWatchCount = view.findViewById(R.id.tvAdWatchCount)
 
         // Loyalty views
         tvLoyaltyReward = view.findViewById(R.id.tvLoyaltyReward)
@@ -287,6 +306,7 @@ class HomeFragment : Fragment() {
                 val config = ServiceLocator.apiClient.configApi.getConfig()
                 exchangeRateCoins = config.exchange_rate_coins
                 exchangeRatePkr = config.exchange_rate_pkr
+                dailyAdLimit = config.daily_ad_limit
             } catch (_: Exception) {}
         }
     }
@@ -367,6 +387,13 @@ class HomeFragment : Fragment() {
             tvLoyaltyReward.text = "${tvLoyaltyReward.text} | ${getString(R.string.loyalty_streak, streak.toString())}"
         }
 
+        // Show ad watch count / daily limit
+        val adCount = status.adWatchCount
+        if (adCount > 0 || dailyAdLimit > 0) {
+            tvAdWatchCount.visibility = View.VISIBLE
+            tvAdWatchCount.text = "Ads today: $adCount / $dailyAdLimit"
+        }
+
         startCooldownTimer(status.nextTaskAt)
     }
 
@@ -393,13 +420,20 @@ class HomeFragment : Fragment() {
     private fun claimTask(taskType: String, button: Button) {
         button.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
-            // Show ad first for ad tasks and meta tasks
-            if (taskType in adTaskTypes || taskType in metaTaskTypes) {
-                adManager.showRewardedAd(requireActivity())
+            // Show ad for the correct network per task type
+            val network = taskNetworkMap[taskType]
+            if (network != null) {
+                adManager.showRewardedAd(requireActivity(), network)
             }
 
             taskRepo.claimTask(taskType).onSuccess { response ->
-                Toast.makeText(context, "+${response.reward?.toInt()} Coins", Toast.LENGTH_SHORT).show()
+                showResultDialog(
+                    title = "Task Complete!",
+                    icon = "\uD83C\uDF89",
+                    prize = response.reward,
+                    winMessage = "+${response.reward?.toInt()} Coins earned!",
+                    loseMessage = "Task claimed"
+                )
                 loadData()
             }.onFailure { e ->
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()

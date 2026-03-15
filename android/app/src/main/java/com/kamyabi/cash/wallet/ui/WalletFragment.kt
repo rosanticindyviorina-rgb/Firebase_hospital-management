@@ -130,22 +130,30 @@ class WalletFragment : Fragment() {
             // Icon based on type
             holder.tvIcon.text = when (entry.type) {
                 "task_reward" -> "\u25B6" // play icon
+                "meta_task_reward" -> "\uD83D\uDCF1" // phone
                 "referral_commission" -> "\u2B50" // star
+                "invite_bonus" -> "\uD83C\uDF89" // party
                 "spin_reward" -> "\uD83C\uDFB0" // slot
                 "scratch_reward" -> "\uD83C\uDFAB" // ticket
+                "loyalty_reward" -> "\uD83C\uDF1F" // star
                 "redeem_code" -> "\uD83C\uDF81" // gift
                 "withdrawal" -> "\u2B07" // down arrow
+                "withdrawal_refund" -> "\u2B06" // up arrow
                 else -> "\u25CF"
             }
 
             // Title
             holder.tvTitle.text = when (entry.type) {
                 "task_reward" -> "Task Reward (${entry.taskType ?: ""})"
+                "meta_task_reward" -> "Meta Ad Reward (${entry.taskType ?: ""})"
                 "referral_commission" -> "Referral Commission (${entry.level ?: ""})"
+                "invite_bonus" -> "Invite Bonus"
                 "spin_reward" -> "Spin Reward"
                 "scratch_reward" -> "Scratch Reward"
+                "loyalty_reward" -> "Daily Loyalty Reward"
                 "redeem_code" -> "Redeem Code"
                 "withdrawal" -> "Withdrawal"
+                "withdrawal_refund" -> "Withdrawal Refund"
                 else -> entry.type
             }
 

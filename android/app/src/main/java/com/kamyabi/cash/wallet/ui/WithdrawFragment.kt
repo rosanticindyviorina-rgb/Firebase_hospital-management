@@ -116,7 +116,7 @@ class WithdrawFragment : Fragment() {
                 val config = ServiceLocator.apiClient.configApi.getConfig()
                 exchangeRateCoins = config.exchange_rate_coins
                 exchangeRatePkr = config.exchange_rate_pkr
-                minWithdrawalCoins = config.exchange_rate_coins
+                minWithdrawalCoins = config.min_withdrawal_coins
                 loadBalance()
             } catch (_: Exception) {}
         }

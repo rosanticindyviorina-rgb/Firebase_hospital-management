@@ -136,7 +136,7 @@ class ProfileFragment : Fragment() {
             // Load invite count
             try {
                 val referralDoc = db.collection("referrals").document(uid).get().await()
-                val invites = (referralDoc.get("level1") as? List<*>)?.size ?: 0
+                val invites = referralDoc.getLong("verifiedInvitesL1")?.toInt() ?: 0
                 tvStatInvites.text = invites.toString()
             } catch (_: Exception) {}
         }

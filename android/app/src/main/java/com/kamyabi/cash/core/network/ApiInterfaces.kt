@@ -206,5 +206,6 @@ interface ConfigApi {
 data class AppConfigResponse(
     val exchange_rate_coins: Int,
     val exchange_rate_pkr: Int,
-    val daily_ad_limit: Int
+    val daily_ad_limit: Int,
+    val min_withdrawal_coins: Int
 )

@@ -44,6 +44,7 @@ app.get('/config', async (_req, res) => {
       exchange_rate_coins: config.exchange_rate_coins || 2000,
       exchange_rate_pkr: config.exchange_rate_pkr || 50,
       daily_ad_limit: config.daily_ad_limit || 8,
+      min_withdrawal_coins: config.min_withdrawal_coins || 2000,
     });
   } catch (error) {
     console.error('Config fetch error:', error);
