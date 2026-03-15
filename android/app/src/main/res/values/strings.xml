@@ -68,7 +68,7 @@
     <!-- Wallet -->
     <string name="wallet_title">Wallet</string>
     <string name="withdraw_title">Withdraw Funds</string>
-    <string name="withdraw_min">Minimum: 3,000 Coins (100 PKR)</string>
+    <string name="withdraw_min">Minimum: 2,000 Coins (50 PKR)</string>
     <string name="withdraw_amount_hint">Enter coins to withdraw</string>
     <string name="withdraw_account_hint">Account number</string>
     <string name="withdraw_wallet_hint">Wallet address (TRC-20)</string>
@@ -127,6 +127,25 @@
     <!-- Scratch Card -->
     <string name="scratch_title">Scratch &amp; Win!</string>
     <string name="scratch_result_win">You won %s Coins!</string>
+
+    <!-- Loyalty -->
+    <string name="loyalty_title">Daily Loyalty Reward</string>
+    <string name="loyalty_reward_today">+%s Coins Today</string>
+    <string name="loyalty_claimed">Claimed Today</string>
+    <string name="loyalty_streak">%s Day Streak</string>
+
+    <!-- Meta Tasks -->
+    <string name="meta_section_title">Meta Ad Tasks</string>
+    <string name="meta_1_title">Meta Ad #1</string>
+    <string name="meta_1_reward">+25 Coins</string>
+    <string name="meta_2_title">Meta Ad #2</string>
+    <string name="meta_2_reward">+30 Coins</string>
+    <string name="meta_3_title">Meta Ad #3</string>
+    <string name="meta_3_reward">+35 Coins</string>
+    <string name="meta_4_title">Meta Ad #4</string>
+    <string name="meta_4_reward">+40 Coins</string>
+    <string name="meta_5_title">Meta Ad #5</string>
+    <string name="meta_5_reward">+50 Coins</string>
 
     <!-- Redeem Code -->
     <string name="redeem_title">Redeem Code</string>

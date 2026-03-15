@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.kamyabi.cash.R
+import com.kamyabi.cash.core.di.ServiceLocator
 import com.kamyabi.cash.wallet.data.LedgerEntry
 import com.kamyabi.cash.wallet.data.WalletRepository
 import kotlinx.coroutines.launch
@@ -29,9 +30,9 @@ class WalletFragment : Fragment() {
     private lateinit var rvTransactions: RecyclerView
     private lateinit var tvNoTransactions: TextView
 
-    // Exchange rate: default 3000 coins = 100 PKR
-    private var exchangeRateCoins = 3000
-    private var exchangeRatePkr = 100
+    // Exchange rate: default 2000 coins = 50 PKR
+    private var exchangeRateCoins = 2000
+    private var exchangeRatePkr = 50
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_wallet, container, false)
@@ -58,7 +59,19 @@ class WalletFragment : Fragment() {
 
         rvTransactions.layoutManager = LinearLayoutManager(context)
 
+        fetchConfig()
         loadData()
+    }
+
+    private fun fetchConfig() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val config = ServiceLocator.apiClient.configApi.getConfig()
+                exchangeRateCoins = config.exchange_rate_coins
+                exchangeRatePkr = config.exchange_rate_pkr
+                loadData()
+            } catch (_: Exception) {}
+        }
     }
 
     private fun navigateToWithdraw(method: String) {

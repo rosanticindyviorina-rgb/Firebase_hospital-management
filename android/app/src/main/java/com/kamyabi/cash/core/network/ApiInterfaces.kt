@@ -94,7 +94,18 @@ interface TaskApi {
 
     @POST("tasks/redeem")
     suspend fun claimRedeemCode(@Body body: Map<String, String>): RedeemResultResponse
+
+    @POST("tasks/loyalty")
+    suspend fun claimLoyalty(): LoyaltyClaimResponse
 }
+
+data class LoyaltyClaimResponse(
+    val success: Boolean,
+    val reward: Double?,
+    val streakDay: Int?,
+    val dayOfMonth: Int?,
+    val error: String?
+)
 
 data class TaskClaimResponse(
     val success: Boolean,
@@ -114,7 +125,23 @@ data class TaskStatusResponse(
     val coinBalance: Double,
     val totalCoinsEarned: Double,
     val adWatchCount: Int,
-    val networkCooldowns: Map<String, Long>?
+    val networkCooldowns: Map<String, Long>?,
+    val meta: MetaStatusResponse?,
+    val loyalty: LoyaltyStatusResponse?
+)
+
+data class MetaStatusResponse(
+    val metaProgress: Map<String, String>?,
+    val cycleReady: Boolean?,
+    val nextMetaCycleAt: Long?,
+    val metaCycleCount: Int?
+)
+
+data class LoyaltyStatusResponse(
+    val claimedToday: Boolean?,
+    val loyaltyStreak: Int?,
+    val todayReward: Int?,
+    val dayOfMonth: Int?
 )
 
 data class SpinResultResponse(
@@ -171,6 +198,11 @@ data class WithdrawalItem(
 // ============================================
 // Config API
 // ============================================
+interface ConfigApi {
+    @GET("config")
+    suspend fun getConfig(): AppConfigResponse
+}
+
 data class AppConfigResponse(
     val exchange_rate_coins: Int,
     val exchange_rate_pkr: Int,

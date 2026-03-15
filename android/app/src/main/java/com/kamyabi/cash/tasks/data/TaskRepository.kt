@@ -1,6 +1,7 @@
 package com.kamyabi.cash.tasks.data
 
 import com.kamyabi.cash.core.di.ServiceLocator
+import com.kamyabi.cash.core.network.LoyaltyClaimResponse
 import com.kamyabi.cash.core.network.ScratchResultResponse
 import com.kamyabi.cash.core.network.SpinResultResponse
 import com.kamyabi.cash.core.network.RedeemResultResponse
@@ -86,6 +87,22 @@ class TaskRepository {
                 Result.success(response)
             } else {
                 Result.failure(Exception(response.error ?: "Redeem failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Claims daily loyalty reward.
+     */
+    suspend fun claimLoyalty(): Result<LoyaltyClaimResponse> {
+        return try {
+            val response = taskApi.claimLoyalty()
+            if (response.success) {
+                Result.success(response)
+            } else {
+                Result.failure(Exception(response.error ?: "Loyalty claim failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)

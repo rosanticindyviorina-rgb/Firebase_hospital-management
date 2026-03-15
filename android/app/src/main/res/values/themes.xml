@@ -17,6 +17,14 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <!-- Dialog theme matching app dark style -->
+    <style name="Theme.KamyabiCash.Dialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:background">@color/bg_surface</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="colorAccent">@color/primary</item>
+    </style>
+
     <!-- Splash screen theme -->
     <style name="Theme.KamyabiCash.Splash" parent="Theme.KamyabiCash">
         <item name="android:windowBackground">@drawable/bg_splash_gradient</item>

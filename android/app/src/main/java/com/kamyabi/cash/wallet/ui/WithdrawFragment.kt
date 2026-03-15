@@ -27,10 +27,10 @@ class WithdrawFragment : Fragment() {
     private var selectedMethod = "easypaisa"
     private var currentCoinBalance = 0.0
 
-    // Exchange rate: default 3000 coins = 100 PKR
-    private var exchangeRateCoins = 3000
-    private var exchangeRatePkr = 100
-    private var minWithdrawalCoins = 3000
+    // Exchange rate: default 2000 coins = 50 PKR
+    private var exchangeRateCoins = 2000
+    private var exchangeRatePkr = 50
+    private var minWithdrawalCoins = 2000
 
     private lateinit var tvSelectedMethod: TextView
     private lateinit var tvMethodDesc: TextView
@@ -56,6 +56,7 @@ class WithdrawFragment : Fragment() {
         bindViews(view)
         setupMethod()
         setupAmountWatcher()
+        fetchConfig()
         loadBalance()
 
         btnSubmitWithdraw.setOnClickListener { submitWithdrawal() }
@@ -106,6 +107,18 @@ class WithdrawFragment : Fragment() {
                 etAccountNumber.hint = getString(R.string.withdraw_wallet_hint)
                 etAccountNumber.inputType = android.text.InputType.TYPE_CLASS_TEXT
             }
+        }
+    }
+
+    private fun fetchConfig() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val config = ServiceLocator.apiClient.configApi.getConfig()
+                exchangeRateCoins = config.exchange_rate_coins
+                exchangeRatePkr = config.exchange_rate_pkr
+                minWithdrawalCoins = config.exchange_rate_coins
+                loadBalance()
+            } catch (_: Exception) {}
         }
     }
 
