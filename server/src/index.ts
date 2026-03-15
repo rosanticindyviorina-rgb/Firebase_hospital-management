@@ -119,21 +119,6 @@ app.post('/seed', async (_req, res) => {
   }
 });
 
-// One-time config fix endpoint
-app.post('/fix-config', async (_req, res) => {
-  try {
-    const { db, Collections } = await import('./config/firebase');
-    await db.collection(Collections.CONFIG).doc('app').set({
-      exchange_rate_coins: 2000,
-      exchange_rate_pkr: 50,
-      daily_ad_limit: 8,
-    }, { merge: true });
-    res.json({ success: true, message: 'Config updated: 2000 coins = 50 PKR' });
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
-  }
-});
-
 // 404 handler
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });
