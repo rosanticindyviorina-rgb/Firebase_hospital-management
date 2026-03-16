@@ -198,6 +198,24 @@ data class WithdrawalItem(
 )
 
 // ============================================
+// Transfer API
+// ============================================
+interface TransferApi {
+
+    @POST("transfer")
+    suspend fun transferCoins(@Body body: Map<String, String>): TransferResponse
+}
+
+data class TransferResponse(
+    val success: Boolean,
+    val coinsSent: Double?,
+    val fee: Double?,
+    val recipientReceived: Double?,
+    val recipientUid: String?,
+    val error: String?
+)
+
+// ============================================
 // Config API
 // ============================================
 interface ConfigApi {

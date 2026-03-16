@@ -69,6 +69,13 @@ class HomeFragment : Fragment() {
     private var cooldownTimer: CountDownTimer? = null
     private lateinit var tvCooldownTimer: TextView
 
+    // Per-network cooldown timers
+    private lateinit var tvSilverCooldown: TextView
+    private lateinit var tvGoldCooldown: TextView
+    private lateinit var tvDiamondCooldown: TextView
+    private lateinit var tvEliteCooldown: TextView
+    private val networkTimers = mutableListOf<CountDownTimer>()
+
     // Banner slider
     private lateinit var bannerPager: ViewPager2
     private lateinit var bannerIndicator: LinearLayout
@@ -132,6 +139,12 @@ class HomeFragment : Fragment() {
 
         // Redeem code
         btnRedeemCode = view.findViewById(R.id.btnRedeemCode)
+
+        // Per-network cooldown timers
+        tvSilverCooldown = view.findViewById(R.id.tvSilverCooldown)
+        tvGoldCooldown = view.findViewById(R.id.tvGoldCooldown)
+        tvDiamondCooldown = view.findViewById(R.id.tvDiamondCooldown)
+        tvEliteCooldown = view.findViewById(R.id.tvEliteCooldown)
 
         // Bind all 12 task cards
         val cardIds = mapOf(
@@ -395,6 +408,44 @@ class HomeFragment : Fragment() {
         }
 
         startCooldownTimer(status.nextTaskAt)
+
+        // Per-network cooldown timers
+        cancelNetworkTimers()
+        startNetworkCooldown(tvSilverCooldown, status.networkCooldowns?.get("admob"))
+        startNetworkCooldown(tvGoldCooldown, status.networkCooldowns?.get("unity"))
+        startNetworkCooldown(tvDiamondCooldown, status.networkCooldowns?.get("applovin"))
+        startNetworkCooldown(tvEliteCooldown, status.meta?.nextMetaAt)
+    }
+
+    private fun cancelNetworkTimers() {
+        networkTimers.forEach { it.cancel() }
+        networkTimers.clear()
+    }
+
+    private fun startNetworkCooldown(tv: TextView, nextAt: Long?) {
+        if (nextAt == null || nextAt <= 0) {
+            tv.visibility = View.GONE
+            return
+        }
+        val remaining = nextAt - System.currentTimeMillis()
+        if (remaining <= 0) {
+            tv.visibility = View.GONE
+            return
+        }
+        tv.visibility = View.VISIBLE
+        val timer = object : CountDownTimer(remaining, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val h = millisUntilFinished / (1000 * 60 * 60)
+                val m = (millisUntilFinished % (1000 * 60 * 60)) / (1000 * 60)
+                val s = (millisUntilFinished % (1000 * 60)) / 1000
+                tv.text = if (h > 0) "Remaining: ${h}h ${m}m ${s}s" else "Remaining: ${m}m ${s}s"
+            }
+            override fun onFinish() {
+                tv.visibility = View.GONE
+                loadData()
+            }
+        }.start()
+        networkTimers.add(timer)
     }
 
     private fun updateTaskButton(button: Button, status: String?) {
@@ -621,6 +672,7 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         cycleTimer?.cancel()
         cooldownTimer?.cancel()
+        cancelNetworkTimers()
         bannerHandler.removeCallbacks(bannerAutoScroll)
     }
 }

@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_wallet_to_withdraw"
             app:destination="@id/withdrawFragment" />
+        <action
+            android:id="@+id/action_wallet_to_transfer"
+            app:destination="@id/transferFragment" />
     </fragment>
 
     <fragment
@@ -27,5 +30,10 @@
         android:id="@+id/withdrawFragment"
         android:name="com.kamyabi.cash.wallet.ui.WithdrawFragment"
         android:label="@string/withdraw_title" />
+
+    <fragment
+        android:id="@+id/transferFragment"
+        android:name="com.kamyabi.cash.wallet.ui.TransferFragment"
+        android:label="Transfer Coins" />
 
 </navigation>

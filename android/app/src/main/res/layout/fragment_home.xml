@@ -164,6 +164,15 @@
             android:textSize="@dimen/text_xs"
             android:lineSpacingExtra="2dp" />
 
+        <TextView
+            android:id="@+id/tvSilverCooldown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_sm"
+            android:visibility="gone" />
+
         <!-- Daily Loyalty Reward -->
         <LinearLayout
             android:id="@+id/loyaltyCard"
@@ -295,6 +304,15 @@
             android:textSize="@dimen/text_xs"
             android:lineSpacingExtra="2dp" />
 
+        <TextView
+            android:id="@+id/tvGoldCooldown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_sm"
+            android:visibility="gone" />
+
         <!-- Task 7: Unity Ad (Gold) -->
         <include
             android:id="@+id/task7Card"
@@ -321,6 +339,15 @@
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_xs"
             android:lineSpacingExtra="2dp" />
+
+        <TextView
+            android:id="@+id/tvDiamondCooldown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_sm"
+            android:visibility="gone" />
 
         <!-- Task 5: AppLovin Ad #1 (Diamond) -->
         <include
@@ -356,6 +383,15 @@
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_xs"
             android:lineSpacingExtra="2dp" />
+
+        <TextView
+            android:id="@+id/tvEliteCooldown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_sm"
+            android:visibility="gone" />
 
         <!-- Meta Task 1 -->
         <include

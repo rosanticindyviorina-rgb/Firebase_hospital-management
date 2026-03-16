@@ -56,6 +56,9 @@ class WalletFragment : Fragment() {
         view.findViewById<View>(R.id.cardUsdt).setOnClickListener {
             navigateToWithdraw("usdt")
         }
+        view.findViewById<View>(R.id.btnTransferCoins).setOnClickListener {
+            findNavController().navigate(R.id.action_wallet_to_transfer)
+        }
 
         rvTransactions.layoutManager = LinearLayoutManager(context)
 
@@ -139,6 +142,8 @@ class WalletFragment : Fragment() {
                 "redeem_code" -> "\uD83C\uDF81" // gift
                 "withdrawal" -> "\u2B07" // down arrow
                 "withdrawal_refund" -> "\u2B06" // up arrow
+                "transfer_sent" -> "\u27A1" // right arrow
+                "transfer_received" -> "\u2B05" // left arrow
                 else -> "\u25CF"
             }
 
@@ -154,6 +159,8 @@ class WalletFragment : Fragment() {
                 "redeem_code" -> "Redeem Code"
                 "withdrawal" -> "Withdrawal"
                 "withdrawal_refund" -> "Withdrawal Refund"
+                "transfer_sent" -> "Coins Sent"
+                "transfer_received" -> "Coins Received"
                 else -> entry.type
             }
 

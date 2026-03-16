@@ -51,5 +51,6 @@ class ApiClient {
     val userApi: UserApi = retrofit.create(UserApi::class.java)
     val taskApi: TaskApi = retrofit.create(TaskApi::class.java)
     val withdrawalApi: WithdrawalApi = retrofit.create(WithdrawalApi::class.java)
+    val transferApi: TransferApi = retrofit.create(TransferApi::class.java)
     val configApi: ConfigApi = retrofit.create(ConfigApi::class.java)
 }
