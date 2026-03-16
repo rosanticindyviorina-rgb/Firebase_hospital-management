@@ -118,21 +118,12 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Daily Tasks Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/daily_tasks"
-            android:textColor="@color/text_primary"
-            android:textSize="@dimen/text_md"
-            android:textStyle="bold" />
-
+        <!-- Timers -->
         <TextView
             android:id="@+id/tvCycleTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
+            android:layout_marginTop="@dimen/spacing_md"
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_sm" />
 
@@ -153,6 +144,25 @@
             android:textColor="@color/accent_gold"
             android:textSize="@dimen/text_sm"
             android:visibility="gone" />
+
+        <!-- ============ SILVER SECTION (AdMob) ============ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/silver_section_title"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/silver_disclaimer"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_xs"
+            android:lineSpacingExtra="2dp" />
 
         <!-- Daily Loyalty Reward -->
         <LinearLayout
@@ -229,31 +239,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 5: Watch Ad #3 -->
-        <include
-            android:id="@+id/task5Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 6: Watch Ad #4 -->
-        <include
-            android:id="@+id/task6Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 7: Watch Ad #5 -->
-        <include
-            android:id="@+id/task7Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 8: Scratch Card -->
+        <!-- Task 8: Scratch Card (Silver) -->
         <include
             android:id="@+id/task8Card"
             layout="@layout/item_task_card"
@@ -261,7 +247,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 9: Invite 1 Friend -->
+        <!-- Invite Tasks (Silver) -->
         <include
             android:id="@+id/task9Card"
             layout="@layout/item_task_card"
@@ -269,7 +255,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 10: Invite 3 Friends -->
         <include
             android:id="@+id/task10Card"
             layout="@layout/item_task_card"
@@ -277,7 +262,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 11: Invite 5 Friends -->
         <include
             android:id="@+id/task11Card"
             layout="@layout/item_task_card"
@@ -285,7 +269,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Task 12: Invite 8 Friends -->
         <include
             android:id="@+id/task12Card"
             layout="@layout/item_task_card"
@@ -293,15 +276,86 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
-        <!-- Meta Ad Tasks Section -->
+        <!-- ============ GOLD SECTION (Unity) ============ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/gold_section_title"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/gold_disclaimer"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_xs"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Task 7: Unity Ad (Gold) -->
+        <include
+            android:id="@+id/task7Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- ============ DIAMOND SECTION (AppLovin) ============ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/diamond_section_title"
+            android:textColor="@color/accent_gold"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/diamond_disclaimer"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_xs"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Task 5: AppLovin Ad #1 (Diamond) -->
+        <include
+            android:id="@+id/task5Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- Task 6: AppLovin Ad #2 (Diamond) -->
+        <include
+            android:id="@+id/task6Card"
+            layout="@layout/item_task_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <!-- ============ ELITE SECTION (Meta) ============ -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/meta_section_title"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/accent_gold"
             android:textSize="@dimen/text_md"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/elite_disclaimer"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_xs"
+            android:lineSpacingExtra="2dp" />
 
         <!-- Meta Task 1 -->
         <include

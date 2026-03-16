@@ -8,7 +8,7 @@ export const META_CYCLE_GAP_MS = 8 * 60 * 60 * 1000; // 8 hours between Meta tas
 export const COINS_PER_PKR = 40; // 2000 coins / 50 PKR = 40 coins per PKR
 export const DEFAULT_EXCHANGE_RATE = 2000; // coins needed per 50 PKR
 export const EXCHANGE_RATE_PKR = 50; // PKR per exchange unit
-export const MIN_WITHDRAWAL_COINS = 2000; // Minimum withdrawal = 50 PKR
+export const MIN_WITHDRAWAL_COINS = 15000; // Minimum withdrawal = 375 PKR
 
 // Invite thresholds
 export const INVITE_CHALLENGE_TARGET = 15; // Task 3

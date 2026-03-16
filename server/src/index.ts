@@ -52,6 +52,22 @@ app.get('/config', async (_req, res) => {
   }
 });
 
+// One-time config sync (remove after use)
+app.post('/sync-config', async (_req, res) => {
+  try {
+    const { db, Collections } = await import('./config/firebase');
+    await db.collection(Collections.CONFIG).doc('app').set({
+      min_withdrawal_coins: 15000,
+      exchange_rate_coins: 2000,
+      exchange_rate_pkr: 50,
+      daily_ad_limit: 8,
+    }, { merge: true });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Seed endpoint — creates system user + referral code for first signups
 app.post('/seed', async (_req, res) => {
   try {

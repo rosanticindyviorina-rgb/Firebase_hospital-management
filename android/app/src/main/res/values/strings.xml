@@ -34,21 +34,38 @@
     <string name="cycle_resets_in">Cycle resets in</string>
     <string name="cooldown_active">Cooldown: %s</string>
 
+    <!-- Tier Section Titles -->
+    <string name="silver_section_title">SILVER SECTION</string>
+    <string name="silver_disclaimer">Daily Limit: All tasks available once every 24 hours.\nTimer: 3-minute countdown per task.\nMultitasking: Switch to Gold, Diamond, or Elite while timer runs.\nReward credited after timer finishes and task is completed.</string>
+
+    <string name="gold_section_title">GOLD SECTION</string>
+    <string name="gold_disclaimer">Dual Sessions: Tasks refresh twice daily (8-hour interval).\n3-minute timer per task — complete other tiers while waiting.\nCoins added to wallet immediately after completion.\nMultiple clicking or spamming = Permanent Account Ban.</string>
+
+    <string name="diamond_section_title">DIAMOND SECTION</string>
+    <string name="diamond_disclaimer">Premium Access: Two sessions per 24 hours (8-hour gap).\n3-minute lockdown per task — switch to other tiers to earn more.\nBalance updated in real-time on completion.\nZero-tolerance for bot activity — violations = permanent blacklist.</string>
+
+    <string name="elite_section_title">ELITE SECTION</string>
+    <string name="elite_disclaimer">Exclusive: Tasks can be completed twice per day (8-hour gap).\n3-minute timer — explore Silver, Gold, or Diamond while waiting.\nCoins credited instantly on task completion.\nAvoid multiple clicking — system manipulation = Immediate Ban.</string>
+
+    <!-- Withdrawal Disclaimer -->
+    <string name="withdraw_disclaimer_title">Official Withdrawal Rules</string>
+    <string name="withdraw_disclaimer">Minimum Exchange Rate: 2,000 Coins = 50 PKR.\nMinimum Withdrawal: 15,000 Coins required.\nTimeline: 24 to 72 business hours.\nProvide correct account details — Kamyabi Cash is NOT responsible for incorrect information.\nOne account policy — multiple accounts or VPNs = permanent ban.\nSuspicious activity = permanent ban and balance forfeiture.\nWithdrawals cannot be modified or cancelled once submitted.</string>
+
     <!-- Tasks (12 Tasks) -->
-    <string name="task_1_title">Watch Ad #1</string>
+    <string name="task_1_title">Silver Ad #1</string>
     <string name="task_1_reward">+50 Coins</string>
-    <string name="task_2_title">Watch Ad #2</string>
+    <string name="task_2_title">Silver Ad #2</string>
     <string name="task_2_reward">+60 Coins</string>
     <string name="task_3_title">Invite Challenge</string>
     <string name="task_3_reward">+400 Coins</string>
     <string name="task_3_desc">Invite 15 verified friends</string>
     <string name="task_4_title">Spin Wheel</string>
     <string name="task_4_reward">Up to 199 Coins</string>
-    <string name="task_5_title">Watch Ad #3</string>
+    <string name="task_5_title">Diamond Ad #1</string>
     <string name="task_5_reward">+50 Coins</string>
-    <string name="task_6_title">Watch Ad #4</string>
+    <string name="task_6_title">Diamond Ad #2</string>
     <string name="task_6_reward">+50 Coins</string>
-    <string name="task_7_title">Watch Ad #5</string>
+    <string name="task_7_title">Gold Ad #1</string>
     <string name="task_7_reward">+50 Coins</string>
     <string name="task_8_title">Scratch Card</string>
     <string name="task_8_reward">Up to 15 Coins</string>
@@ -68,7 +85,7 @@
     <!-- Wallet -->
     <string name="wallet_title">Wallet</string>
     <string name="withdraw_title">Withdraw Funds</string>
-    <string name="withdraw_min">Minimum: 2,000 Coins (50 PKR)</string>
+    <string name="withdraw_min">Minimum: 15,000 Coins (375 PKR)</string>
     <string name="withdraw_amount_hint">Enter coins to withdraw</string>
     <string name="withdraw_account_hint">Account number</string>
     <string name="withdraw_wallet_hint">Wallet address (TRC-20)</string>
@@ -80,7 +97,7 @@
     <string name="withdraw_fee_label">Processing Fee</string>
     <string name="withdraw_receive_label">You Receive (PKR)</string>
     <string name="withdraw_pkr_equivalent">= PKR %s</string>
-    <string name="withdraw_processing_time">Withdrawals are processed within 24-48 hours</string>
+    <string name="withdraw_processing_time">Withdrawals are processed within 24-72 business hours</string>
     <string name="withdraw_pending">Pending</string>
     <string name="withdraw_approved">Approved</string>
     <string name="withdraw_rejected">Rejected</string>
@@ -135,16 +152,16 @@
     <string name="loyalty_streak">%s Day Streak</string>
 
     <!-- Meta Tasks -->
-    <string name="meta_section_title">Meta Ad Tasks</string>
-    <string name="meta_1_title">Meta Ad #1</string>
+    <string name="meta_section_title">ELITE SECTION</string>
+    <string name="meta_1_title">Elite Ad #1</string>
     <string name="meta_1_reward">+25 Coins</string>
-    <string name="meta_2_title">Meta Ad #2</string>
+    <string name="meta_2_title">Elite Ad #2</string>
     <string name="meta_2_reward">+30 Coins</string>
-    <string name="meta_3_title">Meta Ad #3</string>
+    <string name="meta_3_title">Elite Ad #3</string>
     <string name="meta_3_reward">+35 Coins</string>
-    <string name="meta_4_title">Meta Ad #4</string>
+    <string name="meta_4_title">Elite Ad #4</string>
     <string name="meta_4_reward">+40 Coins</string>
-    <string name="meta_5_title">Meta Ad #5</string>
+    <string name="meta_5_title">Elite Ad #5</string>
     <string name="meta_5_reward">+50 Coins</string>
 
     <!-- Redeem Code -->

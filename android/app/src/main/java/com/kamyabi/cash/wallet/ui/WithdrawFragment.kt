@@ -30,7 +30,7 @@ class WithdrawFragment : Fragment() {
     // Exchange rate: default 2000 coins = 50 PKR
     private var exchangeRateCoins = 2000
     private var exchangeRatePkr = 50
-    private var minWithdrawalCoins = 2000
+    private var minWithdrawalCoins = 15000
 
     private lateinit var tvSelectedMethod: TextView
     private lateinit var tvMethodDesc: TextView
