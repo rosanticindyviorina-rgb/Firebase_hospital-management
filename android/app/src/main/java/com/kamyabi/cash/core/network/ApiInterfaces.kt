@@ -133,7 +133,9 @@ data class TaskStatusResponse(
 data class MetaStatusResponse(
     val metaProgress: Map<String, String>?,
     val cycleReady: Boolean?,
+    val cooldownReady: Boolean?,
     val nextMetaCycleAt: Long?,
+    val nextMetaAt: Long?,
     val metaCycleCount: Int?
 )
 

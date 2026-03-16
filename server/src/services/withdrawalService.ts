@@ -12,7 +12,7 @@ interface WithdrawalRequest {
 
 /**
  * Gets the current exchange rate from Firestore config.
- * Returns { coinsPerUnit, pkrPerUnit } e.g. { coinsPerUnit: 3000, pkrPerUnit: 100 }
+ * Returns { coinsPerUnit, pkrPerUnit } e.g. { coinsPerUnit: 2000, pkrPerUnit: 50 }
  */
 async function getExchangeRate(): Promise<{ coinsPerUnit: number; pkrPerUnit: number }> {
   const configDoc = await db.collection(Collections.CONFIG).doc('app').get();

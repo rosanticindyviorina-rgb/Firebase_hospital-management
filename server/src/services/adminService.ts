@@ -1,6 +1,6 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
 import { banUser, unbanUser } from './securityService';
-import { AD_PROVIDERS, DEFAULT_EXCHANGE_RATE, TASK_REWARDS } from '../config/constants';
+import { AD_PROVIDERS, DEFAULT_EXCHANGE_RATE, EXCHANGE_RATE_PKR, MIN_WITHDRAWAL_COINS, TASK_REWARDS } from '../config/constants';
 
 /**
  * Switch the active ad provider.
@@ -172,8 +172,8 @@ export async function getAppConfig(): Promise<FirebaseFirestore.DocumentData> {
   const defaults = {
     ad_provider: 'admob',
     exchange_rate_coins: DEFAULT_EXCHANGE_RATE,
-    exchange_rate_pkr: 100,
-    min_withdrawal_coins: 3000,
+    exchange_rate_pkr: EXCHANGE_RATE_PKR,
+    min_withdrawal_coins: MIN_WITHDRAWAL_COINS,
     daily_ad_limit: 8,
     ad_cooldown_hours: 7,
     l1_invite_bonus_coins: 150,

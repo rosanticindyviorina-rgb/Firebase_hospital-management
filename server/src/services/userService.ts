@@ -1,5 +1,5 @@
 import { db, Collections, firebaseAdmin } from '../config/firebase';
-import { USER_STATUS, L1_INVITE_BONUS_COINS, getDefaultTaskProgress } from '../config/constants';
+import { USER_STATUS, L1_INVITE_BONUS_COINS, getDefaultTaskProgress, getDefaultMetaProgress } from '../config/constants';
 import * as crypto from 'crypto';
 
 interface CreateUserPayload {
@@ -95,6 +95,21 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     lastTaskAt: null,
     nextTaskAt: null,
     taskProgress: getDefaultTaskProgress(),
+    // Meta task fields (separate cycle from core tasks)
+    metaProgress: getDefaultMetaProgress(),
+    metaCycleCount: 0,
+    nextMetaCycleAt: null,
+    // Loyalty fields
+    lastLoyaltyDate: '',
+    loyaltyStreak: 0,
+    // Network cooldown fields
+    nextAdmobAt: null,
+    nextApplovinAt: null,
+    nextUnityAt: null,
+    nextMetaAt: null,
+    // Invite bonus — credited to inviter after this user completes first task
+    inviteBonusPending: true,
+    inviteBonusInviterUid: inviterUid,
     createdAt: now,
     updatedAt: now,
   });
@@ -134,14 +149,6 @@ export async function createUser(payload: CreateUserPayload): Promise<{
     fingerprint: deviceFingerprint,
     createdAt: now,
   }, { merge: true });
-
-  // Mark invite bonus as pending — 150 coins awarded to inviter only
-  // after this new user completes at least one full task session.
-  // The bonus is credited in taskService.ts on first task completion.
-  batch.update(db.collection(Collections.USERS).doc(uid), {
-    inviteBonusPending: true,
-    inviteBonusInviterUid: inviterUid,
-  });
 
   await batch.commit();
   return { success: true };
