@@ -27,6 +27,7 @@ interface StartSessionResult {
   maxMinutes?: number;
   coinCap?: number;
   expiresAt?: number;
+  nextSessionAt?: number;
 }
 
 interface EndSessionResult {
