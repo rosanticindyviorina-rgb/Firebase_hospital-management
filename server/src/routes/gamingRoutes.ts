@@ -1,14 +1,13 @@
 import { Router } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { AuthenticatedRequest, verifyAuth } from '../middleware/authMiddleware';
 import { startGamingSession, endGamingSession, getGamingStatus } from '../services/gamingService';
 
 const router = Router();
-router.use(authMiddleware);
 
 // Start a gaming session
-router.post('/start', async (req, res) => {
+router.post('/start', verifyAuth, async (req, res) => {
   try {
-    const uid = (req as any).uid;
+    const uid = (req as AuthenticatedRequest).uid;
     const { platform } = req.body;
     if (!platform) return res.status(400).json({ success: false, error: 'Platform required' });
 
@@ -21,9 +20,9 @@ router.post('/start', async (req, res) => {
 });
 
 // End a gaming session
-router.post('/end', async (req, res) => {
+router.post('/end', verifyAuth, async (req, res) => {
   try {
-    const uid = (req as any).uid;
+    const uid = (req as AuthenticatedRequest).uid;
     const { platform, coinsEarned } = req.body;
     if (!platform) return res.status(400).json({ success: false, error: 'Platform required' });
 
@@ -36,9 +35,9 @@ router.post('/end', async (req, res) => {
 });
 
 // Get gaming status for all platforms
-router.get('/status', async (req, res) => {
+router.get('/status', verifyAuth, async (req, res) => {
   try {
-    const uid = (req as any).uid;
+    const uid = (req as AuthenticatedRequest).uid;
     const result = await getGamingStatus(uid);
     res.json(result);
   } catch (error) {
