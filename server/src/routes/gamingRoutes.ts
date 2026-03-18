@@ -7,7 +7,7 @@ const router = Router();
 // Start a gaming session
 router.post('/start', verifyAuth, async (req, res) => {
   try {
-    const uid = (req as AuthenticatedRequest).uid;
+    const uid = (req as AuthenticatedRequest).uid!;
     const { platform } = req.body;
     if (!platform) return res.status(400).json({ success: false, error: 'Platform required' });
 
@@ -22,7 +22,7 @@ router.post('/start', verifyAuth, async (req, res) => {
 // End a gaming session
 router.post('/end', verifyAuth, async (req, res) => {
   try {
-    const uid = (req as AuthenticatedRequest).uid;
+    const uid = (req as AuthenticatedRequest).uid!;
     const { platform, coinsEarned } = req.body;
     if (!platform) return res.status(400).json({ success: false, error: 'Platform required' });
 
@@ -37,7 +37,7 @@ router.post('/end', verifyAuth, async (req, res) => {
 // Get gaming status for all platforms
 router.get('/status', verifyAuth, async (req, res) => {
   try {
-    const uid = (req as AuthenticatedRequest).uid;
+    const uid = (req as AuthenticatedRequest).uid!;
     const result = await getGamingStatus(uid);
     res.json(result);
   } catch (error) {
