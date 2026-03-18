@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.kamyabi.cash.R
-import com.kamyabi.cash.core.network.ApiClient
+import com.kamyabi.cash.core.di.ServiceLocator
 import kotlinx.coroutines.launch
 
 class GamingFragment : Fragment() {
@@ -61,7 +61,7 @@ class GamingFragment : Fragment() {
     private fun loadGamingStatus() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = ApiClient.gamingApi.getGamingStatus()
+                val response = ServiceLocator.apiClient.gamingApi.getGamingStatus()
                 cancelTimers()
                 val now = System.currentTimeMillis()
 
@@ -103,7 +103,7 @@ class GamingFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = ApiClient.gamingApi.startSession(mapOf("platform" to platform))
+                val response = ServiceLocator.apiClient.gamingApi.startSession(mapOf("platform" to platform))
                 if (response.success) {
                     Toast.makeText(
                         context,
