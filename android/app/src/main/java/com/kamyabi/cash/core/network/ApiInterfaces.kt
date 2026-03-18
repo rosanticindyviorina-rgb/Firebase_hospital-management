@@ -230,3 +230,50 @@ data class AppConfigResponse(
     val daily_ad_limit: Int,
     val min_withdrawal_coins: Int
 )
+
+// ============================================
+// Gaming API
+// ============================================
+interface GamingApi {
+
+    @GET("gaming/status")
+    suspend fun getGamingStatus(): GamingStatusResponse
+
+    @POST("gaming/start")
+    suspend fun startSession(@Body body: Map<String, String>): GamingStartResponse
+
+    @POST("gaming/end")
+    suspend fun endSession(@Body body: Map<String, Any>): GamingEndResponse
+}
+
+data class GamingPlatformStatus(
+    val sessionsToday: Int,
+    val maxSessions: Int,
+    val nextSessionAt: Long,
+    val canPlay: Boolean,
+    val activeSession: Boolean,
+    val coinsEarnedToday: Int
+)
+
+data class GamingStatusResponse(
+    val platforms: Map<String, GamingPlatformStatus>
+)
+
+data class GamingStartResponse(
+    val success: Boolean,
+    val error: String?,
+    val sessionId: String?,
+    val sessionNumber: Int?,
+    val maxMinutes: Int?,
+    val coinCap: Int?,
+    val expiresAt: Long?
+)
+
+data class GamingEndResponse(
+    val success: Boolean,
+    val error: String?,
+    val coinsAwarded: Int?,
+    val sessionNumber: Int?,
+    val nextSessionAt: Long?,
+    val capped: Boolean?
+)

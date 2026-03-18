@@ -1,6 +1,7 @@
 package com.kamyabi.cash.tasks.ui
 
 import android.app.AlertDialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -8,6 +9,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -541,11 +543,32 @@ class HomeFragment : Fragment() {
         val isWin = prize != null && prize > 0
         val message = if (isWin) winMessage else loseMessage
 
+        // Play coin collect sound and animate balance on win
+        if (isWin) {
+            playCoinSound()
+            animateBalance()
+        }
+
         AlertDialog.Builder(ctx, R.style.Theme_KamyabiCash_Dialog)
             .setTitle("$icon $title")
             .setMessage("\n$message\n")
             .setPositiveButton("OK", null)
             .show()
+    }
+
+    private fun playCoinSound() {
+        try {
+            val mp = MediaPlayer.create(context, R.raw.coin_collect)
+            mp?.setOnCompletionListener { it.release() }
+            mp?.start()
+        } catch (_: Exception) { }
+    }
+
+    private fun animateBalance() {
+        try {
+            val anim = AnimationUtils.loadAnimation(context, R.anim.coin_sparkle)
+            tvBalance.startAnimation(anim)
+        } catch (_: Exception) { }
     }
 
     private fun claimLoyalty() {

@@ -7,6 +7,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_tasks">Tasks</string>
     <string name="nav_wallet">Wallet</string>
+    <string name="nav_gaming">Games</string>
     <string name="nav_profile">Profile</string>
 
     <!-- Auth -->
@@ -27,7 +28,7 @@
     <!-- Dashboard -->
     <string name="balance_label">Your Balance</string>
     <string name="total_earned_label">Total Earned</string>
-    <string name="coins_symbol">Coins</string>
+    <string name="coins_symbol">KC Coins</string>
     <string name="pkr_symbol">PKR</string>
     <string name="withdraw_button">Withdraw</string>
     <string name="daily_tasks">Daily Tasks</string>
@@ -39,44 +40,44 @@
     <string name="silver_disclaimer">Daily Limit: All tasks available once every 24 hours.\nTimer: 3-minute countdown per task.\nMultitasking: Switch to Gold, Diamond, or Elite while timer runs.\nReward credited after timer finishes and task is completed.</string>
 
     <string name="gold_section_title">GOLD SECTION</string>
-    <string name="gold_disclaimer">Dual Sessions: Tasks refresh twice daily (8-hour interval).\n3-minute timer per task — complete other tiers while waiting.\nCoins added to wallet immediately after completion.\nMultiple clicking or spamming = Permanent Account Ban.</string>
+    <string name="gold_disclaimer">Dual Sessions: Tasks refresh twice daily (8-hour interval).\n3-minute timer per task — complete other tiers while waiting.\nKC Coins added to wallet immediately after completion.\nMultiple clicking or spamming = Permanent Account Ban.</string>
 
     <string name="diamond_section_title">DIAMOND SECTION</string>
     <string name="diamond_disclaimer">Premium Access: Two sessions per 24 hours (8-hour gap).\n3-minute lockdown per task — switch to other tiers to earn more.\nBalance updated in real-time on completion.\nZero-tolerance for bot activity — violations = permanent blacklist.</string>
 
     <string name="elite_section_title">ELITE SECTION</string>
-    <string name="elite_disclaimer">Exclusive: Tasks can be completed twice per day (8-hour gap).\n3-minute timer — explore Silver, Gold, or Diamond while waiting.\nCoins credited instantly on task completion.\nAvoid multiple clicking — system manipulation = Immediate Ban.</string>
+    <string name="elite_disclaimer">Exclusive: Tasks can be completed twice per day (8-hour gap).\n3-minute timer — explore Silver, Gold, or Diamond while waiting.\nKC Coins credited instantly on task completion.\nAvoid multiple clicking — system manipulation = Immediate Ban.</string>
 
     <!-- Withdrawal Disclaimer -->
     <string name="withdraw_disclaimer_title">Official Withdrawal Rules</string>
-    <string name="withdraw_disclaimer">Minimum Exchange Rate: 2,000 Coins = 50 PKR.\nMinimum Withdrawal: 15,000 Coins required.\nTimeline: 24 to 72 business hours.\nProvide correct account details — Kamyabi Cash is NOT responsible for incorrect information.\nOne account policy — multiple accounts or VPNs = permanent ban.\nSuspicious activity = permanent ban and balance forfeiture.\nWithdrawals cannot be modified or cancelled once submitted.</string>
+    <string name="withdraw_disclaimer">Minimum Exchange Rate: 2,000 KC Coins = 50 PKR.\nMinimum Withdrawal: 15,000 KC Coins required.\nTimeline: 24 to 72 business hours.\nProvide correct account details — Kamyabi Cash is NOT responsible for incorrect information.\nOne account policy — multiple accounts or VPNs = permanent ban.\nSuspicious activity = permanent ban and balance forfeiture.\nWithdrawals cannot be modified or cancelled once submitted.</string>
 
     <!-- Tasks (12 Tasks) -->
     <string name="task_1_title">Silver Ad #1</string>
-    <string name="task_1_reward">+50 Coins</string>
+    <string name="task_1_reward">+50 KC Coins</string>
     <string name="task_2_title">Silver Ad #2</string>
-    <string name="task_2_reward">+60 Coins</string>
+    <string name="task_2_reward">+60 KC Coins</string>
     <string name="task_3_title">Invite Challenge</string>
-    <string name="task_3_reward">+400 Coins</string>
+    <string name="task_3_reward">+400 KC Coins</string>
     <string name="task_3_desc">Invite 15 verified friends</string>
     <string name="task_4_title">Spin Wheel</string>
-    <string name="task_4_reward">Up to 199 Coins</string>
+    <string name="task_4_reward">Up to 199 KC Coins</string>
     <string name="task_5_title">Diamond Ad #1</string>
-    <string name="task_5_reward">+50 Coins</string>
+    <string name="task_5_reward">+50 KC Coins</string>
     <string name="task_6_title">Diamond Ad #2</string>
-    <string name="task_6_reward">+50 Coins</string>
+    <string name="task_6_reward">+50 KC Coins</string>
     <string name="task_7_title">Gold Ad #1</string>
-    <string name="task_7_reward">+50 Coins</string>
+    <string name="task_7_reward">+50 KC Coins</string>
     <string name="task_8_title">Scratch Card</string>
-    <string name="task_8_reward">Up to 15 Coins</string>
+    <string name="task_8_reward">Up to 15 KC Coins</string>
     <string name="task_9_title">Invite 1 Friend</string>
-    <string name="task_9_reward">+80 Coins</string>
+    <string name="task_9_reward">+80 KC Coins</string>
     <string name="task_10_title">Invite 3 Friends</string>
-    <string name="task_10_reward">+100 Coins</string>
+    <string name="task_10_reward">+100 KC Coins</string>
     <string name="task_11_title">Invite 5 Friends</string>
-    <string name="task_11_reward">+150 Coins</string>
+    <string name="task_11_reward">+150 KC Coins</string>
     <string name="task_12_title">Invite 8 Friends</string>
-    <string name="task_12_reward">+250 Coins</string>
+    <string name="task_12_reward">+250 KC Coins</string>
 
     <string name="task_claim">Claim</string>
     <string name="task_completed">Completed</string>
@@ -85,12 +86,12 @@
     <!-- Wallet -->
     <string name="wallet_title">Wallet</string>
     <string name="withdraw_title">Withdraw Funds</string>
-    <string name="withdraw_min">Minimum: 15,000 Coins (375 PKR)</string>
+    <string name="withdraw_min">Minimum: 15,000 KC Coins (375 PKR)</string>
     <string name="withdraw_amount_hint">Enter coins to withdraw</string>
     <string name="withdraw_account_hint">Account number</string>
     <string name="withdraw_wallet_hint">Wallet address (TRC-20)</string>
     <string name="withdraw_submit">Request Withdrawal</string>
-    <string name="withdraw_amount_label">Amount (Coins)</string>
+    <string name="withdraw_amount_label">Amount (KC Coins)</string>
     <string name="withdraw_account_label">Account Number</string>
     <string name="withdraw_name_label">Account Holder Name</string>
     <string name="withdraw_name_hint">Full name</string>
@@ -115,7 +116,7 @@
     <string name="share_code">Share Code</string>
     <string name="referral_tree">Referral Tree</string>
     <string name="verified_invites">Verified Invites</string>
-    <string name="level_1">Level 1 (150 Coins)</string>
+    <string name="level_1">Level 1 (150 KC Coins)</string>
     <string name="level_2">Level 2 (5%%)</string>
     <string name="level_3">Level 3 (2%%)</string>
 
@@ -138,37 +139,37 @@
     <!-- Spin -->
     <string name="spin_title">Spin &amp; Win!</string>
     <string name="spin_button">SPIN</string>
-    <string name="spin_result_win">You won %s Coins!</string>
+    <string name="spin_result_win">You won %s KC Coins!</string>
     <string name="spin_result_try_again">Try Again next cycle!</string>
 
     <!-- Scratch Card -->
     <string name="scratch_title">Scratch &amp; Win!</string>
-    <string name="scratch_result_win">You won %s Coins!</string>
+    <string name="scratch_result_win">You won %s KC Coins!</string>
 
     <!-- Loyalty -->
     <string name="loyalty_title">Daily Loyalty Reward</string>
-    <string name="loyalty_reward_today">+%s Coins Today</string>
+    <string name="loyalty_reward_today">+%s KC Coins Today</string>
     <string name="loyalty_claimed">Claimed Today</string>
     <string name="loyalty_streak">%s Day Streak</string>
 
     <!-- Meta Tasks -->
     <string name="meta_section_title">ELITE SECTION</string>
     <string name="meta_1_title">Elite Ad #1</string>
-    <string name="meta_1_reward">+25 Coins</string>
+    <string name="meta_1_reward">+25 KC Coins</string>
     <string name="meta_2_title">Elite Ad #2</string>
-    <string name="meta_2_reward">+30 Coins</string>
+    <string name="meta_2_reward">+30 KC Coins</string>
     <string name="meta_3_title">Elite Ad #3</string>
-    <string name="meta_3_reward">+35 Coins</string>
+    <string name="meta_3_reward">+35 KC Coins</string>
     <string name="meta_4_title">Elite Ad #4</string>
-    <string name="meta_4_reward">+40 Coins</string>
+    <string name="meta_4_reward">+40 KC Coins</string>
     <string name="meta_5_title">Elite Ad #5</string>
-    <string name="meta_5_reward">+50 Coins</string>
+    <string name="meta_5_reward">+50 KC Coins</string>
 
     <!-- Redeem Code -->
     <string name="redeem_title">Redeem Code</string>
     <string name="redeem_hint">Enter redeem code</string>
     <string name="redeem_submit">Redeem</string>
-    <string name="redeem_success">Redeemed! +%s Coins</string>
+    <string name="redeem_success">Redeemed! +%s KC Coins</string>
 
     <!-- Social Media -->
     <string name="follow_us">Follow Us</string>
@@ -191,4 +192,15 @@
     <string name="support_whatsapp_cta">Chat with us</string>
     <string name="support_community">WhatsApp Community</string>
     <string name="support_community_cta">Join Community</string>
+
+    <!-- Gaming Hub -->
+    <string name="gaming_title">Gaming Hub</string>
+    <string name="gaming_subtitle">Play games, earn KC Coins! 3 sessions daily per platform.</string>
+    <string name="gaming_session_rules">Session Rules:\n- 10-minute cap per session\n- 8-hour cooldown between sessions\n- Max 100 KC Coins per session\n- 3 sessions per platform per day</string>
+    <string name="gaming_session_of">Session %d/%d</string>
+    <string name="gaming_play">Play</string>
+    <string name="gaming_locked">Locked</string>
+    <string name="gaming_resume">Resume</string>
+    <string name="gaming_coming_soon">Coming Soon</string>
+    <string name="gaming_total_today">Gaming KC Coins Today: %d</string>
 </resources>

@@ -8,6 +8,7 @@ import taskRoutes from './routes/taskRoutes';
 import adminRoutes from './routes/adminRoutes';
 import withdrawalRoutes from './routes/withdrawalRoutes';
 import transferRoutes from './routes/transferRoutes';
+import gamingRoutes from './routes/gamingRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -33,6 +34,7 @@ app.use('/tasks', taskRoutes);
 app.use('/admin', adminRoutes);
 app.use('/withdrawals', withdrawalRoutes);
 app.use('/transfer', transferRoutes);
+app.use('/gaming', gamingRoutes);
 
 // Config endpoint (public, for app to read ad_provider etc.)
 app.get('/config', async (_req, res) => {

@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.kamyabi.cash.tasks.ui.HomeFragment"
-        android:label="@string/nav_home" />
+        android:label="@string/nav_home">
+        <action
+            android:id="@+id/action_home_to_gaming"
+            app:destination="@id/nav_gaming" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_wallet"
@@ -35,5 +39,10 @@
         android:id="@+id/transferFragment"
         android:name="com.kamyabi.cash.wallet.ui.TransferFragment"
         android:label="Transfer Coins" />
+
+    <fragment
+        android:id="@+id/nav_gaming"
+        android:name="com.kamyabi.cash.gaming.ui.GamingFragment"
+        android:label="@string/nav_gaming" />
 
 </navigation>

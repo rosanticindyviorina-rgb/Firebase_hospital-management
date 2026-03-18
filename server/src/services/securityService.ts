@@ -7,9 +7,15 @@ interface DeviceFingerprint {
   buildFingerprint?: string;
   buildModel?: string;
   buildManufacturer?: string;
+  buildBoard?: string;
+  buildHardware?: string;
+  buildSerial?: string;
   screenResolution?: string;
+  screenDensity?: string;
   installerPackage?: string;
   appSignature?: string;
+  totalMemory?: string;
+  cpuAbi?: string;
 }
 
 interface AttestationPayload {
@@ -80,7 +86,9 @@ async function checkIpIntelligence(ip: string): Promise<{
 }
 
 /**
- * Generates a SHA-256 device key from fingerprint for device binding.
+ * Generates device key from HARDWARE identifiers (not IP).
+ * Two brothers on same Wi-Fi = different devices = OK.
+ * Two accounts on same phone = same device key = BANNED.
  */
 function generateDeviceKey(fingerprint: DeviceFingerprint): string {
   const parts = [
@@ -88,7 +96,12 @@ function generateDeviceKey(fingerprint: DeviceFingerprint): string {
     fingerprint.buildFingerprint || '',
     fingerprint.buildModel || '',
     fingerprint.buildManufacturer || '',
+    fingerprint.buildBoard || '',
+    fingerprint.buildHardware || '',
+    fingerprint.buildSerial || '',
     fingerprint.screenResolution || '',
+    fingerprint.totalMemory || '',
+    fingerprint.cpuAbi || '',
   ];
   const hash = crypto.createHash('sha256').update(parts.join('|')).digest('hex');
   return `dev_${hash.substring(0, 16)}`;
@@ -207,6 +220,7 @@ export async function processSecurityReport(
     clone: BAN_REASONS.CLONE_DETECTED,
     parallel_space: BAN_REASONS.PARALLEL_SPACE,
     hooking: BAN_REASONS.HOOKING_DETECTED,
+    memory_editor: BAN_REASONS.MEMORY_EDITOR,
   };
 
   for (const violation of violations) {

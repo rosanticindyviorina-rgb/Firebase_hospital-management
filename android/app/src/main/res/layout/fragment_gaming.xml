@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gaming Hub"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="Play games, earn KC Coins! 3 sessions daily per platform."
+            android:textColor="#B3FFFFFF"
+            android:textSize="@dimen/text_sm"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Total Gaming Coins Today -->
+        <TextView
+            android:id="@+id/tvGamingTotalCoins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="Today: 0 KC Coins earned"
+            android:textColor="#FFD600"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold" />
+
+        <!-- ========== ADJOE CARD ========== -->
+        <LinearLayout
+            android:id="@+id/cardAdjoe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <!-- Platform icon placeholder -->
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#1A00C853">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="AJ"
+                    android:textColor="#00C853"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Adjoe"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Play casual games to earn coins"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvAdjoeStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Session 0/3"
+                    android:textColor="#00C853"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvAdjoeCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFD600"
+                    android:textSize="@dimen/text_sm"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnAdjoePlay"
+                style="@style/Widget.KamyabiCash.Button.Primary"
+                android:layout_width="90dp"
+                android:text="Play"
+                android:textSize="@dimen/text_sm" />
+        </LinearLayout>
+
+        <!-- ========== TAPJOY CARD ========== -->
+        <LinearLayout
+            android:id="@+id/cardTapjoy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#1A448AFF">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="TJ"
+                    android:textColor="#448AFF"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tapjoy"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Complete offers and play games"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvTapjoyStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Session 0/3"
+                    android:textColor="#00C853"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvTapjoyCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFD600"
+                    android:textSize="@dimen/text_sm"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnTapjoyPlay"
+                style="@style/Widget.KamyabiCash.Button.Primary"
+                android:layout_width="90dp"
+                android:text="Play"
+                android:textSize="@dimen/text_sm" />
+        </LinearLayout>
+
+        <!-- ========== OFFERTORO CARD ========== -->
+        <LinearLayout
+            android:id="@+id/cardOffertoro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#1AFF6D00">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="OT"
+                    android:textColor="#FF6D00"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OfferToro"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Surveys and offer wall rewards"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvOffertoroStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Session 0/3"
+                    android:textColor="#00C853"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvOffertoroCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFD600"
+                    android:textSize="@dimen/text_sm"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnOffertoroPlay"
+                style="@style/Widget.KamyabiCash.Button.Primary"
+                android:layout_width="90dp"
+                android:text="Play"
+                android:textSize="@dimen/text_sm" />
+        </LinearLayout>
+
+        <!-- ========== GAMEZOP CARD ========== -->
+        <LinearLayout
+            android:id="@+id/cardGamezop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#1AE040FB">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="GZ"
+                    android:textColor="#E040FB"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gamezop"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HTML5 games — play in-app"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvGamezopStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Session 0/3"
+                    android:textColor="#00C853"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvGamezopCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFD600"
+                    android:textSize="@dimen/text_sm"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnGamezopPlay"
+                style="@style/Widget.KamyabiCash.Button.Primary"
+                android:layout_width="90dp"
+                android:text="Play"
+                android:textSize="@dimen/text_sm" />
+        </LinearLayout>
+
+        <!-- ========== RESERVED CARD ========== -->
+        <LinearLayout
+            android:id="@+id/cardReserved"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_md">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#1A9E9E9E">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="RS"
+                    android:textColor="#9E9E9E"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Coming Soon"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New gaming platform — stay tuned!"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvReservedStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Coming Soon"
+                    android:textColor="#9E9E9E"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:id="@+id/tvReservedCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFD600"
+                    android:textSize="@dimen/text_sm"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnReservedPlay"
+                style="@style/Widget.KamyabiCash.Button.Primary"
+                android:layout_width="90dp"
+                android:alpha="0.5"
+                android:enabled="false"
+                android:text="Play"
+                android:textSize="@dimen/text_sm" />
+        </LinearLayout>
+
+        <!-- ========== SESSION RULES DISCLAIMER ========== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Session Rules"
+                android:textColor="#FFD600"
+                android:textSize="@dimen/text_md"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:lineSpacingExtra="4dp"
+                android:text="Each gaming session has a 10-minute cap. After completing a session, there is an 8-hour cooldown before you can play the same platform again. You can earn a maximum of 100 KC Coins per session. Play smart, earn more!"
+                android:textColor="#B3FFFFFF"
+                android:textSize="@dimen/text_sm" />
+        </LinearLayout>
+
+        <!-- Bottom spacing -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_lg" />
+
+    </LinearLayout>
+</ScrollView>

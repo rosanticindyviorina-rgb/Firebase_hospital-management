@@ -33,19 +33,19 @@ export const DAILY_AD_LIMIT = 8;
 
 // Spin wheel weights (coins)
 export const SPIN_WEIGHTS = [
-  { prize: 30, label: '30 Coins', weight: 40 },
+  { prize: 30, label: '30 KC Coins', weight: 40 },
   { prize: 0, label: 'Try Again', weight: 25 },
-  { prize: 50, label: '50 Coins', weight: 20 },
-  { prize: 100, label: '100 Coins', weight: 10 },
-  { prize: 199, label: '199 Coins', weight: 5 },
+  { prize: 50, label: '50 KC Coins', weight: 20 },
+  { prize: 100, label: '100 KC Coins', weight: 10 },
+  { prize: 199, label: '199 KC Coins', weight: 5 },
 ] as const;
 
 // Scratch card rewards (coins) — Task 8
 export const SCRATCH_REWARDS = [
-  { prize: 3, label: '3 Coins', weight: 40 },
-  { prize: 7, label: '7 Coins', weight: 30 },
-  { prize: 10, label: '10 Coins', weight: 20 },
-  { prize: 15, label: '15 Coins', weight: 10 },
+  { prize: 3, label: '3 KC Coins', weight: 40 },
+  { prize: 7, label: '7 KC Coins', weight: 30 },
+  { prize: 10, label: '10 KC Coins', weight: 20 },
+  { prize: 15, label: '15 KC Coins', weight: 10 },
 ] as const;
 
 // User statuses
@@ -67,6 +67,7 @@ export const BAN_REASONS = {
   MULTI_ACCOUNT: 'multi_account_device',
   ADMIN_BAN: 'admin_manual_ban',
   SUSPICIOUS_BEHAVIOR: 'suspicious_behavior',
+  MEMORY_EDITOR: 'memory_editor_detected',
 } as const;
 
 // 12 Core Task types + 5 Meta tasks + loyalty task

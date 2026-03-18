@@ -36,6 +36,7 @@ class SecurityDetector(private val context: Context) {
         if (isCloneOrParallelSpace()) violations.add("clone")
         if (isVpnActive()) violations.add("vpn")
         if (isDebugged()) violations.add("hooking")
+        if (isMemoryEditorInstalled()) violations.add("memory_editor")
 
         return SecurityReport(
             violations = violations,
@@ -202,6 +203,59 @@ class SecurityDetector(private val context: Context) {
     }
 
     // ============================================
+    // MEMORY EDITOR / CHEAT TOOL DETECTION
+    // ============================================
+    fun isMemoryEditorInstalled(): Boolean {
+        return checkMemoryEditorPackages() || checkMemoryEditorProcesses()
+    }
+
+    private fun checkMemoryEditorPackages(): Boolean {
+        val cheatPackages = arrayOf(
+            // Lucky Patcher
+            "com.chelpus.lackypatch", "com.dimonvideo.luckypatcher",
+            "com.forpda.lp", "com.android.vending.billing.InAppBillingService.LUCK",
+            // Game Guardian
+            "com.gameguardian", "org.sbtools.gamehack",
+            // Cheat Engine / memory editors
+            "org.cheatengine.cegui", "com.cih.game_cih",
+            "catch_.me_.if_.you_.can_",
+            // HackerBot / GameKiller
+            "com.zune.gamekiller", "com.killerapp.gamekiller",
+            // SB Game Hacker
+            "com.sbgamehacker",
+            // Xmodgames
+            "com.xmodgame",
+            // Freedom (IAP hack)
+            "cc.madkite.freedom", "cc.cz.madkite.freedom",
+            // Creehack
+            "org.creeplays.hack",
+            // Leo PlayCard
+            "com.leo.playcard",
+            // App Cloner variants used for tampering
+            "com.applisto.appcloner.cloned",
+        )
+        val pm = context.packageManager
+        return cheatPackages.any {
+            try {
+                pm.getPackageInfo(it, 0)
+                true
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
+            }
+        }
+    }
+
+    private fun checkMemoryEditorProcesses(): Boolean {
+        return try {
+            val maps = File("/proc/self/maps").readText()
+            maps.contains("gameguardian") || maps.contains("luckypatcher")
+                    || maps.contains("gamehack") || maps.contains("gamekiller")
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // ============================================
     // DEVICE FINGERPRINT
     // ============================================
     fun collectDeviceFingerprint(): Map<String, String> {
@@ -213,9 +267,23 @@ class SecurityDetector(private val context: Context) {
             "buildBrand" to Build.BRAND,
             "buildDevice" to Build.DEVICE,
             "buildProduct" to Build.PRODUCT,
+            "buildBoard" to Build.BOARD,
+            "buildHardware" to Build.HARDWARE,
+            "buildSerial" to (try { Build.SERIAL } catch (_: Exception) { "unknown" }),
             "sdkVersion" to Build.VERSION.SDK_INT.toString(),
             "screenResolution" to "${context.resources.displayMetrics.widthPixels}x${context.resources.displayMetrics.heightPixels}",
+            "screenDensity" to context.resources.displayMetrics.densityDpi.toString(),
             "installerPackage" to (context.packageManager.getInstallerPackageName(context.packageName) ?: "unknown"),
+            "totalMemory" to getTotalMemoryMb(),
+            "cpuAbi" to Build.SUPPORTED_ABIS.firstOrNull().orEmpty(),
         )
+    }
+
+    private fun getTotalMemoryMb(): String {
+        return try {
+            val mi = android.app.ActivityManager.MemoryInfo()
+            (context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager).getMemoryInfo(mi)
+            (mi.totalMem / (1024 * 1024)).toString()
+        } catch (_: Exception) { "unknown" }
     }
 }
