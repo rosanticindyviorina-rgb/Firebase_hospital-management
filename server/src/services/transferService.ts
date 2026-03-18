@@ -49,85 +49,81 @@ export async function transferCoins(
     return { success: false, error: 'Cannot transfer coins to yourself' };
   }
 
-  // Fetch both users
-  const [senderDoc, receiverDoc] = await Promise.all([
-    db.collection(Collections.USERS).doc(senderUid).get(),
-    db.collection(Collections.USERS).doc(recipientUid).get(),
-  ]);
-
-  if (!senderDoc.exists) {
-    return { success: false, error: 'Sender account not found' };
-  }
-  if (!receiverDoc.exists) {
-    return { success: false, error: 'Recipient account not found' };
-  }
-
-  const senderData = senderDoc.data()!;
-  const receiverData = receiverDoc.data()!;
-
-  // Check both users are active (not banned)
-  if (senderData.status !== 'active') {
-    return { success: false, error: 'Your account is suspended' };
-  }
-  if (receiverData.status !== 'active') {
-    return { success: false, error: 'Recipient account is suspended' };
-  }
-
-  // Check sender balance
-  if ((senderData.coinBalance || 0) < coinAmount) {
-    return { success: false, error: 'Insufficient coin balance' };
-  }
-
-  // Calculate fee and net amount
+  // Use Firestore transaction to prevent race conditions (double-spend)
   const fee = Math.floor(coinAmount * TRANSFER_FEE_RATE);
   const netAmount = coinAmount - fee;
 
-  const now = firebaseAdmin.firestore.FieldValue.serverTimestamp();
-  const batch = db.batch();
+  try {
+    await db.runTransaction(async (tx) => {
+      const senderRef = db.collection(Collections.USERS).doc(senderUid);
+      const receiverRef = db.collection(Collections.USERS).doc(recipientUid);
 
-  // Deduct full amount from sender
-  batch.update(db.collection(Collections.USERS).doc(senderUid), {
-    coinBalance: firebaseAdmin.firestore.FieldValue.increment(-coinAmount),
-    updatedAt: now,
-  });
+      const [senderDoc, receiverDoc] = await Promise.all([
+        tx.get(senderRef),
+        tx.get(receiverRef),
+      ]);
 
-  // Credit net amount to receiver
-  batch.update(db.collection(Collections.USERS).doc(recipientUid), {
-    coinBalance: firebaseAdmin.firestore.FieldValue.increment(netAmount),
-    totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(netAmount),
-    updatedAt: now,
-  });
+      if (!senderDoc.exists) throw new Error('Sender account not found');
+      if (!receiverDoc.exists) throw new Error('Recipient account not found');
 
-  // Ledger entry for sender (negative)
-  batch.set(
-    db.collection(Collections.LEDGER).doc(senderUid).collection('entries').doc(),
-    {
-      uid: senderUid,
-      type: 'transfer_sent',
-      amount: -coinAmount,
-      fee,
-      netAmount,
-      currency: 'coins',
-      recipientUid,
-      createdAt: now,
-    }
-  );
+      const senderData = senderDoc.data()!;
+      const receiverData = receiverDoc.data()!;
 
-  // Ledger entry for receiver (positive)
-  batch.set(
-    db.collection(Collections.LEDGER).doc(recipientUid).collection('entries').doc(),
-    {
-      uid: recipientUid,
-      type: 'transfer_received',
-      amount: netAmount,
-      fee,
-      currency: 'coins',
-      senderUid,
-      createdAt: now,
-    }
-  );
+      if (senderData.status !== 'active') throw new Error('Your account is suspended');
+      if (receiverData.status !== 'active') throw new Error('Recipient account is suspended');
 
-  await batch.commit();
+      // Atomic balance check inside transaction — prevents double-spend
+      if ((senderData.coinBalance || 0) < coinAmount) {
+        throw new Error('Insufficient coin balance');
+      }
+
+      const now = firebaseAdmin.firestore.FieldValue.serverTimestamp();
+
+      // Deduct from sender
+      tx.update(senderRef, {
+        coinBalance: firebaseAdmin.firestore.FieldValue.increment(-coinAmount),
+        updatedAt: now,
+      });
+
+      // Credit to receiver
+      tx.update(receiverRef, {
+        coinBalance: firebaseAdmin.firestore.FieldValue.increment(netAmount),
+        totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(netAmount),
+        updatedAt: now,
+      });
+
+      // Ledger: sender
+      tx.set(
+        db.collection(Collections.LEDGER).doc(senderUid).collection('entries').doc(),
+        {
+          uid: senderUid,
+          type: 'transfer_sent',
+          amount: -coinAmount,
+          fee,
+          netAmount,
+          currency: 'coins',
+          recipientUid,
+          createdAt: now,
+        }
+      );
+
+      // Ledger: receiver
+      tx.set(
+        db.collection(Collections.LEDGER).doc(recipientUid).collection('entries').doc(),
+        {
+          uid: recipientUid,
+          type: 'transfer_received',
+          amount: netAmount,
+          fee,
+          currency: 'coins',
+          senderUid,
+          createdAt: now,
+        }
+      );
+    });
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Transfer failed' };
+  }
 
   return { success: true, fee, netAmount, recipientUid };
 }

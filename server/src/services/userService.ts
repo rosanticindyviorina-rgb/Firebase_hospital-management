@@ -164,13 +164,22 @@ export async function isUserBanned(uid: string): Promise<boolean> {
   return doc.exists ? doc.data()?.status === USER_STATUS.BANNED : false;
 }
 
+/**
+ * MUST match securityService.ts generateDeviceKey() exactly.
+ * Uses hardware-only identifiers (not IP) for one-device-one-account.
+ */
 function generateDeviceKey(fingerprint: Record<string, unknown>): string {
   const parts = [
     fingerprint.androidId || '',
     fingerprint.buildFingerprint || '',
     fingerprint.buildModel || '',
     fingerprint.buildManufacturer || '',
+    fingerprint.buildBoard || '',
+    fingerprint.buildHardware || '',
+    fingerprint.buildSerial || '',
     fingerprint.screenResolution || '',
+    fingerprint.totalMemory || '',
+    fingerprint.cpuAbi || '',
   ];
   const hash = crypto.createHash('sha256').update(parts.join('|')).digest('hex');
   return `dev_${hash.substring(0, 16)}`;

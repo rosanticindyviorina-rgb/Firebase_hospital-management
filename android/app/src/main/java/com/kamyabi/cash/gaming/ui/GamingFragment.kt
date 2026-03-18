@@ -65,9 +65,10 @@ class GamingFragment : Fragment() {
                 cancelTimers()
                 val now = System.currentTimeMillis()
 
-                // Update total coins earned today
+                // Calculate total coins earned today from all platforms
+                val totalToday = response.platforms.values.sumOf { it.coinsEarnedToday }
                 view?.findViewById<TextView>(R.id.tvGamingTotalCoins)?.text =
-                    "Today: ${response.totalCoinsToday} KC Coins earned"
+                    "Today: $totalToday KC Coins earned"
 
                 for ((key, views) in platforms) {
                     val pStatus = response.platforms[key]

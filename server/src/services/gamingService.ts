@@ -72,11 +72,23 @@ export async function startGamingSession(uid: string, platform: string): Promise
   // Check if there's an active session
   if (platformData.activeSessionId) {
     const activeStarted = platformData.activeSessionStartedAt?.toMillis?.() || 0;
-    // If session is expired (over 10 min), auto-end it
-    if (now - activeStarted < MAX_SESSION_MS) {
+    const elapsed = now - activeStarted;
+    if (elapsed < MAX_SESSION_MS) {
+      // Session still within 10-min window — block new session
       return { success: false, error: 'Session already active' };
     }
-    // Auto-expire stale session
+    // Session expired (over 10 min) — auto-expire it, award 0, clear state
+    await userRef.update({
+      [`gaming.${platform}.activeSessionId`]: firebaseAdmin.firestore.FieldValue.delete(),
+      [`gaming.${platform}.activeSessionStartedAt`]: firebaseAdmin.firestore.FieldValue.delete(),
+      [`gaming.${platform}.activeSessionNumber`]: firebaseAdmin.firestore.FieldValue.delete(),
+      [`gaming.${platform}.nextSessionAt`]: firebaseAdmin.firestore.Timestamp.fromMillis(now + SESSION_GAP_MS),
+    });
+    try {
+      await db.collection('gamingSessions').doc(platformData.activeSessionId).update({
+        status: 'expired', endedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(), coinsEarned: 0,
+      });
+    } catch (_) { /* session doc may not exist */ }
   }
 
   // Check session count today
@@ -167,14 +179,33 @@ export async function endGamingSession(
   const elapsed = now - sessionStarted;
   const sessionNumber = platformData.activeSessionNumber || 1;
 
-  // Enforce 10-minute cap — ignore coins earned beyond the cap
-  const capped = coinsEarned > SESSION_COIN_CAP;
-  const awardedCoins = Math.min(Math.max(0, Math.floor(coinsEarned)), SESSION_COIN_CAP);
+  // Reject sessions ended way after expiry (>2x window = likely stale/exploit)
+  const GRACE_MS = MAX_SESSION_MS * 2; // 20 minutes grace
+  if (elapsed > GRACE_MS) {
+    // Auto-expire: award 0 coins, clear session
+    const serverNow = firebaseAdmin.firestore.FieldValue.serverTimestamp();
+    await userRef.update({
+      [`gaming.${platform}.activeSessionId`]: firebaseAdmin.firestore.FieldValue.delete(),
+      [`gaming.${platform}.activeSessionStartedAt`]: firebaseAdmin.firestore.FieldValue.delete(),
+      [`gaming.${platform}.activeSessionNumber`]: firebaseAdmin.firestore.FieldValue.delete(),
+      [`gaming.${platform}.nextSessionAt`]: firebaseAdmin.firestore.Timestamp.fromMillis(now + SESSION_GAP_MS),
+      updatedAt: serverNow,
+    });
+    return { success: false, error: 'Session expired', coinsAwarded: 0 };
+  }
 
-  // Greed filter: if session lasted < 30 seconds, suspicious
-  if (elapsed < 30000 && awardedCoins > 20) {
-    // Suspicious — log but still award reduced amount
-    console.warn(`Suspicious gaming session: ${uid} earned ${awardedCoins} in ${elapsed}ms`);
+  // Server-authoritative coin calculation based on elapsed time
+  // Max coins proportional to time spent (prevents instant coin farming)
+  const maxCoinsByTime = Math.floor((Math.min(elapsed, MAX_SESSION_MS) / MAX_SESSION_MS) * SESSION_COIN_CAP);
+  const serverCoins = Math.min(Math.max(0, Math.floor(coinsEarned)), maxCoinsByTime);
+
+  // Enforce 10-minute cap — ignore coins earned beyond the cap
+  const capped = coinsEarned > SESSION_COIN_CAP || coinsEarned > maxCoinsByTime;
+  const awardedCoins = serverCoins; // Use server-calculated amount, NOT client amount
+
+  // Greed filter: if session lasted < 30 seconds, suspicious — award 0
+  if (elapsed < 30000 && coinsEarned > 20) {
+    console.warn(`Suspicious gaming session: ${uid} claimed ${coinsEarned} in ${elapsed}ms — awarding 0`);
   }
 
   const serverNow = firebaseAdmin.firestore.FieldValue.serverTimestamp();
