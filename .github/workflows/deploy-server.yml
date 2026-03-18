@@ -35,6 +35,7 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Deploy to Cloud Run (source)
+        id: deploy
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
             --source ./server \
@@ -49,7 +50,19 @@ jobs:
             --timeout 60 \
             --quiet
 
+      - name: Show Cloud Build logs on failure
+        if: failure()
+        run: |
+          echo "=== Fetching Cloud Build logs ==="
+          BUILD_ID=$(gcloud builds list --limit=1 --format='value(id)' --region=${{ env.REGION }} 2>/dev/null || gcloud builds list --limit=1 --format='value(id)' 2>/dev/null || echo "")
+          if [ -n "$BUILD_ID" ]; then
+            gcloud builds log "$BUILD_ID" --region=${{ env.REGION }} 2>/dev/null || gcloud builds log "$BUILD_ID" 2>/dev/null || echo "Could not fetch build logs"
+          else
+            echo "No build ID found"
+          fi
+
       - name: Get Service URL
+        if: success()
         run: |
           URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.REGION }} --format 'value(status.url)')
           echo "Service URL: $URL"
