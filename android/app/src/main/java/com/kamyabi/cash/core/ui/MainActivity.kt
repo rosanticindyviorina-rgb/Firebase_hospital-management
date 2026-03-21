@@ -3,6 +3,7 @@ package com.kamyabi.cash.core.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -25,9 +26,11 @@ import kotlinx.coroutines.launch
  * 2. If banned → BanActivity
  * 3. If not signed in → show referral code screen → phone auth
  * 4. If signed in → listen for user status → show task dashboard with bottom nav
+ * 5. Demo Mode → skip auth, show dashboard for testing
  */
 class MainActivity : AppCompatActivity(),
     ReferralCodeFragment.OnReferralValidatedListener,
+    ReferralCodeFragment.OnDemoModeListener,
     PhoneAuthFragment.OnAuthCompleteListener {
 
     private val securityGate by lazy { SecurityGate(this) }
@@ -35,6 +38,9 @@ class MainActivity : AppCompatActivity(),
     private val db = FirebaseFirestore.getInstance()
 
     private lateinit var bottomNav: BottomNavigationView
+
+    var isDemoMode = false
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +93,12 @@ class MainActivity : AppCompatActivity(),
             .replace(R.id.navHostFragment, PhoneAuthFragment.newInstance(referralCode))
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onDemoModeRequested() {
+        isDemoMode = true
+        Toast.makeText(this, "Demo Mode — exploring app without login", Toast.LENGTH_LONG).show()
+        showTaskDashboard()
     }
 
     override fun onAuthComplete() {

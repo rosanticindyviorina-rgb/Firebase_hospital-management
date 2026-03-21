@@ -6,6 +6,7 @@
     <!-- Navigation -->
     <string name="nav_home">Home</string>
     <string name="nav_tasks">Tasks</string>
+    <string name="nav_team">Team</string>
     <string name="nav_wallet">Wallet</string>
     <string name="nav_gaming">Games</string>
     <string name="nav_profile">Profile</string>

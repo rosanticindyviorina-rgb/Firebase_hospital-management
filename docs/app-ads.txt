@@ -1,0 +1,18 @@
+# Kamyabi Cash — app-ads.txt
+# Package: com.taskforge.app
+# Updated: 2026-03-22
+#
+# Add your ad network entries below.
+# Format: <domain>, <publisher-id>, DIRECT|RESELLER, <certification-authority-id>
+#
+# Google AdMob
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+#
+# AppLovin
+applovin.com, XXXXXXXXXXXX, DIRECT
+#
+# Meta Audience Network
+facebook.com, XXXXXXXXXXXXXXXX, DIRECT, c3e20eee3f780d68
+#
+# Replace the X values above with your actual publisher/app IDs
+# after registering with each ad network.

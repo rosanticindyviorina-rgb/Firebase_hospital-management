@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +23,10 @@ class ReferralCodeFragment : Fragment() {
 
     interface OnReferralValidatedListener {
         fun onReferralValidated(referralCode: String)
+    }
+
+    interface OnDemoModeListener {
+        fun onDemoModeRequested()
     }
 
     private lateinit var etReferralCode: EditText
@@ -44,6 +49,10 @@ class ReferralCodeFragment : Fragment() {
                 return@setOnClickListener
             }
             validateCode(code)
+        }
+
+        view.findViewById<TextView>(R.id.tvDemoMode).setOnClickListener {
+            (activity as? OnDemoModeListener)?.onDemoModeRequested()
         }
     }
 
