@@ -50,4 +50,14 @@
         android:name="com.kamyabi.cash.gaming.ui.GamingFragment"
         android:label="@string/nav_gaming" />
 
+    <fragment
+        android:id="@+id/tierTasksFragment"
+        android:name="com.kamyabi.cash.tasks.ui.TierTasksFragment"
+        android:label="Tasks">
+        <argument
+            android:name="tier"
+            app:argType="string"
+            android:defaultValue="SILVER" />
+    </fragment>
+
 </navigation>

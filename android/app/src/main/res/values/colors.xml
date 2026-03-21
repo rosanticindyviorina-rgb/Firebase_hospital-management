@@ -62,6 +62,20 @@
     <color name="nav_active">#FF00C853</color>
     <color name="nav_inactive">#66FFFFFF</color>
 
+    <!-- Tier Colors -->
+    <color name="tier_silver">#FFC0C0C0</color>
+    <color name="tier_silver_dark">#FF8E8E8E</color>
+    <color name="tier_silver_bg">#FF1A1A2A</color>
+    <color name="tier_gold">#FFFFD600</color>
+    <color name="tier_gold_dark">#FFC7A600</color>
+    <color name="tier_gold_bg">#FF1A1A2A</color>
+    <color name="tier_diamond">#FF29B6F6</color>
+    <color name="tier_diamond_dark">#FF0288D1</color>
+    <color name="tier_diamond_bg">#FF1A1A2A</color>
+    <color name="tier_elite">#FF7C4DFF</color>
+    <color name="tier_elite_dark">#FF3F1DCB</color>
+    <color name="tier_elite_bg">#FF1A1A2A</color>
+
     <!-- Misc -->
     <color name="divider">#1AFFFFFF</color>
     <color name="ripple">#3300C853</color>

@@ -194,6 +194,22 @@
     <string name="support_community">WhatsApp Community</string>
     <string name="support_community_cta">Join Community</string>
 
+    <!-- Tier Dashboard Cards -->
+    <string name="tier_silver_title">Silver</string>
+    <string name="tier_silver_desc">Daily ads, spin wheel, scratch card &amp; invite tasks</string>
+    <string name="tier_silver_tasks">9 Tasks Available</string>
+    <string name="tier_gold_title">Gold</string>
+    <string name="tier_gold_desc">Premium Unity ad — dual sessions daily</string>
+    <string name="tier_gold_tasks">1 Task Available</string>
+    <string name="tier_diamond_title">Diamond</string>
+    <string name="tier_diamond_desc">AppLovin premium ads — two sessions per day</string>
+    <string name="tier_diamond_tasks">2 Tasks Available</string>
+    <string name="tier_elite_title">Elite</string>
+    <string name="tier_elite_desc">Exclusive Meta ads — highest tier rewards</string>
+    <string name="tier_elite_tasks">5 Tasks Available</string>
+    <string name="tier_cooldown_label">Cooldown</string>
+    <string name="transfer_coins">Transfer</string>
+
     <!-- Gaming Hub -->
     <string name="gaming_title">Gaming Hub</string>
     <string name="gaming_subtitle">Play games, earn KC Coins! 3 sessions daily per platform.</string>

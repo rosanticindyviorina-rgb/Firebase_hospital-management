@@ -39,7 +39,7 @@
             android:layout_marginTop="@dimen/spacing_xs"
             android:orientation="horizontal" />
 
-        <!-- Balance Card — Gradient -->
+        <!-- ===== Balance Card ===== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,23 +55,15 @@
                 android:textColor="#B3FFFFFF"
                 android:textSize="@dimen/text_sm" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvBalance"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/spacing_xs">
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="0 Coins"
+                style="@style/Widget.KamyabiCash.Balance"
+                android:textColor="@color/text_primary" />
 
-                <TextView
-                    android:id="@+id/tvBalance"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0 Coins"
-                    style="@style/Widget.KamyabiCash.Balance"
-                    android:textColor="@color/text_primary" />
-            </LinearLayout>
-
-            <!-- PKR equivalent -->
             <TextView
                 android:id="@+id/tvBalancePkr"
                 android:layout_width="wrap_content"
@@ -83,7 +75,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginTop="@dimen/spacing_sm"
                 android:gravity="center_vertical">
 
                 <LinearLayout
@@ -108,12 +100,42 @@
                         android:textSize="@dimen/text_body"
                         android:textStyle="bold" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- Action Buttons Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:orientation="horizontal"
+                android:weightSum="3">
 
                 <Button
                     android:id="@+id/btnWithdraw"
                     style="@style/Widget.KamyabiCash.Button.Primary"
-                    android:layout_width="140dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
                     android:text="@string/withdraw_button"
+                    android:textSize="@dimen/text_sm" />
+
+                <Button
+                    android:id="@+id/btnTransfer"
+                    style="@style/Widget.KamyabiCash.Button.Outline"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/transfer_coins"
+                    android:textSize="@dimen/text_sm" />
+
+                <Button
+                    android:id="@+id/btnRedeemCode"
+                    style="@style/Widget.KamyabiCash.Button.Outline"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/redeem_submit"
                     android:textSize="@dimen/text_sm" />
             </LinearLayout>
         </LinearLayout>
@@ -145,33 +167,15 @@
             android:textSize="@dimen/text_sm"
             android:visibility="gone" />
 
-        <!-- ============ SILVER SECTION (AdMob) ============ -->
+        <!-- ===== Earn Sections Title ===== -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/silver_section_title"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_md"
+            android:text="@string/daily_tasks"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="@string/silver_disclaimer"
-            android:textColor="@color/text_secondary"
-            android:textSize="@dimen/text_xs"
-            android:lineSpacingExtra="2dp" />
-
-        <TextView
-            android:id="@+id/tvSilverCooldown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_sm"
-            android:visibility="gone" />
 
         <!-- Daily Loyalty Reward -->
         <LinearLayout
@@ -216,231 +220,18 @@
                 android:textSize="@dimen/text_sm" />
         </LinearLayout>
 
-        <!-- Task 1: Watch Ad #1 -->
-        <include
-            android:id="@+id/task1Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 2: Watch Ad #2 -->
-        <include
-            android:id="@+id/task2Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 3: Invite Challenge (15 friends) -->
-        <include
-            android:id="@+id/task3Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 4: Spin Wheel -->
-        <include
-            android:id="@+id/task4Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 8: Scratch Card (Silver) -->
-        <include
-            android:id="@+id/task8Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Invite Tasks (Silver) -->
-        <include
-            android:id="@+id/task9Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <include
-            android:id="@+id/task10Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <include
-            android:id="@+id/task11Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <include
-            android:id="@+id/task12Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- ============ GOLD SECTION (Unity) ============ -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/gold_section_title"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_md"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="@string/gold_disclaimer"
-            android:textColor="@color/text_secondary"
-            android:textSize="@dimen/text_xs"
-            android:lineSpacingExtra="2dp" />
-
-        <TextView
-            android:id="@+id/tvGoldCooldown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_sm"
-            android:visibility="gone" />
-
-        <!-- Task 7: Unity Ad (Gold) -->
-        <include
-            android:id="@+id/task7Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- ============ DIAMOND SECTION (AppLovin) ============ -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/diamond_section_title"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_md"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="@string/diamond_disclaimer"
-            android:textColor="@color/text_secondary"
-            android:textSize="@dimen/text_xs"
-            android:lineSpacingExtra="2dp" />
-
-        <TextView
-            android:id="@+id/tvDiamondCooldown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_sm"
-            android:visibility="gone" />
-
-        <!-- Task 5: AppLovin Ad #1 (Diamond) -->
-        <include
-            android:id="@+id/task5Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Task 6: AppLovin Ad #2 (Diamond) -->
-        <include
-            android:id="@+id/task6Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- ============ ELITE SECTION (Meta) ============ -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/meta_section_title"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_md"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="@string/elite_disclaimer"
-            android:textColor="@color/text_secondary"
-            android:textSize="@dimen/text_xs"
-            android:lineSpacingExtra="2dp" />
-
-        <TextView
-            android:id="@+id/tvEliteCooldown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textColor="@color/accent_gold"
-            android:textSize="@dimen/text_sm"
-            android:visibility="gone" />
-
-        <!-- Meta Task 1 -->
-        <include
-            android:id="@+id/meta1Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Meta Task 2 -->
-        <include
-            android:id="@+id/meta2Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Meta Task 3 -->
-        <include
-            android:id="@+id/meta3Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Meta Task 4 -->
-        <include
-            android:id="@+id/meta4Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Meta Task 5 -->
-        <include
-            android:id="@+id/meta5Card"
-            layout="@layout/item_task_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm" />
-
-        <!-- Redeem Code Card -->
+        <!-- ===== SILVER TIER CARD ===== -->
         <LinearLayout
+            android:id="@+id/cardSilver"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:background="@drawable/bg_card"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:background="@drawable/bg_tier_silver"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:padding="@dimen/spacing_md">
+            android:padding="@dimen/spacing_lg"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -451,26 +242,226 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/redeem_title"
-                    android:textColor="@color/text_primary"
-                    android:textSize="@dimen/text_body"
+                    android:text="@string/tier_silver_title"
+                    android:textColor="@color/tier_silver"
+                    android:textSize="@dimen/text_lg"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Have a code? Redeem for free coins!"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_silver_desc"
                     android:textColor="@color/text_secondary"
                     android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_silver_tasks"
+                    android:textColor="@color/tier_silver"
+                    android:textSize="@dimen/text_xs" />
+
+                <TextView
+                    android:id="@+id/tvSilverCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/accent_gold"
+                    android:textSize="@dimen/text_xs"
+                    android:visibility="gone" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnRedeemCode"
-                style="@style/Widget.KamyabiCash.Button.Outline"
-                android:layout_width="100dp"
-                android:layout_height="@dimen/button_height_sm"
-                android:text="@string/redeem_submit"
-                android:textSize="@dimen/text_sm" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=">"
+                android:textColor="@color/tier_silver"
+                android:textSize="@dimen/text_xl" />
+        </LinearLayout>
+
+        <!-- ===== GOLD TIER CARD ===== -->
+        <LinearLayout
+            android:id="@+id/cardGold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_tier_gold"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_lg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tier_gold_title"
+                    android:textColor="@color/tier_gold"
+                    android:textSize="@dimen/text_lg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_gold_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_gold_tasks"
+                    android:textColor="@color/tier_gold"
+                    android:textSize="@dimen/text_xs" />
+
+                <TextView
+                    android:id="@+id/tvGoldCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/accent_gold"
+                    android:textSize="@dimen/text_xs"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=">"
+                android:textColor="@color/tier_gold"
+                android:textSize="@dimen/text_xl" />
+        </LinearLayout>
+
+        <!-- ===== DIAMOND TIER CARD ===== -->
+        <LinearLayout
+            android:id="@+id/cardDiamond"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_tier_diamond"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_lg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tier_diamond_title"
+                    android:textColor="@color/tier_diamond"
+                    android:textSize="@dimen/text_lg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_diamond_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_diamond_tasks"
+                    android:textColor="@color/tier_diamond"
+                    android:textSize="@dimen/text_xs" />
+
+                <TextView
+                    android:id="@+id/tvDiamondCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/accent_gold"
+                    android:textSize="@dimen/text_xs"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=">"
+                android:textColor="@color/tier_diamond"
+                android:textSize="@dimen/text_xl" />
+        </LinearLayout>
+
+        <!-- ===== ELITE TIER CARD ===== -->
+        <LinearLayout
+            android:id="@+id/cardElite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_tier_elite"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_lg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tier_elite_title"
+                    android:textColor="@color/tier_elite"
+                    android:textSize="@dimen/text_lg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_elite_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_sm" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/tier_elite_tasks"
+                    android:textColor="@color/tier_elite"
+                    android:textSize="@dimen/text_xs" />
+
+                <TextView
+                    android:id="@+id/tvEliteCooldown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/accent_gold"
+                    android:textSize="@dimen/text_xs"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=">"
+                android:textColor="@color/tier_elite"
+                android:textSize="@dimen/text_xl" />
         </LinearLayout>
 
         <!-- Referral Code Card -->

@@ -15,8 +15,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.auth.FirebaseAuth
 import com.kamyabi.cash.R
@@ -40,38 +42,27 @@ class HomeFragment : Fragment() {
     private lateinit var tvCycleTimer: TextView
     private lateinit var tvReferralCode: TextView
     private lateinit var btnWithdraw: Button
+    private lateinit var btnTransfer: Button
+    private lateinit var btnRedeemCode: Button
     private lateinit var btnShareCode: Button
 
     // Loyalty views
     private lateinit var tvLoyaltyReward: TextView
     private lateinit var btnLoyaltyClaim: Button
 
-    // Redeem code button
-    private lateinit var btnRedeemCode: Button
-
     // Ad watch count
     private lateinit var tvAdWatchCount: TextView
     private var dailyAdLimit = 8
 
-    // Exchange rate: default 2000 coins = 50 PKR
+    // Exchange rate
     private var exchangeRateCoins = 2000
     private var exchangeRatePkr = 50
-
-    // Task card views — data class for convenience
-    private data class TaskCardViews(
-        val title: TextView,
-        val reward: TextView,
-        val button: Button
-    )
-
-    private val taskCards = mutableMapOf<String, TaskCardViews>()
-    private val metaCards = mutableMapOf<String, TaskCardViews>()
 
     private var cycleTimer: CountDownTimer? = null
     private var cooldownTimer: CountDownTimer? = null
     private lateinit var tvCooldownTimer: TextView
 
-    // Per-network cooldown timers
+    // Per-network cooldown timers on tier cards
     private lateinit var tvSilverCooldown: TextView
     private lateinit var tvGoldCooldown: TextView
     private lateinit var tvDiamondCooldown: TextView
@@ -90,25 +81,6 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
-    // Ad task types (tasks that require watching an ad)
-    private val adTaskTypes = setOf("task_1", "task_2", "task_5", "task_6", "task_7")
-    // Meta task types
-    private val metaTaskTypes = setOf("meta_1", "meta_2", "meta_3", "meta_4", "meta_5")
-
-    // Task-to-network mapping (must match server TASK_NETWORK_MAP)
-    private val taskNetworkMap = mapOf(
-        "task_1" to "admob",
-        "task_2" to "admob",
-        "task_5" to "applovin",
-        "task_6" to "applovin",
-        "task_7" to "unity",
-        "meta_1" to "meta",
-        "meta_2" to "meta",
-        "meta_3" to "meta",
-        "meta_4" to "meta",
-        "meta_5" to "meta",
-    )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -131,6 +103,8 @@ class HomeFragment : Fragment() {
         tvCycleTimer = view.findViewById(R.id.tvCycleTimer)
         tvReferralCode = view.findViewById(R.id.tvReferralCode)
         btnWithdraw = view.findViewById(R.id.btnWithdraw)
+        btnTransfer = view.findViewById(R.id.btnTransfer)
+        btnRedeemCode = view.findViewById(R.id.btnRedeemCode)
         btnShareCode = view.findViewById(R.id.btnShareCode)
         tvCooldownTimer = view.findViewById(R.id.tvCooldownTimer)
         tvAdWatchCount = view.findViewById(R.id.tvAdWatchCount)
@@ -139,96 +113,11 @@ class HomeFragment : Fragment() {
         tvLoyaltyReward = view.findViewById(R.id.tvLoyaltyReward)
         btnLoyaltyClaim = view.findViewById(R.id.btnLoyaltyClaim)
 
-        // Redeem code
-        btnRedeemCode = view.findViewById(R.id.btnRedeemCode)
-
-        // Per-network cooldown timers
+        // Per-network cooldown on tier cards
         tvSilverCooldown = view.findViewById(R.id.tvSilverCooldown)
         tvGoldCooldown = view.findViewById(R.id.tvGoldCooldown)
         tvDiamondCooldown = view.findViewById(R.id.tvDiamondCooldown)
         tvEliteCooldown = view.findViewById(R.id.tvEliteCooldown)
-
-        // Bind all 12 task cards
-        val cardIds = mapOf(
-            "task_1" to R.id.task1Card,
-            "task_2" to R.id.task2Card,
-            "task_3" to R.id.task3Card,
-            "task_4" to R.id.task4Card,
-            "task_5" to R.id.task5Card,
-            "task_6" to R.id.task6Card,
-            "task_7" to R.id.task7Card,
-            "task_8" to R.id.task8Card,
-            "task_9" to R.id.task9Card,
-            "task_10" to R.id.task10Card,
-            "task_11" to R.id.task11Card,
-            "task_12" to R.id.task12Card,
-        )
-
-        for ((key, cardId) in cardIds) {
-            val card = view.findViewById<View>(cardId)
-            taskCards[key] = TaskCardViews(
-                title = card.findViewById(R.id.tvTaskTitle),
-                reward = card.findViewById(R.id.tvTaskReward),
-                button = card.findViewById(R.id.btnTaskAction)
-            )
-        }
-
-        // Set static task labels
-        val taskLabels = mapOf(
-            "task_1" to Pair(R.string.task_1_title, R.string.task_1_reward),
-            "task_2" to Pair(R.string.task_2_title, R.string.task_2_reward),
-            "task_3" to Pair(R.string.task_3_title, R.string.task_3_reward),
-            "task_4" to Pair(R.string.task_4_title, R.string.task_4_reward),
-            "task_5" to Pair(R.string.task_5_title, R.string.task_5_reward),
-            "task_6" to Pair(R.string.task_6_title, R.string.task_6_reward),
-            "task_7" to Pair(R.string.task_7_title, R.string.task_7_reward),
-            "task_8" to Pair(R.string.task_8_title, R.string.task_8_reward),
-            "task_9" to Pair(R.string.task_9_title, R.string.task_9_reward),
-            "task_10" to Pair(R.string.task_10_title, R.string.task_10_reward),
-            "task_11" to Pair(R.string.task_11_title, R.string.task_11_reward),
-            "task_12" to Pair(R.string.task_12_title, R.string.task_12_reward),
-        )
-
-        for ((key, labels) in taskLabels) {
-            taskCards[key]?.let { card ->
-                card.title.text = getString(labels.first)
-                card.reward.text = getString(labels.second)
-            }
-        }
-
-        // Bind meta task cards
-        val metaCardIds = mapOf(
-            "meta_1" to R.id.meta1Card,
-            "meta_2" to R.id.meta2Card,
-            "meta_3" to R.id.meta3Card,
-            "meta_4" to R.id.meta4Card,
-            "meta_5" to R.id.meta5Card,
-        )
-
-        for ((key, cardId) in metaCardIds) {
-            val card = view.findViewById<View>(cardId)
-            metaCards[key] = TaskCardViews(
-                title = card.findViewById(R.id.tvTaskTitle),
-                reward = card.findViewById(R.id.tvTaskReward),
-                button = card.findViewById(R.id.btnTaskAction)
-            )
-        }
-
-        // Set meta task labels
-        val metaLabels = mapOf(
-            "meta_1" to Pair(R.string.meta_1_title, R.string.meta_1_reward),
-            "meta_2" to Pair(R.string.meta_2_title, R.string.meta_2_reward),
-            "meta_3" to Pair(R.string.meta_3_title, R.string.meta_3_reward),
-            "meta_4" to Pair(R.string.meta_4_title, R.string.meta_4_reward),
-            "meta_5" to Pair(R.string.meta_5_title, R.string.meta_5_reward),
-        )
-
-        for ((key, labels) in metaLabels) {
-            metaCards[key]?.let { card ->
-                card.title.text = getString(labels.first)
-                card.reward.text = getString(labels.second)
-            }
-        }
     }
 
     private fun setupBannerSlider(view: View) {
@@ -278,26 +167,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        // Ad tasks (1, 2, 5, 6, 7)
-        for (taskType in adTaskTypes) {
-            taskCards[taskType]?.button?.setOnClickListener { claimTask(taskType, it as Button) }
-        }
-
-        // Invite tasks (3, 9, 10, 11, 12) — server validates invite count
-        for (taskType in listOf("task_3", "task_9", "task_10", "task_11", "task_12")) {
-            taskCards[taskType]?.button?.setOnClickListener { claimTask(taskType, it as Button) }
-        }
-
-        // Spin wheel (task 4)
-        taskCards["task_4"]?.button?.setOnClickListener { spinWheel(it as Button) }
-
-        // Scratch card (task 8)
-        taskCards["task_8"]?.button?.setOnClickListener { scratchCard(it as Button) }
-
-        // Meta tasks — ad-gated, claim via same endpoint
-        for (taskType in metaTaskTypes) {
-            metaCards[taskType]?.button?.setOnClickListener { claimTask(taskType, it as Button) }
-        }
+        // Tier card navigation
+        view?.findViewById<View>(R.id.cardSilver)?.setOnClickListener { openTier("SILVER") }
+        view?.findViewById<View>(R.id.cardGold)?.setOnClickListener { openTier("GOLD") }
+        view?.findViewById<View>(R.id.cardDiamond)?.setOnClickListener { openTier("DIAMOND") }
+        view?.findViewById<View>(R.id.cardElite)?.setOnClickListener { openTier("ELITE") }
 
         // Loyalty claim
         btnLoyaltyClaim.setOnClickListener { claimLoyalty() }
@@ -305,6 +179,7 @@ class HomeFragment : Fragment() {
         // Redeem code
         btnRedeemCode.setOnClickListener { showRedeemDialog() }
 
+        // Withdraw — switch to Wallet tab
         btnWithdraw.setOnClickListener {
             activity?.let { act ->
                 val navView = act.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
@@ -312,7 +187,17 @@ class HomeFragment : Fragment() {
             }
         }
 
+        // Transfer — navigate to transfer fragment
+        btnTransfer.setOnClickListener {
+            findNavController().navigate(R.id.transferFragment)
+        }
+
         btnShareCode.setOnClickListener { shareReferralCode() }
+    }
+
+    private fun openTier(tierName: String) {
+        val bundle = bundleOf(TierTasksFragment.ARG_TIER to tierName)
+        findNavController().navigate(R.id.tierTasksFragment, bundle)
     }
 
     private fun fetchConfig() {
@@ -351,29 +236,15 @@ class HomeFragment : Fragment() {
                 tvGreeting.text = "Welcome back!"
             } catch (_: Exception) {}
 
-            // Load task status
+            // Load task status for timers & cooldowns
             taskRepo.getTaskStatus().onSuccess { status ->
-                updateTaskUI(status)
-                startCycleTimer(status.nextCycleAt)
+                updateTimers(status)
             }
         }
     }
 
-    private fun updateTaskUI(status: com.kamyabi.cash.core.network.TaskStatusResponse) {
-        val progress = status.taskProgress
-
-        // Update core task buttons
-        for ((key, card) in taskCards) {
-            updateTaskButton(card.button, progress[key])
-        }
-
-        // Update meta task buttons from meta status
-        val metaProgress = status.meta?.metaProgress
-        for ((key, card) in metaCards) {
-            updateTaskButton(card.button, metaProgress?.get(key))
-        }
-
-        // Update loyalty from server status
+    private fun updateTimers(status: com.kamyabi.cash.core.network.TaskStatusResponse) {
+        // Loyalty
         val loyalty = status.loyalty
         if (loyalty?.claimedToday == true) {
             btnLoyaltyClaim.text = getString(R.string.loyalty_claimed)
@@ -385,7 +256,6 @@ class HomeFragment : Fragment() {
             btnLoyaltyClaim.alpha = 1.0f
         }
 
-        // Set loyalty reward text from server or calculate locally
         val todayReward = loyalty?.todayReward ?: run {
             val day = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH)
             when {
@@ -396,22 +266,22 @@ class HomeFragment : Fragment() {
         }
         tvLoyaltyReward.text = getString(R.string.loyalty_reward_today, todayReward.toString())
 
-        // Show streak if available
         val streak = loyalty?.loyaltyStreak ?: 0
         if (streak > 0) {
             tvLoyaltyReward.text = "${tvLoyaltyReward.text} | ${getString(R.string.loyalty_streak, streak.toString())}"
         }
 
-        // Show ad watch count / daily limit
+        // Ad watch count
         val adCount = status.adWatchCount
         if (adCount > 0 || dailyAdLimit > 0) {
             tvAdWatchCount.visibility = View.VISIBLE
             tvAdWatchCount.text = "Ads today: $adCount / $dailyAdLimit"
         }
 
+        startCycleTimer(status.nextCycleAt)
         startCooldownTimer(status.nextTaskAt)
 
-        // Per-network cooldown timers
+        // Per-network cooldowns on tier cards
         cancelNetworkTimers()
         startNetworkCooldown(tvSilverCooldown, status.networkCooldowns?.get("admob"))
         startNetworkCooldown(tvGoldCooldown, status.networkCooldowns?.get("unity"))
@@ -440,141 +310,18 @@ class HomeFragment : Fragment() {
                 val h = millisUntilFinished / (1000 * 60 * 60)
                 val m = (millisUntilFinished % (1000 * 60 * 60)) / (1000 * 60)
                 val s = (millisUntilFinished % (1000 * 60)) / 1000
-                tv.text = if (h > 0) "Remaining: ${h}h ${m}m ${s}s" else "Remaining: ${m}m ${s}s"
+                tv.text = if (h > 0) "Cooldown: ${h}h ${m}m ${s}s" else "Cooldown: ${m}m ${s}s"
             }
             override fun onFinish() {
                 tv.visibility = View.GONE
-                loadData()
             }
         }.start()
         networkTimers.add(timer)
     }
 
-    private fun updateTaskButton(button: Button, status: String?) {
-        when (status) {
-            "completed" -> {
-                button.text = getString(R.string.task_completed)
-                button.isEnabled = false
-                button.alpha = 0.5f
-            }
-            "locked" -> {
-                button.text = getString(R.string.task_locked)
-                button.isEnabled = false
-                button.alpha = 0.5f
-            }
-            else -> {
-                button.text = getString(R.string.task_claim)
-                button.isEnabled = true
-                button.alpha = 1.0f
-            }
-        }
-    }
-
-    private fun claimTask(taskType: String, button: Button) {
-        button.isEnabled = false
-        viewLifecycleOwner.lifecycleScope.launch {
-            // Show ad for the correct network per task type
-            val network = taskNetworkMap[taskType]
-            if (network != null) {
-                val adWatched = adManager.showRewardedAd(requireActivity(), network)
-                if (!adWatched) {
-                    Toast.makeText(context, "Please watch the full ad to claim this task", Toast.LENGTH_SHORT).show()
-                    button.isEnabled = true
-                    return@launch
-                }
-            }
-
-            taskRepo.claimTask(taskType).onSuccess { response ->
-                showResultDialog(
-                    title = "Task Complete!",
-                    icon = "\uD83C\uDF89",
-                    prize = response.reward,
-                    winMessage = "+${response.reward?.toInt()} Coins earned!",
-                    loseMessage = "Task claimed"
-                )
-                loadData()
-            }.onFailure { e ->
-                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                button.isEnabled = true
-            }
-        }
-    }
-
-    private fun spinWheel(button: Button) {
-        button.isEnabled = false
-        viewLifecycleOwner.lifecycleScope.launch {
-            taskRepo.executeSpin().onSuccess { result ->
-                showResultDialog(
-                    title = getString(R.string.spin_title),
-                    icon = "\uD83C\uDFA1",
-                    prize = result.prize,
-                    winMessage = getString(R.string.spin_result_win, result.prize?.toInt()?.toString() ?: "0"),
-                    loseMessage = getString(R.string.spin_result_try_again)
-                )
-                loadData()
-            }.onFailure { e ->
-                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                button.isEnabled = true
-            }
-        }
-    }
-
-    private fun scratchCard(button: Button) {
-        button.isEnabled = false
-        viewLifecycleOwner.lifecycleScope.launch {
-            taskRepo.executeScratch().onSuccess { result ->
-                showResultDialog(
-                    title = getString(R.string.scratch_title),
-                    icon = "\uD83C\uDFAB",
-                    prize = result.prize,
-                    winMessage = getString(R.string.scratch_result_win, result.prize?.toInt()?.toString() ?: "0"),
-                    loseMessage = getString(R.string.spin_result_try_again)
-                )
-                loadData()
-            }.onFailure { e ->
-                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                button.isEnabled = true
-            }
-        }
-    }
-
-    private fun showResultDialog(title: String, icon: String, prize: Double?, winMessage: String, loseMessage: String) {
-        val ctx = context ?: return
-        val isWin = prize != null && prize > 0
-        val message = if (isWin) winMessage else loseMessage
-
-        // Play coin collect sound and animate balance on win
-        if (isWin) {
-            playCoinSound()
-            animateBalance()
-        }
-
-        AlertDialog.Builder(ctx, R.style.Theme_KamyabiCash_Dialog)
-            .setTitle("$icon $title")
-            .setMessage("\n$message\n")
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    private fun playCoinSound() {
-        try {
-            val mp = MediaPlayer.create(context, R.raw.coin_collect)
-            mp?.setOnCompletionListener { it.release() }
-            mp?.start()
-        } catch (_: Exception) { }
-    }
-
-    private fun animateBalance() {
-        try {
-            val anim = AnimationUtils.loadAnimation(context, R.anim.coin_sparkle)
-            tvBalance.startAnimation(anim)
-        } catch (_: Exception) { }
-    }
-
     private fun claimLoyalty() {
         btnLoyaltyClaim.isEnabled = false
         viewLifecycleOwner.lifecycleScope.launch {
-            // Loyalty requires watching one ad per day (uses default provider)
             val adWatched = adManager.showRewardedAd(requireActivity(), "admob")
             if (!adWatched) {
                 Toast.makeText(context, "Please watch the ad to claim your daily reward", Toast.LENGTH_SHORT).show()
@@ -633,6 +380,30 @@ class HomeFragment : Fragment() {
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showResultDialog(title: String, icon: String, prize: Double?, winMessage: String, loseMessage: String) {
+        val ctx = context ?: return
+        val isWin = prize != null && prize > 0
+        val message = if (isWin) winMessage else loseMessage
+
+        if (isWin) {
+            try {
+                val mp = MediaPlayer.create(context, R.raw.coin_collect)
+                mp?.setOnCompletionListener { it.release() }
+                mp?.start()
+            } catch (_: Exception) { }
+            try {
+                val anim = AnimationUtils.loadAnimation(context, R.anim.coin_sparkle)
+                tvBalance.startAnimation(anim)
+            } catch (_: Exception) { }
+        }
+
+        AlertDialog.Builder(ctx, R.style.Theme_KamyabiCash_Dialog)
+            .setTitle("$icon $title")
+            .setMessage("\n$message\n")
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun startCycleTimer(nextCycleAt: Long) {
