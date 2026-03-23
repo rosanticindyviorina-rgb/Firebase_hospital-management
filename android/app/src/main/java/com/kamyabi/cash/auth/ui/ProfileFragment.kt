@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kamyabi.cash.BuildConfig
@@ -45,7 +47,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindViews(view)
-        setupClickListeners()
+        setupClickListeners(view)
         loadProfile()
     }
 
@@ -64,7 +66,7 @@ class ProfileFragment : Fragment() {
         tvVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
     }
 
-    private fun setupClickListeners() {
+    private fun setupClickListeners(view: View) {
         btnProfileShare.setOnClickListener { shareReferralCode() }
 
         btnSignOut.setOnClickListener {
@@ -75,31 +77,64 @@ class ProfileFragment : Fragment() {
             requireActivity().finish()
         }
 
+        // Account grid buttons
+        view.findViewById<View>(R.id.btnWithdrawalRecord)?.setOnClickListener {
+            // Navigate to wallet tab to see withdrawal history
+            activity?.let { act ->
+                val navView = act.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+                navView?.selectedItemId = R.id.nav_wallet
+            }
+        }
+
+        view.findViewById<View>(R.id.btnTaskRecord)?.setOnClickListener {
+            Toast.makeText(context, "Task history coming soon", Toast.LENGTH_SHORT).show()
+        }
+
+        view.findViewById<View>(R.id.btnBankBinding)?.setOnClickListener {
+            Toast.makeText(context, "Bank binding coming soon", Toast.LENGTH_SHORT).show()
+        }
+
+        view.findViewById<View>(R.id.btnTeamReport)?.setOnClickListener {
+            // Navigate to team tab
+            activity?.let { act ->
+                val navView = act.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+                navView?.selectedItemId = R.id.nav_team
+            }
+        }
+
+        view.findViewById<View>(R.id.btnChangePassword)?.setOnClickListener {
+            Toast.makeText(context, "Password change coming soon", Toast.LENGTH_SHORT).show()
+        }
+
+        view.findViewById<View>(R.id.btnNotice)?.setOnClickListener {
+            Toast.makeText(context, "No new notices", Toast.LENGTH_SHORT).show()
+        }
+
         // Social media links
-        view?.findViewById<View>(R.id.btnYoutube)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnYoutube)?.setOnClickListener {
             openUrl("https://www.youtube.com/@EarnWithKamyabi")
         }
-        view?.findViewById<View>(R.id.btnFacebook)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnFacebook)?.setOnClickListener {
             openUrl("https://www.facebook.com/share/1axbAWTTBw/")
         }
-        view?.findViewById<View>(R.id.btnTiktok)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnTiktok)?.setOnClickListener {
             openUrl("https://www.tiktok.com/@kamyabikasafar8")
         }
-        view?.findViewById<View>(R.id.btnWhatsappChannel)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnWhatsappChannel)?.setOnClickListener {
             openUrl("https://whatsapp.com/channel/0029VbC0xHd7j6fyCHrehL3F")
         }
-        view?.findViewById<View>(R.id.btnTelegramChannel)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnTelegramChannel)?.setOnClickListener {
             openUrl("https://t.me/kamyabicashofficial")
         }
 
         // Support links
-        view?.findViewById<View>(R.id.btnTelegramSupport)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnTelegramSupport)?.setOnClickListener {
             openUrl("https://t.me/kamyabicash_support")
         }
-        view?.findViewById<View>(R.id.btnWhatsappSupport)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnWhatsappSupport)?.setOnClickListener {
             openUrl("https://wa.me/message/kamyabicash")
         }
-        view?.findViewById<View>(R.id.btnWhatsappCommunity)?.setOnClickListener {
+        view.findViewById<View>(R.id.btnWhatsappCommunity)?.setOnClickListener {
             openUrl("https://chat.whatsapp.com/DxO8GJJcCFb0eHMdyZzCd5")
         }
     }
@@ -108,11 +143,19 @@ class ProfileFragment : Fragment() {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
+    private fun maskPhone(phone: String): String {
+        if (phone.length <= 4) return phone
+        val last4 = phone.takeLast(4)
+        val masked = phone.dropLast(4).replace(Regex("[0-9]"), "*")
+        return "$masked$last4"
+    }
+
     private fun loadProfile() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val phone = FirebaseAuth.getInstance().currentUser?.phoneNumber ?: ""
 
-        tvPhone.text = phone
+        // Show masked phone number for privacy
+        tvPhone.text = maskPhone(phone)
         tvAvatar.text = if (phone.length > 3) phone.substring(phone.length - 2) else "KC"
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -122,7 +165,7 @@ class ProfileFragment : Fragment() {
                 tvStatus.text = profile.status.replaceFirstChar { it.uppercase() }
 
                 val formatter = NumberFormat.getNumberInstance(Locale.US)
-                tvStatBalance.text = "${formatter.format(profile.coinBalance.toLong())} Coins"
+                tvStatBalance.text = formatter.format(profile.coinBalance.toLong())
 
                 // Load member since
                 val userDoc = db.collection("users").document(uid).get().await()

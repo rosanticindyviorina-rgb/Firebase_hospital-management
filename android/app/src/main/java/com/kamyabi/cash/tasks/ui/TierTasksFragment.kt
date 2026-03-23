@@ -37,28 +37,28 @@ class TierTasksFragment : Fragment() {
             R.string.silver_section_title,
             R.string.silver_disclaimer,
             R.color.tier_silver,
-            listOf("task_1", "task_2", "task_3", "task_4", "task_8", "task_9", "task_10", "task_11", "task_12"),
+            listOf("task_1", "task_2", "task_3", "task_4", "task_8", "task_9"),
             "admob"
         ),
         GOLD(
             R.string.gold_section_title,
             R.string.gold_disclaimer,
             R.color.tier_gold,
-            listOf("task_7"),
+            listOf("task_7", "task_10", "task_11", "task_12"),
             "unity"
         ),
         DIAMOND(
             R.string.diamond_section_title,
             R.string.diamond_disclaimer,
             R.color.tier_diamond,
-            listOf("task_5", "task_6"),
+            listOf("task_5", "task_6", "meta_1", "meta_2"),
             "applovin"
         ),
         ELITE(
             R.string.elite_section_title,
             R.string.elite_disclaimer,
             R.color.tier_elite,
-            listOf("meta_1", "meta_2", "meta_3", "meta_4", "meta_5"),
+            listOf("meta_3", "meta_4", "meta_5"),
             "meta"
         )
     }

@@ -37,17 +37,17 @@
     <string name="cooldown_active">Cooldown: %s</string>
 
     <!-- Tier Section Titles -->
-    <string name="silver_section_title">SILVER SECTION</string>
-    <string name="silver_disclaimer">Daily Limit: All tasks available once every 24 hours.\nTimer: 3-minute countdown per task.\nMultitasking: Switch to Gold, Diamond, or Elite while timer runs.\nReward credited after timer finishes and task is completed.</string>
+    <string name="silver_section_title">SILVER MEMBERSHIP</string>
+    <string name="silver_disclaimer">6 Daily Tasks available.\nClick only once per task — multiple clicks = account block.\n3-minute lockdown per task.\nSwitch to Gold, Diamond, or Elite while timer runs.</string>
 
-    <string name="gold_section_title">GOLD SECTION</string>
-    <string name="gold_disclaimer">Dual Sessions: Tasks refresh twice daily (8-hour interval).\n3-minute timer per task — complete other tiers while waiting.\nKC Coins added to wallet immediately after completion.\nMultiple clicking or spamming = Permanent Account Ban.</string>
+    <string name="gold_section_title">GOLD MEMBERSHIP</string>
+    <string name="gold_disclaimer">4+4 System: Complete 4 tasks now, return after 8 hours for the next 4.\n3-minute timer per task — complete other tiers while waiting.\nKC Coins added to wallet immediately after completion.\nMultiple clicking or spamming = Permanent Account Ban.</string>
 
-    <string name="diamond_section_title">DIAMOND SECTION</string>
-    <string name="diamond_disclaimer">Premium Access: Two sessions per 24 hours (8-hour gap).\n3-minute lockdown per task — switch to other tiers to earn more.\nBalance updated in real-time on completion.\nZero-tolerance for bot activity — violations = permanent blacklist.</string>
+    <string name="diamond_section_title">DIAMOND MEMBERSHIP</string>
+    <string name="diamond_disclaimer">4+4 System: Complete 4 tasks now, return after 8 hours for the next 4.\n3-minute lockdown per task — switch to other tiers to earn more.\nBalance updated in real-time on completion.\nZero-tolerance for bot activity — violations = permanent blacklist.</string>
 
-    <string name="elite_section_title">ELITE SECTION</string>
-    <string name="elite_disclaimer">Exclusive: Tasks can be completed twice per day (8-hour gap).\n3-minute timer — explore Silver, Gold, or Diamond while waiting.\nKC Coins credited instantly on task completion.\nAvoid multiple clicking — system manipulation = Immediate Ban.</string>
+    <string name="elite_section_title">ELITE MEMBERSHIP</string>
+    <string name="elite_disclaimer">4+4 System: Complete 4 tasks now, return after 8 hours for the next 4.\n3-minute timer — explore Silver, Gold, or Diamond while waiting.\nKC Coins credited instantly on task completion.\nAvoid multiple clicking — system manipulation = Immediate Ban.</string>
 
     <!-- Withdrawal Disclaimer -->
     <string name="withdraw_disclaimer_title">Official Withdrawal Rules</string>
@@ -196,17 +196,17 @@
 
     <!-- Tier Dashboard Cards -->
     <string name="tier_silver_title">Silver</string>
-    <string name="tier_silver_desc">Daily ads, spin wheel, scratch card &amp; invite tasks</string>
-    <string name="tier_silver_tasks">9 Tasks Available</string>
+    <string name="tier_silver_desc">6 Daily Tasks \u2022 One click per task</string>
+    <string name="tier_silver_tasks">6 Tasks Available</string>
     <string name="tier_gold_title">Gold</string>
-    <string name="tier_gold_desc">Premium Unity ad — dual sessions daily</string>
-    <string name="tier_gold_tasks">1 Task Available</string>
+    <string name="tier_gold_desc">4+4 System \u2022 Complete 4 now, return in 8 hours</string>
+    <string name="tier_gold_tasks">4 Tasks Available</string>
     <string name="tier_diamond_title">Diamond</string>
-    <string name="tier_diamond_desc">AppLovin premium ads — two sessions per day</string>
-    <string name="tier_diamond_tasks">2 Tasks Available</string>
+    <string name="tier_diamond_desc">4+4 System \u2022 Premium tasks, dual sessions</string>
+    <string name="tier_diamond_tasks">4 Tasks Available</string>
     <string name="tier_elite_title">Elite</string>
-    <string name="tier_elite_desc">Exclusive Meta ads — highest tier rewards</string>
-    <string name="tier_elite_tasks">5 Tasks Available</string>
+    <string name="tier_elite_desc">4+4 System \u2022 Exclusive highest tier rewards</string>
+    <string name="tier_elite_tasks">3 Tasks Available</string>
     <string name="tier_cooldown_label">Cooldown</string>
     <string name="transfer_coins">Transfer</string>
 
