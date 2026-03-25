@@ -54,4 +54,5 @@ class ApiClient {
     val transferApi: TransferApi = retrofit.create(TransferApi::class.java)
     val configApi: ConfigApi = retrofit.create(ConfigApi::class.java)
     val gamingApi: GamingApi = retrofit.create(GamingApi::class.java)
+    val accountApi: AccountApi = retrofit.create(AccountApi::class.java)
 }

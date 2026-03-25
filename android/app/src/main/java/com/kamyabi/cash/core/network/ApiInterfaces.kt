@@ -277,3 +277,47 @@ data class GamingEndResponse(
     val nextSessionAt: Long?,
     val capped: Boolean?
 )
+
+// ============================================
+// Account API (Bank Binding, Task History, Frozen)
+// ============================================
+interface AccountApi {
+
+    @POST("account/bank")
+    suspend fun saveBankBinding(@Body body: Map<String, String>): GenericResponse
+
+    @GET("account/bank")
+    suspend fun getBankBinding(): BankBindingResponse
+
+    @GET("account/task-history")
+    suspend fun getTaskHistory(@Query("limit") limit: Int = 50): TaskHistoryResponse
+
+    @GET("account/frozen")
+    suspend fun getFrozenAmount(): FrozenAmountResponse
+}
+
+data class BankBindingResponse(
+    val bound: Boolean,
+    val accountTitle: String?,
+    val accountNumber: String?,
+    val bankName: String?,
+    val method: String?,
+    val locked: Boolean?
+)
+
+data class TaskHistoryItem(
+    val id: String,
+    val type: String,
+    val amount: Double,
+    val currency: String,
+    val taskType: String?,
+    val createdAt: Long
+)
+
+data class TaskHistoryResponse(
+    val history: List<TaskHistoryItem>
+)
+
+data class FrozenAmountResponse(
+    val frozenCoins: Double
+)

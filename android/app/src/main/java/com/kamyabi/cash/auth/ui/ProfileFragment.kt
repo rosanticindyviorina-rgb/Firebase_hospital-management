@@ -34,6 +34,7 @@ class ProfileFragment : Fragment() {
     private lateinit var tvMemberSince: TextView
     private lateinit var tvStatus: TextView
     private lateinit var tvStatBalance: TextView
+    private lateinit var tvFrozenAmount: TextView
     private lateinit var tvStatInvites: TextView
     private lateinit var tvProfileReferralCode: TextView
     private lateinit var btnProfileShare: Button
@@ -57,6 +58,7 @@ class ProfileFragment : Fragment() {
         tvMemberSince = view.findViewById(R.id.tvMemberSince)
         tvStatus = view.findViewById(R.id.tvStatus)
         tvStatBalance = view.findViewById(R.id.tvStatBalance)
+        tvFrozenAmount = view.findViewById(R.id.tvFrozenAmount)
         tvStatInvites = view.findViewById(R.id.tvStatInvites)
         tvProfileReferralCode = view.findViewById(R.id.tvProfileReferralCode)
         btnProfileShare = view.findViewById(R.id.btnProfileShare)
@@ -87,11 +89,11 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btnTaskRecord)?.setOnClickListener {
-            Toast.makeText(context, "Task history coming soon", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_profile_to_task_history)
         }
 
         view.findViewById<View>(R.id.btnBankBinding)?.setOnClickListener {
-            Toast.makeText(context, "Bank binding coming soon", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_profile_to_bank)
         }
 
         view.findViewById<View>(R.id.btnTeamReport)?.setOnClickListener {
@@ -181,6 +183,13 @@ class ProfileFragment : Fragment() {
                 val referralDoc = db.collection("referrals").document(uid).get().await()
                 val invites = referralDoc.getLong("verifiedInvitesL1")?.toInt() ?: 0
                 tvStatInvites.text = invites.toString()
+            } catch (_: Exception) {}
+
+            // Load frozen amount (pending withdrawals)
+            try {
+                val frozen = ServiceLocator.apiClient.accountApi.getFrozenAmount()
+                val formatter = NumberFormat.getNumberInstance(Locale.US)
+                tvFrozenAmount.text = formatter.format(frozen.frozenCoins.toLong())
             } catch (_: Exception) {}
         }
     }

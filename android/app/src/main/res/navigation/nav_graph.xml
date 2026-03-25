@@ -33,7 +33,14 @@
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.kamyabi.cash.auth.ui.ProfileFragment"
-        android:label="@string/nav_profile" />
+        android:label="@string/nav_profile">
+        <action
+            android:id="@+id/action_profile_to_bank"
+            app:destination="@id/bankBindingFragment" />
+        <action
+            android:id="@+id/action_profile_to_task_history"
+            app:destination="@id/taskHistoryFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/withdrawFragment"
@@ -59,5 +66,15 @@
             app:argType="string"
             android:defaultValue="SILVER" />
     </fragment>
+
+    <fragment
+        android:id="@+id/bankBindingFragment"
+        android:name="com.kamyabi.cash.wallet.ui.BankBindingFragment"
+        android:label="Bank Binding" />
+
+    <fragment
+        android:id="@+id/taskHistoryFragment"
+        android:name="com.kamyabi.cash.wallet.ui.TaskHistoryFragment"
+        android:label="Task Record" />
 
 </navigation>
