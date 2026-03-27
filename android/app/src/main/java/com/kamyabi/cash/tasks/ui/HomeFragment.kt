@@ -125,24 +125,15 @@ class HomeFragment : Fragment() {
         bannerIndicator = view.findViewById(R.id.bannerIndicator)
 
         val banners = listOf(
-            // Silver Membership
-            BannerItem("\uD83E\uDD48", "SILVER MEMBERSHIP", "6 Daily Tasks \u2022 One click per task\nMultiple clicks = account block", R.drawable.bg_banner_silver),
-            // Gold Membership
-            BannerItem("\uD83E\uDD47", "GOLD MEMBERSHIP", "8 Tasks (4+4 System)\nComplete 4 now, return after 8 hours", R.drawable.bg_banner_gold),
-            // Diamond Membership
-            BannerItem("\uD83D\uDC8E", "DIAMOND MEMBERSHIP", "8 Tasks (4+4 System)\nComplete 4 now, return after 8 hours", R.drawable.bg_banner_diamond),
-            // Elite Membership
-            BannerItem("\uD83D\uDC51", "ELITE MEMBERSHIP", "8 Tasks (4+4 System)\nComplete 4 now, return after 8 hours", R.drawable.bg_banner_elite),
-            // Withdrawal Rules
-            BannerItem("\uD83D\uDCB0", "WITHDRAWAL RULES", "Min 2000 KC Coins = 50 PKR\nMin 15000 KC Coins for withdrawal\nPayout: 24-72 Business Hours", R.drawable.bg_banner_withdraw),
-            // Transfer Rules
-            BannerItem("\uD83D\uDD04", "TRANSFER RULES", "Min Transfer: 3000 KC Coins\nPlatform Tax: 10%\nDaily Limit: 3 Transfers", R.drawable.bg_banner_transfer),
-            // Gaming Policy
-            BannerItem("\uD83C\uDFAE", "GAMING POLICY", "Watch Ad \u2192 3 Min Lockdown \u2192 Play 5-10 Min\nPlay more to win unlimited KC Coins!", R.drawable.bg_banner_gaming),
-            // Social Media
-            BannerItem("\uD83D\uDCF1", "FOLLOW OUR OFFICIALS", "Follow on Facebook, TikTok, YouTube & WhatsApp\nfor guidance and extra KC Coins rewards!", R.drawable.bg_banner_social),
-            // Redeem Code
-            BannerItem("\uD83C\uDF81", "DAILY REDEEM CODE @ 9 PM", "Join WhatsApp & Telegram\nGet codes for 50 to 200 KC Coins every night!", R.drawable.bg_banner_redeem),
+            BannerItem(R.drawable.banner_silver),
+            BannerItem(R.drawable.banner_gold),
+            BannerItem(R.drawable.banner_diamond),
+            BannerItem(R.drawable.banner_elite),
+            BannerItem(R.drawable.banner_withdraw),
+            BannerItem(R.drawable.banner_transfer),
+            BannerItem(R.drawable.banner_gaming),
+            BannerItem(R.drawable.banner_social),
+            BannerItem(R.drawable.banner_redeem),
         )
 
         val adapter = BannerAdapter(banners)
