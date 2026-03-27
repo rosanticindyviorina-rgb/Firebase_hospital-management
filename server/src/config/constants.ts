@@ -20,7 +20,7 @@ export const INVITE_TARGET_T12 = 8;
 // Referral commission rates (applied on coins)
 export const REFERRAL_COMMISSION = {
   L1: 0.10, // 10%
-  L2: 0.05, // 5%
+  L2: 0.07, // 7%
   L3: 0.02, // 2%
 } as const;
 
@@ -177,6 +177,15 @@ export const AD_IDS = {
   UNITY_GAME_ID: '6061899',
   UNITY_REWARDED_ID: 'Rewarded_Android',
 } as const;
+
+// Tier-based task groupings with 8-hour lockdown
+export const TIER_LOCKDOWN_MS = 8 * 60 * 60 * 1000; // 8 hours
+export const TIER_TASK_GROUPS: Record<string, string[]> = {
+  silver: ['task_1', 'task_2', 'task_3', 'task_4', 'task_8', 'task_9'],
+  gold: ['task_7', 'task_10', 'task_11', 'task_12'],
+  diamond: ['task_5', 'task_6', 'meta_1', 'meta_2'],
+  elite: ['meta_3', 'meta_4', 'meta_5'],
+};
 
 // Referral tree max levels
 export const MAX_REFERRAL_LEVELS_ADMIN = 6;

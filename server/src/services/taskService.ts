@@ -14,7 +14,33 @@ import {
   AD_TASKS,
   CORE_TASK_KEYS,
   getDefaultTaskProgress,
+  TIER_TASK_GROUPS,
+  TIER_LOCKDOWN_MS,
 } from '../config/constants';
+
+/**
+ * Find which tier a task belongs to, and check if that tier is locked.
+ */
+function getTierForTask(taskType: string): string | null {
+  for (const [tier, tasks] of Object.entries(TIER_TASK_GROUPS)) {
+    if (tasks.includes(taskType)) return tier;
+  }
+  return null;
+}
+
+function isTierLocked(userData: Record<string, unknown>, tier: string, now: number): boolean {
+  const lockField = `tierLockdown_${tier}`;
+  const lockUntil = (userData[lockField] as any)?.toMillis?.() || 0;
+  return now < lockUntil;
+}
+
+function areTierTasksComplete(taskProgress: Record<string, string>, metaProgress: Record<string, string>, tier: string): boolean {
+  const tasks = TIER_TASK_GROUPS[tier] || [];
+  return tasks.every(key => {
+    if (key.startsWith('meta_')) return (metaProgress[key] || 'pending') === 'completed';
+    return (taskProgress[key] || 'pending') === 'completed';
+  });
+}
 
 interface TaskClaimResult {
   success: boolean;
@@ -78,6 +104,14 @@ export async function claimTask(
   const nextCycleAt = userData.nextCycleAt?.toMillis?.() || 0;
   if (now < nextCycleAt) {
     return { success: false, error: 'Task cycle not ready yet', nextTaskAt: nextCycleAt };
+  }
+
+  // Check tier-based 8-hour lockdown
+  const tier = getTierForTask(taskType);
+  if (tier && isTierLocked(userData, tier, now)) {
+    const lockField = `tierLockdown_${tier}`;
+    const lockUntil = (userData[lockField] as any)?.toMillis?.() || 0;
+    return { success: false, error: `${tier.charAt(0).toUpperCase() + tier.slice(1)} tier is locked for 8 hours`, nextTaskAt: lockUntil };
   }
 
   // Check cooldown: per-network for ad tasks, global for others
@@ -144,7 +178,20 @@ export async function claimTask(
 
   // Check if all 12 core tasks will be complete after this one
   const updatedProgress = { ...userData.taskProgress, [taskType]: 'completed' };
+  const metaProgress = userData.metaProgress || {};
   const allDone = CORE_TASK_KEYS.every(key => updatedProgress[key] === 'completed');
+
+  // Check if this task completes its tier → 8-hour lockdown
+  let tierLockdownUpdate: Record<string, unknown> = {};
+  if (tier) {
+    const updatedMeta = taskType.startsWith('meta_')
+      ? { ...metaProgress, [taskType]: 'completed' }
+      : metaProgress;
+    const updatedCore = taskType.startsWith('meta_') ? updatedProgress : { ...updatedProgress };
+    if (areTierTasksComplete(updatedCore, updatedMeta, tier)) {
+      tierLockdownUpdate[`tierLockdown_${tier}`] = firebaseAdmin.firestore.Timestamp.fromMillis(now + TIER_LOCKDOWN_MS);
+    }
+  }
 
   const serverNow = firebaseAdmin.firestore.FieldValue.serverTimestamp();
   const batch = db.batch();
@@ -156,6 +203,7 @@ export async function claimTask(
     coinBalance: firebaseAdmin.firestore.FieldValue.increment(reward),
     totalCoinsEarned: firebaseAdmin.firestore.FieldValue.increment(reward),
     updatedAt: serverNow,
+    ...tierLockdownUpdate,
   };
 
   // Increment ad watch count for ad tasks

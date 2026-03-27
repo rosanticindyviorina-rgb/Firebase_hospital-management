@@ -7,8 +7,23 @@ type GamingPlatform = typeof GAMING_PLATFORMS[number];
 const SESSION_GAP_MS = 8 * 60 * 60 * 1000; // 8 hours between sessions
 const MAX_SESSION_MINUTES = 10; // 10-minute cap per session
 const MAX_SESSION_MS = MAX_SESSION_MINUTES * 60 * 1000;
-const SESSION_COIN_CAP = 100; // Max KC Coins per session
+// Tiered coin caps per session number (client requirement)
+const SESSION_COIN_CAPS: Record<number, { min: number; max: number }> = {
+  1: { min: 100, max: 300 }, // Session 1: 100-300 coins
+  2: { min: 100, max: 200 }, // Session 2: 100-200 coins
+  3: { min: 50, max: 100 },  // Session 3: 50-100 coins
+};
 const MAX_SESSIONS_PER_DAY = 3;
+
+function getSessionCoinCap(sessionNumber: number): number {
+  const tier = SESSION_COIN_CAPS[sessionNumber] || SESSION_COIN_CAPS[3];
+  return tier.max;
+}
+
+function getSessionCoinMin(sessionNumber: number): number {
+  const tier = SESSION_COIN_CAPS[sessionNumber] || SESSION_COIN_CAPS[3];
+  return tier.min;
+}
 
 interface GamingSession {
   platform: string;
@@ -144,7 +159,7 @@ export async function startGamingSession(uid: string, platform: string): Promise
     sessionId,
     sessionNumber,
     maxMinutes: MAX_SESSION_MINUTES,
-    coinCap: SESSION_COIN_CAP,
+    coinCap: getSessionCoinCap(sessionNumber),
     expiresAt,
   };
 }
@@ -195,13 +210,19 @@ export async function endGamingSession(
     return { success: false, error: 'Session expired', coinsAwarded: 0 };
   }
 
+  // Session-tiered coin cap: Session 1=300, Session 2=200, Session 3=100
+  const sessionCap = getSessionCoinCap(sessionNumber);
+  const sessionMin = getSessionCoinMin(sessionNumber);
+
   // Server-authoritative coin calculation based on elapsed time
   // Max coins proportional to time spent (prevents instant coin farming)
-  const maxCoinsByTime = Math.floor((Math.min(elapsed, MAX_SESSION_MS) / MAX_SESSION_MS) * SESSION_COIN_CAP);
-  const serverCoins = Math.min(Math.max(0, Math.floor(coinsEarned)), maxCoinsByTime);
+  const maxCoinsByTime = Math.floor((Math.min(elapsed, MAX_SESSION_MS) / MAX_SESSION_MS) * sessionCap);
+  // Ensure at least minimum coins if played for > 3 minutes
+  const minCoins = elapsed >= 3 * 60 * 1000 ? sessionMin : 0;
+  const serverCoins = Math.max(minCoins, Math.min(Math.max(0, Math.floor(coinsEarned)), maxCoinsByTime));
 
-  // Enforce 10-minute cap — ignore coins earned beyond the cap
-  const capped = coinsEarned > SESSION_COIN_CAP || coinsEarned > maxCoinsByTime;
+  // Enforce session-tiered cap
+  const capped = coinsEarned > sessionCap || coinsEarned > maxCoinsByTime;
   const awardedCoins = serverCoins; // Use server-calculated amount, NOT client amount
 
   // Greed filter: if session lasted < 30 seconds, suspicious — award 0
